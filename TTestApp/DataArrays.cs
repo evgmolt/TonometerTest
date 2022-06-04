@@ -21,10 +21,12 @@ namespace TTestApp
 
         public void CountViewArray()
         {
+            int[] tmpArray = new int[Size];
             for (int i = 0; i < PressureArray.Length; i++)
             {
-                PressureViewArray[i] = (int)(PressureArray[i] * 10000);
+                tmpArray[i] = (int)(PressureArray[i] * 10000);
             }
+            DataProcessing.Process(tmpArray, PressureViewArray, true, Filter.coeff14);
         }
 
         public String GetDataString(uint index)
