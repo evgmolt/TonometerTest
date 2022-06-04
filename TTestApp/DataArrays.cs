@@ -8,13 +8,23 @@ namespace TTestApp
 {
     public class DataArrays
     {
-        public int[] PressureArray;
+        public uint Size;
+        public double[] PressureArray;
         public int[] PressureViewArray;
 
         public DataArrays(int size)
         {
-            PressureArray = new int[size];
+            Size = (uint)size;
+            PressureArray = new double[size];
             PressureViewArray = new int[size];
+        }
+
+        public void CountViewArray()
+        {
+            for (int i = 0; i < PressureArray.Length; i++)
+            {
+                PressureViewArray[i] = (int)(PressureArray[i] * 10000);
+            }
         }
 
         public String GetDataString(uint index)

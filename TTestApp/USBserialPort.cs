@@ -10,6 +10,7 @@ namespace TTestApp
 
     public class USBserialPort: Form, IMessageHandler
     {
+        private const int _USBTimerInterval = 25;
         public SerialPort PortHandle;
         public string[] PortNames;
         public byte[] PortBuf;
@@ -98,7 +99,7 @@ namespace TTestApp
                     ConnectionFailure?.Invoke(e);
                 }
 
-                ReadTimer.Change(0, PolyConstants.USBTimerInterval);
+                ReadTimer.Change(0, _USBTimerInterval);
                 CurrentPort = i;
                 break;
             }
