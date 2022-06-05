@@ -11,10 +11,19 @@ namespace TTestApp
     {
         private const string _configFileName = "ttconfig.json";
         public string DataDir { get; set; }
+        public bool FilterOn { get; set; }
+        public bool Maximized { get; set; }
+        public int WindowWidth { get; set; }
+        public int WindowHeight { get; set; }
+
 
         public TTestConfig()
         {
             DataDir = Directory.GetCurrentDirectory() + @"\Data\";
+            FilterOn = false;
+            Maximized = false;
+            WindowWidth = 800;
+            WindowHeight = 500;
         }
 
         public static TTestConfig GetConfig()

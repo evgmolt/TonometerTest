@@ -33,6 +33,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.checkBoxFilter = new System.Windows.Forms.CheckBox();
             this.butOpenFile = new System.Windows.Forms.Button();
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -78,11 +79,23 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.checkBoxFilter);
             this.panel1.Controls.Add(this.butOpenFile);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(144, 277);
             this.panel1.TabIndex = 1;
+            // 
+            // checkBoxFilter
+            // 
+            this.checkBoxFilter.AutoSize = true;
+            this.checkBoxFilter.Location = new System.Drawing.Point(9, 77);
+            this.checkBoxFilter.Name = "checkBoxFilter";
+            this.checkBoxFilter.Size = new System.Drawing.Size(76, 24);
+            this.checkBoxFilter.TabIndex = 1;
+            this.checkBoxFilter.Text = "Filter 1";
+            this.checkBoxFilter.UseVisualStyleBackColor = true;
+            this.checkBoxFilter.CheckedChanged += new System.EventHandler(this.checkBoxFilter_CheckedChanged);
             // 
             // butOpenFile
             // 
@@ -112,9 +125,11 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panelGraph.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -128,5 +143,6 @@
         private Panel panel1;
         private OpenFileDialog openFileDialog1;
         private HScrollBar hScrollBar1;
+        private CheckBox checkBoxFilter;
     }
 }

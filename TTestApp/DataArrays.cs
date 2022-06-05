@@ -19,14 +19,14 @@ namespace TTestApp
             PressureViewArray = new int[size];
         }
 
-        public void CountViewArray()
+        public void CountViewArray(bool filterOn)
         {
             int[] tmpArray = new int[Size];
             for (int i = 0; i < PressureArray.Length; i++)
             {
                 tmpArray[i] = (int)(PressureArray[i] * 10000);
             }
-            DataProcessing.Process(tmpArray, PressureViewArray, true, Filter.coeff14);
+            DataProcessing.Process(tmpArray, PressureViewArray, filterOn, Filter.coeff14);
         }
 
         public String GetDataString(uint index)

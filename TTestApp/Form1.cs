@@ -21,6 +21,17 @@ namespace TTestApp
             InitializeComponent();
             bufPanel = new BufferedPanel(0);
             Cfg = TTestConfig.GetConfig();
+            if (Cfg.Maximized)
+            {
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                WindowState = FormWindowState.Normal;
+                Width = Cfg.WindowWidth;
+                Height = Cfg.WindowHeight;
+            }
+            checkBoxFilter.Checked = Cfg.FilterOn;
             panelGraph.Controls.Add(bufPanel);
             panelGraph.Dock = DockStyle.Fill;
             bufPanel.Dock = DockStyle.Fill;
@@ -96,7 +107,7 @@ namespace TTestApp
                 return;
             }
             DataA = ParseData(lines, DataA, 0);
-            DataA.CountViewArray();
+            DataA.CountViewArray(Cfg.FilterOn);
             MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
@@ -154,7 +165,7 @@ namespace TTestApp
             }
             else
             {
-                OutArray = ViewArrayMaker.MakeArrayForView(panel, data, ViewShift, MaxSize, ScaleY);
+                OutArray = ViewArrayMaker.MakeArrayForView(panel, data, ViewShift, MaxSize, ScaleY, 1);
             }
             var pen = new Pen(Color.Red, 1);
             e.Graphics.DrawCurve(pen, OutArray, tension);
@@ -175,6 +186,22 @@ namespace TTestApp
             ViewShift = hScrollBar1.Value;
             bufPanel.Refresh();
 
+        }
+
+        private void checkBoxFilter_CheckedChanged(object sender, EventArgs e)
+        {
+            Cfg.FilterOn = checkBoxFilter.Checked;
+            DataA.CountViewArray(Cfg.FilterOn);
+            MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
+            bufPanel.Refresh();
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Cfg.Maximized = WindowState == FormWindowState.Maximized;
+            Cfg.WindowWidth = Width;
+            Cfg.WindowHeight = Height;
+            TTestConfig.SaveConfig(Cfg);
         }
     }
 }
