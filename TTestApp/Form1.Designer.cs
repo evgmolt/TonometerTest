@@ -33,10 +33,13 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.radioButton11 = new System.Windows.Forms.RadioButton();
             this.checkBoxFilter = new System.Windows.Forms.CheckBox();
             this.butOpenFile = new System.Windows.Forms.Button();
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelGraph.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -79,12 +82,39 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.radioButton2);
+            this.panel1.Controls.Add(this.radioButton11);
             this.panel1.Controls.Add(this.checkBoxFilter);
             this.panel1.Controls.Add(this.butOpenFile);
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(144, 277);
             this.panel1.TabIndex = 1;
+            // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(9, 176);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(46, 24);
+            this.radioButton2.TabIndex = 3;
+            this.radioButton2.TabStop = true;
+            this.radioButton2.Text = "Fit";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
+            // 
+            // radioButton11
+            // 
+            this.radioButton11.AutoSize = true;
+            this.radioButton11.Location = new System.Drawing.Point(9, 146);
+            this.radioButton11.Name = "radioButton11";
+            this.radioButton11.Size = new System.Drawing.Size(49, 24);
+            this.radioButton11.TabIndex = 2;
+            this.radioButton11.TabStop = true;
+            this.radioButton11.Text = "1:1";
+            this.radioButton11.UseVisualStyleBackColor = true;
+            this.radioButton11.CheckedChanged += new System.EventHandler(this.radioButton1_CheckedChanged);
             // 
             // checkBoxFilter
             // 
@@ -116,6 +146,15 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(14, 119);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(41, 20);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "View";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -144,5 +183,8 @@
         private OpenFileDialog openFileDialog1;
         private HScrollBar hScrollBar1;
         private CheckBox checkBoxFilter;
+        private RadioButton radioButton2;
+        private RadioButton radioButton11;
+        private Label label1;
     }
 }

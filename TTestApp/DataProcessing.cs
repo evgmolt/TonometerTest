@@ -7,7 +7,22 @@ using System.Threading.Tasks;
 namespace TTestApp
 {
     internal static class DataProcessing
-    {
+    { 
+        public static int[] GetCompressedArray(int destSize, int[] inputArray)
+        {
+            int[] result = new int[destSize];
+            int windowSize = inputArray.Length / destSize;
+            for (int  i = 0; i < destSize; i++)
+            {
+                int aver = 0;
+                for (int j = 0; j < windowSize; j++)
+                {
+                    aver += inputArray[i * windowSize + j];
+                }
+                result[i] = aver / windowSize;
+            }
+            return result;
+        }
         public static void Process(int[] inData, int[] outData, bool filterOn, double[] coeff)
         {
             int size = inData.Length;

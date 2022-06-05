@@ -32,6 +32,7 @@ namespace TTestApp
                 Height = Cfg.WindowHeight;
             }
             checkBoxFilter.Checked = Cfg.FilterOn;
+            radioButton11.Checked = true;
             panelGraph.Controls.Add(bufPanel);
             panelGraph.Dock = DockStyle.Fill;
             bufPanel.Dock = DockStyle.Fill;
@@ -106,31 +107,17 @@ namespace TTestApp
                 MessageBox.Show("Error reading file " + fileName);
                 return;
             }
-            DataA = ParseData(lines, DataA, 0);
-            DataA.CountViewArray(Cfg.FilterOn);
+            DataA = DataArrays.CreateDataFromLines(lines);
+            if (DataA == null)
+            {
+                MessageBox.Show("Error reading file");
+                return;
+            }
+            DataA.CountViewArray(bufPanel.Width, Cfg.FilterOn);
             MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
 
-        private DataArrays ParseData(string[] lines, DataArrays a, int v)
-        {
-            int skip = 5;
-            a = new DataArrays(lines.Length - skip);
-            try
-            {
-                for (int i = skip; i < lines.Length; i++)
-                {
-                    string[] s = lines[i].Split('\t');
-                    a.PressureArray[i - skip] = Convert.ToDouble(s[1]);
-                }
-                return a;
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Invalid file format");
-                return null;
-            }
-        }
 
         private void UpdateScrollBar(int size)
         {
@@ -178,7 +165,15 @@ namespace TTestApp
             {
                 return;
             }
-            buffPanel_Paint(DataA.PressureViewArray, bufPanel, 1, MaxSize, e);
+            if (radioButton11.Checked)
+            {
+                buffPanel_Paint(DataA.PressureViewArray, bufPanel, 1, MaxSize, e);
+            }
+            else
+            {
+                buffPanel_Paint(DataA.PressureCompressedArray, bufPanel, 1, MaxSize, e);
+
+            }
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
@@ -191,7 +186,11 @@ namespace TTestApp
         private void checkBoxFilter_CheckedChanged(object sender, EventArgs e)
         {
             Cfg.FilterOn = checkBoxFilter.Checked;
-            DataA.CountViewArray(Cfg.FilterOn);
+            if (DataA == null)
+            {
+                return;
+            }
+            DataA.CountViewArray(bufPanel.Width, Cfg.FilterOn);
             MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
@@ -202,6 +201,16 @@ namespace TTestApp
             Cfg.WindowWidth = Width;
             Cfg.WindowHeight = Height;
             TTestConfig.SaveConfig(Cfg);
+        }
+
+        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        {
+            bufPanel.Refresh();
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            bufPanel.Refresh();
         }
     }
 }
