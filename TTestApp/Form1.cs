@@ -34,6 +34,7 @@
                 Height = Cfg.WindowHeight;
             }
             checkBoxFilter.Checked = Cfg.FilterOn;
+            numUDownSmooth.Value = Cfg.SmoothWindowSize;
             radioButton11.Checked = true;
             panelGraph.Dock = DockStyle.Fill;
             panelGraph.Controls.Add(bufPanel);
@@ -121,7 +122,7 @@
                 MessageBox.Show("Error reading file");
                 return;
             }
-            DataA.CountViewArray(bufPanel.Width, Cfg.FilterOn);
+            DataA.CountViewArray(bufPanel.Width, Cfg);
             MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
@@ -180,7 +181,6 @@
             else
             {
                 buffPanel_Paint(DataA.PressureCompressedArray, bufPanel, ScaleY, MaxSize, e);
-
             }
         }
 
@@ -197,7 +197,7 @@
             {
                 return;
             }
-            DataA.CountViewArray(bufPanel.Width, Cfg.FilterOn);
+            DataA.CountViewArray(bufPanel.Width, Cfg);
             MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
@@ -245,6 +245,11 @@
         private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void numUDownSmooth_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.SmoothWindowSize = (int)numUDownSmooth.Value;
         }
     }
 }

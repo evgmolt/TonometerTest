@@ -15,7 +15,7 @@ namespace TTestApp
         {
             int[] result = new int[destSize];
             CompressionRatio = inputArray.Length / destSize;
-            for (int  i = 0; i < destSize; i++)
+            for (int i = 0; i < destSize; i++)
             {
                 int aver = 0;
                 for (int j = 0; j < CompressionRatio; j++)
@@ -62,6 +62,50 @@ namespace TTestApp
                 max = Math.Max(max, elem);
             }
             return (max - min);
+        }
+
+        public static double[] Smooth(double[] inputArray, int windowSize)
+        {
+            int size = inputArray.Length;
+            double[] outputArray = new double[size];
+            int i, j, z, k1, k2, hw;
+            double tmp;
+            if (windowSize % 2 == 0)
+            {
+                windowSize++;
+            }
+            hw = (windowSize - 1) / 2;
+            outputArray[0] = inputArray[0];
+
+            for (i = 1; i < size; i++)
+            {
+                tmp = 0;
+                if (i < hw)
+                {
+                    k1 = 0;
+                    k2 = 2 * i;
+                    z = k2 + 1;
+                }
+                else if ((i + hw) > (size - 1))
+                {
+                    k1 = i - size + i + 1;
+                    k2 = size - 1;
+                    z = k2 - k1 + 1;
+                }
+                else
+                {
+                    k1 = i - hw;
+                    k2 = i + hw;
+                    z = windowSize;
+                }
+
+                for (j = k1; j <= k2; j++)
+                {
+                    tmp = tmp + inputArray[j];
+                }
+                outputArray[i] = tmp / z;
+            }
+            return outputArray;
         }
     }
 }

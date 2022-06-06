@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace TTestApp
 {
-    public class DataArrays
+    internal class DataArrays
     {
         public uint Size;
         public double[] PressureArray;
         public int[] PressureViewArray;
         public int[]? PressureCompressedArray;
+        public int[]? PressureSmoothArray;
 
         public DataArrays(int size)
         {
@@ -39,15 +40,16 @@ namespace TTestApp
             }
         }
 
-        public void CountViewArray(int destSize, bool filterOn)
+        public void CountViewArray(int destSize, TTestConfig config)
         {
+            double[] smoothArray = DataProcessing.Smooth(PressureArray, config.SmoothWindowSize);
             int[] tmpArray = new int[Size];
             for (int i = 0; i < PressureArray.Length; i++)
             {
-                tmpArray[i] = (int)(PressureArray[i] * 10000);
+                tmpArray[i] = (int)(smoothArray[i] * 10000);
             }
-            DataProcessing.PrepareData(tmpArray, PressureViewArray, filterOn, Filter.coeff14);
-            PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureViewArray);
+            DataProcessing.PrepareData(tmpArray, PressureViewArray, config.FilterOn, Filter.coeff14);
+            PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, tmpArray);
         }
 
         public String GetDataString(uint index)

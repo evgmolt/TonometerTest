@@ -32,6 +32,8 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.numUDownSmooth = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.radioButtonFit = new System.Windows.Forms.RadioButton();
             this.radioButton11 = new System.Windows.Forms.RadioButton();
@@ -46,6 +48,7 @@
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDownSmooth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).BeginInit();
             this.panelBottom.SuspendLayout();
             this.SuspendLayout();
@@ -70,7 +73,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 66F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 431);
             this.tableLayoutPanel1.TabIndex = 0;
-            this.tableLayoutPanel1.Paint += new System.Windows.Forms.PaintEventHandler(this.tableLayoutPanel1_Paint);
             // 
             // hScrollBar1
             // 
@@ -84,6 +86,8 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.label2);
+            this.panel1.Controls.Add(this.numUDownSmooth);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.radioButtonFit);
             this.panel1.Controls.Add(this.radioButton11);
@@ -95,10 +99,42 @@
             this.panel1.Size = new System.Drawing.Size(121, 342);
             this.panel1.TabIndex = 0;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(25, 91);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 15);
+            this.label2.TabIndex = 6;
+            this.label2.Text = "Smooth";
+            // 
+            // numUDownSmooth
+            // 
+            this.numUDownSmooth.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numUDownSmooth.Location = new System.Drawing.Point(21, 117);
+            this.numUDownSmooth.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.numUDownSmooth.Name = "numUDownSmooth";
+            this.numUDownSmooth.Size = new System.Drawing.Size(75, 23);
+            this.numUDownSmooth.TabIndex = 5;
+            this.numUDownSmooth.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numUDownSmooth.ValueChanged += new System.EventHandler(this.numUDownSmooth_ValueChanged);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 91);
+            this.label1.Location = new System.Drawing.Point(23, 173);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(32, 15);
             this.label1.TabIndex = 4;
@@ -107,7 +143,7 @@
             // radioButtonFit
             // 
             this.radioButtonFit.AutoSize = true;
-            this.radioButtonFit.Location = new System.Drawing.Point(23, 134);
+            this.radioButtonFit.Location = new System.Drawing.Point(23, 216);
             this.radioButtonFit.Name = "radioButtonFit";
             this.radioButtonFit.Size = new System.Drawing.Size(38, 19);
             this.radioButtonFit.TabIndex = 3;
@@ -119,7 +155,7 @@
             // radioButton11
             // 
             this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(23, 109);
+            this.radioButton11.Location = new System.Drawing.Point(23, 191);
             this.radioButton11.Name = "radioButton11";
             this.radioButton11.Size = new System.Drawing.Size(40, 19);
             this.radioButton11.TabIndex = 2;
@@ -215,6 +251,7 @@
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDownSmooth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).EndInit();
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
@@ -239,5 +276,7 @@
         private Label labCompressionRatio;
         private Label label1;
         private TrackBar trackBarAmp;
+        private Label label2;
+        private NumericUpDown numUDownSmooth;
     }
 }

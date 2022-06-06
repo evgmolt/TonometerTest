@@ -15,6 +15,7 @@ namespace TTestApp
         public bool Maximized { get; set; }
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
+        public int SmoothWindowSize { get; set; }
 
 
         public TTestConfig()
@@ -24,6 +25,7 @@ namespace TTestApp
             Maximized = false;
             WindowWidth = 800;
             WindowHeight = 500;
+            SmoothWindowSize = 10;
         }
 
         public static TTestConfig GetConfig()
