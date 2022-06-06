@@ -1,4 +1,4 @@
-namespace TTestApp
+﻿namespace TTestApp
 {
     public partial class Form1 : Form, IMessageHandler
     {
@@ -40,7 +40,7 @@ namespace TTestApp
             USBPort = new USBserialPort(this, 115200);
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.Connect();
-//            InitArraysForFlow();
+            //            InitArraysForFlow();
         }
 
         private void InitArraysForFlow()
@@ -203,12 +203,12 @@ namespace TTestApp
             TTestConfig.SaveConfig(Cfg);
         }
 
-        private void radioButton1_CheckedChanged(object sender, EventArgs e)
+        private void radioButton11_CheckedChanged(object sender, EventArgs e)
         {
             bufPanel.Refresh();
         }
 
-        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        private void radioButtonFit_CheckedChanged(object sender, EventArgs e)
         {
             bufPanel.Refresh();
         }
