@@ -13,6 +13,7 @@
         bool ViewMode = true;
         int ViewShift;
         BufferedPanel bufPanel;
+        double ScaleY = 1;
 
         public event Action<Message> WindowsMessage;
 
@@ -20,6 +21,7 @@
         {
             InitializeComponent();
             bufPanel = new BufferedPanel(0);
+            bufPanel.MouseMove += bufPanel_MouseMove;
             Cfg = TTestConfig.GetConfig();
             if (Cfg.Maximized)
             {
@@ -33,14 +35,20 @@
             }
             checkBoxFilter.Checked = Cfg.FilterOn;
             radioButton11.Checked = true;
-            panelGraph.Controls.Add(bufPanel);
             panelGraph.Dock = DockStyle.Fill;
+            panelGraph.Controls.Add(bufPanel);
             bufPanel.Dock = DockStyle.Fill;
             bufPanel.Paint += bufferedPanel_Paint;
             USBPort = new USBserialPort(this, 115200);
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.Connect();
+            DataProcessing.CompressionChanged += onCompressionChanged;
             //            InitArraysForFlow();
+        }
+
+        private void onCompressionChanged(object? sender, EventArgs e)
+        {
+            labCompressionRatio.Text = DataProcessing.CompressionRatio.ToString();
         }
 
         private void InitArraysForFlow()
@@ -118,7 +126,6 @@
             bufPanel.Refresh();
         }
 
-
         private void UpdateScrollBar(int size)
         {
             int space = 14;
@@ -129,6 +136,7 @@
             hScrollBar1.Value = 0;
             hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;
         }
+
         private void buffPanel_Paint(int[] data, Control panel, double ScaleY, int MaxSize, PaintEventArgs e)
         {
             if (data == null)
@@ -167,11 +175,11 @@
             }
             if (radioButton11.Checked)
             {
-                buffPanel_Paint(DataA.PressureViewArray, bufPanel, 1, MaxSize, e);
+                buffPanel_Paint(DataA.PressureViewArray, bufPanel, ScaleY, MaxSize, e);
             }
             else
             {
-                buffPanel_Paint(DataA.PressureCompressedArray, bufPanel, 1, MaxSize, e);
+                buffPanel_Paint(DataA.PressureCompressedArray, bufPanel, ScaleY, MaxSize, e);
 
             }
         }
@@ -180,7 +188,6 @@
         {
             ViewShift = hScrollBar1.Value;
             bufPanel.Refresh();
-
         }
 
         private void checkBoxFilter_CheckedChanged(object sender, EventArgs e)
@@ -211,6 +218,33 @@
         private void radioButtonFit_CheckedChanged(object sender, EventArgs e)
         {
             bufPanel.Refresh();
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (DataA == null)
+            {
+                return;
+            }
+            DataA.PressureCompressedArray = DataProcessing.GetCompressedArray(bufPanel.Width, DataA.PressureViewArray);
+            bufPanel.Refresh();
+        }
+
+        private void bufPanel_MouseMove(object sender, MouseEventArgs e)
+        {
+            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, e.Y);
+        }
+
+        private void trackBarAmp_ValueChanged(object sender, EventArgs e)
+        {
+            double a = trackBarAmp.Value;
+            ScaleY = Math.Pow(2, a / 2);
+            bufPanel.Refresh();
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

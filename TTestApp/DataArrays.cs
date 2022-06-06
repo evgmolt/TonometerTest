@@ -11,7 +11,7 @@ namespace TTestApp
         public uint Size;
         public double[] PressureArray;
         public int[] PressureViewArray;
-        public int[] PressureCompressedArray;
+        public int[]? PressureCompressedArray;
 
         public DataArrays(int size)
         {
@@ -23,7 +23,7 @@ namespace TTestApp
         public static DataArrays? CreateDataFromLines(string[] lines)
         {
             int skip = 5;
-            DataArrays a = new DataArrays(lines.Length - skip);
+            DataArrays a = new(lines.Length - skip);
             try
             {
                 for (int i = skip; i < lines.Length; i++)
@@ -39,7 +39,6 @@ namespace TTestApp
             }
         }
 
-
         public void CountViewArray(int destSize, bool filterOn)
         {
             int[] tmpArray = new int[Size];
@@ -47,7 +46,7 @@ namespace TTestApp
             {
                 tmpArray[i] = (int)(PressureArray[i] * 10000);
             }
-            DataProcessing.Process(tmpArray, PressureViewArray, filterOn, Filter.coeff14);
+            DataProcessing.PrepareData(tmpArray, PressureViewArray, filterOn, Filter.coeff14);
             PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureViewArray);
         }
 
