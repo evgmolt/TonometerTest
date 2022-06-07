@@ -11,28 +11,28 @@ namespace TTestApp
         public static int CompressionRatio;
         public static event EventHandler CompressionChanged;
 
+        public static void SaveArray(string fname, int[] array)
+        {
+            var stringsArr = array.Select(s => s.ToString()).ToArray();
+            File.WriteAllLines(fname, stringsArr);
+        }
         public static int[] GetCompressedArray(int destSize, int[] inputArray)
         {
             int[] result = new int[destSize];
             CompressionRatio = inputArray.Length / destSize;
             for (int i = 0; i < destSize; i++)
             {
-                int aver = 0;
-                for (int j = 0; j < CompressionRatio; j++)
-                {
-                    aver += inputArray[i * CompressionRatio + j];
-                }
-                result[i] = aver / CompressionRatio;
+                result[i] = inputArray[i * CompressionRatio];
             }
             CompressionChanged(null, null);
             return result;
         }
 
-        public static void PrepareData(int[] inData, int[] outData, bool filterOn, double[] coeff)
+        public static void PrepareData(double[] inData, double[] outData, bool filterOn, double[] coeff)
         {
             int size = inData.Length;
-            int aver = 0;
-            var tmpBuf = new int[size];
+            double aver = 0;
+            var tmpBuf = new double[size];
             for (int i = 0; i < size; i++)
             {
                 aver += inData[i];
@@ -48,7 +48,10 @@ namespace TTestApp
                 {
                     outData[i] = Filter.FilterForView(coeff, tmpBuf, i);
                 }
-                else outData[i] = tmpBuf[i];
+                else
+                {
+                    outData[i] = tmpBuf[i];
+                }
             }
         }
 

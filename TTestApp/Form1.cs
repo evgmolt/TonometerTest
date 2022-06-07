@@ -138,13 +138,14 @@
             hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;
         }
 
-        private void buffPanel_Paint(int[] data, Control panel, double ScaleY, int MaxSize, PaintEventArgs e)
+        private void buffPanel_Paint(List<int[]> data, Control panel, double ScaleY, int MaxSize, PaintEventArgs e)
         {
+            Color[] curveColors = { Color.Red, Color.Blue, Color.Green };
             if (data == null)
             {
                 return;
             }
-            if (data.Length == 0)
+            if (data.Count == 0)
             {
                 return;
             }
@@ -154,18 +155,21 @@
             e.Graphics.Clear(Color.White);
             e.Graphics.DrawRectangle(pen0, R0);
             pen0.Dispose();
-            Point[] OutArray;
             if (!ViewMode)
             {
-                OutArray = ViewArrayMaker.MakeArray(panel, data, (uint)data.Length, MaxSize, ScaleY);
+                Point[] OutArray = ViewArrayMaker.MakeArray(panel, data[0], (uint)data[0].Length, MaxSize, ScaleY);
             }
             else
             {
-                OutArray = ViewArrayMaker.MakeArrayForView(panel, data, ViewShift, MaxSize, ScaleY, 1);
+                for (int i = 0; i < data.Count; i++)
+                {
+                    if (data[i] == null) break;
+                    var pen = new Pen(curveColors[i], 1);
+                    Point[] OutArray = ViewArrayMaker.MakeArrayForView(panel, data[i], ViewShift, MaxSize, ScaleY, 1);
+                    e.Graphics.DrawCurve(pen, OutArray, tension);
+                    pen.Dispose();
+                }
             }
-            var pen = new Pen(Color.Red, 1);
-            e.Graphics.DrawCurve(pen, OutArray, tension);
-            pen.Dispose();
         }
 
         private void bufferedPanel_Paint(object sender, PaintEventArgs e)
@@ -174,14 +178,20 @@
             {
                 return;
             }
+            var ArrayList = new List<int[]>();
+            
             if (radioButton11.Checked)
             {
-                buffPanel_Paint(DataA.PressureViewArray, bufPanel, ScaleY, MaxSize, e);
+                ArrayList.Add(DataA.PressureViewArray);
+                ArrayList.Add(DataA.PressureFiltredViewArray);
             }
             else
             {
-                buffPanel_Paint(DataA.PressureCompressedArray, bufPanel, ScaleY, MaxSize, e);
+                ArrayList.Add(DataA.PressureCompressedArray);
+                ArrayList.Add(DataA.PressureFiltredCompressedArray);
             }
+            buffPanel_Paint(ArrayList, bufPanel, ScaleY, MaxSize, e);
+            ArrayList.Clear();
         }
 
         private void hScrollBar1_ValueChanged(object sender, EventArgs e)
@@ -227,6 +237,7 @@
                 return;
             }
             DataA.PressureCompressedArray = DataProcessing.GetCompressedArray(bufPanel.Width, DataA.PressureViewArray);
+            DataA.PressureFiltredCompressedArray = DataProcessing.GetCompressedArray(bufPanel.Width, DataA.PressureViewArray);
             bufPanel.Refresh();
         }
 

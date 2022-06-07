@@ -11,7 +11,10 @@ namespace TTestApp
         public uint Size;
         public double[] PressureArray;
         public int[] PressureViewArray;
+        public double[] PressureFiltredArray;
+        public int[] PressureFiltredViewArray;
         public int[]? PressureCompressedArray;
+        public int[]? PressureFiltredCompressedArray;
         public int[]? PressureSmoothArray;
 
         public DataArrays(int size)
@@ -19,6 +22,8 @@ namespace TTestApp
             Size = (uint)size;
             PressureArray = new double[size];
             PressureViewArray = new int[size];
+            PressureFiltredArray = new double[size];
+            PressureFiltredViewArray = new int[size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -42,14 +47,14 @@ namespace TTestApp
 
         public void CountViewArray(int destSize, TTestConfig config)
         {
-            double[] smoothArray = DataProcessing.Smooth(PressureArray, config.SmoothWindowSize);
-            int[] tmpArray = new int[Size];
+            DataProcessing.PrepareData(PressureArray, PressureFiltredArray, config.FilterOn, Filter.coeff10Hz);
             for (int i = 0; i < PressureArray.Length; i++)
             {
-                tmpArray[i] = (int)(smoothArray[i] * 10000);
+                PressureViewArray[i] = (int)(PressureArray[i] * 100000);
+                PressureFiltredViewArray[i] = (int)(PressureFiltredArray[i] * 100000);
             }
-            DataProcessing.PrepareData(tmpArray, PressureViewArray, config.FilterOn, Filter.coeff14);
-            PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, tmpArray);
+            PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureViewArray);
+            PressureFiltredCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureFiltredViewArray);
         }
 
         public String GetDataString(uint index)
