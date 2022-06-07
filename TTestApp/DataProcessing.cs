@@ -28,6 +28,21 @@ namespace TTestApp
             return result;
         }
 
+        public static int[] GetSmoothArray(int windowSize, int[] inputArray)
+        {
+            int[] result = new int[inputArray.Length];
+            for (int i = 0; i < result.Length - windowSize * 2 - 1; i++)
+            {
+                int aver = 0;
+                for (int j = 0; j < windowSize; j++)
+                {
+                    aver += inputArray[i  * windowSize + j];
+                }
+                result[i] = aver /= windowSize;
+            }
+            return result;
+        }
+
         public static void PrepareData(double[] inData, double[] outData, bool filterOn, double[] coeff)
         {
             int size = inData.Length;
@@ -67,12 +82,12 @@ namespace TTestApp
             return (max - min);
         }
 
-        public static double[] Smooth(double[] inputArray, int windowSize)
+        public static int[] Smooth(int[] inputArray, int windowSize)
         {
             int size = inputArray.Length;
-            double[] outputArray = new double[size];
+            int[] outputArray = new int[size];
             int i, j, z, k1, k2, hw;
-            double tmp;
+            int tmp;
             if (windowSize % 2 == 0)
             {
                 windowSize++;
@@ -106,7 +121,7 @@ namespace TTestApp
                 {
                     tmp = tmp + inputArray[j];
                 }
-                outputArray[i] = tmp / z;
+                outputArray[i] = tmp / z + 50;
             }
             return outputArray;
         }

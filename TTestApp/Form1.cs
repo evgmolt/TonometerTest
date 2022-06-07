@@ -189,6 +189,7 @@
             {
                 ArrayList.Add(DataA.PressureCompressedArray);
                 ArrayList.Add(DataA.PressureFiltredCompressedArray);
+//                ArrayList.Add(DataA.PressureSmoothArray);
             }
             buffPanel_Paint(ArrayList, bufPanel, ScaleY, MaxSize, e);
             ArrayList.Clear();

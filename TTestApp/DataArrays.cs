@@ -24,6 +24,7 @@ namespace TTestApp
             PressureViewArray = new int[size];
             PressureFiltredArray = new double[size];
             PressureFiltredViewArray = new int[size];
+            PressureSmoothArray = new int[size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -55,6 +56,7 @@ namespace TTestApp
             }
             PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureViewArray);
             PressureFiltredCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureFiltredViewArray);
+//            PressureSmoothArray = DataProcessing.Smooth(PressureFiltredCompressedArray, 10);
         }
 
         public String GetDataString(uint index)
