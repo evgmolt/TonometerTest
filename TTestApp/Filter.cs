@@ -179,5 +179,27 @@ namespace TTestApp
             }
             return sum;
         }
+
+        public static int Median(int windowSize, int[] inArr, int ind)
+        {
+            if (ind > inArr.Length - windowSize)
+            {
+                return 0;
+            }
+            int[] tmpArr = new int[windowSize];
+            for (int i = 0; i < windowSize; i++)
+            {
+                tmpArr[i] = inArr[ind + i];
+            }
+            Array.Sort(tmpArr);
+            if (tmpArr.Length %2 == 0)
+            {
+                return (tmpArr[tmpArr.Length / 2] + tmpArr[tmpArr.Length / 2 - 1] ) / 2; 
+            }
+            else 
+            {
+                return tmpArr[tmpArr.Length / 2];
+            }
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace TTestApp
         public int[]? PressureCompressedArray;
         public int[]? PressureFiltredCompressedArray;
         public int[]? PressureSmoothArray;
+        public int[]? PressureFiltredMedian;
+        public int[]? DiffArray;
 
         public DataArrays(int size)
         {
@@ -25,6 +27,7 @@ namespace TTestApp
             PressureFiltredArray = new double[size];
             PressureFiltredViewArray = new int[size];
             PressureSmoothArray = new int[size];
+            PressureFiltredMedian = new int[size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -46,7 +49,7 @@ namespace TTestApp
             }
         }
 
-        public void CountViewArray(int destSize, TTestConfig config)
+        public void CountViewArrays(int destSize, TTestConfig config)
         {
             DataProcessing.PrepareData(PressureArray, PressureFiltredArray, config.FilterOn, Filter.coeff10Hz);
             for (int i = 0; i < PressureArray.Length; i++)
@@ -56,7 +59,16 @@ namespace TTestApp
             }
             PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureViewArray);
             PressureFiltredCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureFiltredViewArray);
-//            PressureSmoothArray = DataProcessing.Smooth(PressureFiltredCompressedArray, 10);
+            PressureSmoothArray = DataProcessing.Smooth(PressureFiltredCompressedArray, config.SmoothWindowSize);
+            for (int i = 0; i < PressureArray.Length; i++)
+            {
+                PressureFiltredMedian[i] = Filter.Median(4, PressureViewArray, i);
+            }
+            //DiffArray = DataProcessing.Diff(PressureFiltredViewArray);
+            //for (int i = 0; i < PressureFiltredCompressedArray.Length; i++)
+            //{
+            //    PressureFiltredCompressedArray[i] -= PressureSmoothArray[i];
+            //}
         }
 
         public String GetDataString(uint index)

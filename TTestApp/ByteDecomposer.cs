@@ -63,12 +63,12 @@ namespace TTestApp
 
         protected virtual void OnDecomposeLineEvent()
         {
-            DecomposeLineEvent?.Invoke(this, null);
+            DecomposeLineEvent?.Invoke(this, EventArgs.Empty);
         }
 
         protected virtual void OnConnectionBreakdown()
         {
-            ConnectionBreakdown?.Invoke(this, null);
+            ConnectionBreakdown?.Invoke(this, EventArgs.Empty);
         }
 
         public int Decompos(USBserialPort usbport)
@@ -139,7 +139,9 @@ namespace TTestApp
 
                         _nextPressure = _pressureTmp;
                          if (FilterOn)
-                                _nextPressure = Filter.FilterForRun(Filter.coeff50, Data.PressureArray, MainIndex);
+                        {
+                            _nextPressure = Filter.FilterForRun(Filter.coeff50, Data.PressureArray, MainIndex);
+                        }
                         _detrendPressure = FilterRecursDetrend(filterCoeff, _nextPressure, _detrendPressure, _prevPressure);
                         Data.PressureViewArray[MainIndex] = (int)Math.Round(_detrendPressure);
                             
@@ -148,7 +150,9 @@ namespace TTestApp
                         _byteNum = 0;
 
                         if (RecordStarted)
+                        {
                             txtFileStream.WriteLine(Data.GetDataString(MainIndex));
+                        }
                         OnDecomposeLineEvent();
                         LineCounter++;
                         MainIndex++;

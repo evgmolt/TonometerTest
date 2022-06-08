@@ -4,7 +4,7 @@
     {
         USBserialPort USBPort;
         public bool Connected;
-        private DataArrays DataA;
+        private DataArrays? DataA;
         private ByteDecomposer decomposer;
         readonly StreamWriter textWriter;
         TTestConfig Cfg;
@@ -108,7 +108,7 @@
         private void ReadFile(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
-            int size = lines.Count();
+            int size = lines.Length;
             UpdateScrollBar(size);
 
             if (size == 0)
@@ -122,7 +122,7 @@
                 MessageBox.Show("Error reading file");
                 return;
             }
-            DataA.CountViewArray(bufPanel.Width, Cfg);
+            DataA.CountViewArrays(bufPanel.Width, Cfg);
             MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
@@ -154,10 +154,10 @@
             var pen0 = new Pen(Color.Black, 1);
             e.Graphics.Clear(Color.White);
             e.Graphics.DrawRectangle(pen0, R0);
-            pen0.Dispose();
             if (!ViewMode)
             {
                 Point[] OutArray = ViewArrayMaker.MakeArray(panel, data[0], (uint)data[0].Length, MaxSize, ScaleY);
+                e.Graphics.DrawCurve(pen0, OutArray, tension);
             }
             else
             {
@@ -170,9 +170,10 @@
                     pen.Dispose();
                 }
             }
+            pen0.Dispose();
         }
 
-        private void bufferedPanel_Paint(object sender, PaintEventArgs e)
+        private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
         {
             if (DataA == null)
             {
@@ -180,40 +181,48 @@
             }
             var ArrayList = new List<int[]>();
             
-            if (radioButton11.Checked)
+            if (ViewMode)
             {
-                ArrayList.Add(DataA.PressureViewArray);
-                ArrayList.Add(DataA.PressureFiltredViewArray);
+                if (radioButton11.Checked)
+                {
+                    ArrayList.Add(DataA.PressureViewArray);
+                    ArrayList.Add(DataA.PressureFiltredMedian);
+//                    ArrayList.Add(DataA.DiffArray);
+                }
+                else
+                {
+                    ArrayList.Add(DataA.PressureCompressedArray);
+                    ArrayList.Add(DataA.PressureFiltredCompressedArray);
+                    ArrayList.Add(DataA.PressureSmoothArray);
+                }
             }
             else
             {
-                ArrayList.Add(DataA.PressureCompressedArray);
-                ArrayList.Add(DataA.PressureFiltredCompressedArray);
-//                ArrayList.Add(DataA.PressureSmoothArray);
+                ArrayList.Add(DataA.PressureViewArray);
             }
             buffPanel_Paint(ArrayList, bufPanel, ScaleY, MaxSize, e);
             ArrayList.Clear();
         }
 
-        private void hScrollBar1_ValueChanged(object sender, EventArgs e)
+        private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
         {
             ViewShift = hScrollBar1.Value;
             bufPanel.Refresh();
         }
 
-        private void checkBoxFilter_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxFilter_CheckedChanged(object? sender, EventArgs e)
         {
             Cfg.FilterOn = checkBoxFilter.Checked;
             if (DataA == null)
             {
                 return;
             }
-            DataA.CountViewArray(bufPanel.Width, Cfg);
+            DataA.CountViewArrays(bufPanel.Width, Cfg);
             MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
 
-        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
         {
             Cfg.Maximized = WindowState == FormWindowState.Maximized;
             Cfg.WindowWidth = Width;
@@ -221,45 +230,39 @@
             TTestConfig.SaveConfig(Cfg);
         }
 
-        private void radioButton11_CheckedChanged(object sender, EventArgs e)
+        private void radioButton11_CheckedChanged(object? sender, EventArgs e)
         {
             bufPanel.Refresh();
         }
 
-        private void radioButtonFit_CheckedChanged(object sender, EventArgs e)
+        private void radioButtonFit_CheckedChanged(object? sender, EventArgs e)
         {
             bufPanel.Refresh();
         }
 
-        private void Form1_Resize(object sender, EventArgs e)
+        private void Form1_Resize(object? sender, EventArgs e)
         {
             if (DataA == null)
             {
                 return;
             }
-            DataA.PressureCompressedArray = DataProcessing.GetCompressedArray(bufPanel.Width, DataA.PressureViewArray);
-            DataA.PressureFiltredCompressedArray = DataProcessing.GetCompressedArray(bufPanel.Width, DataA.PressureViewArray);
+            DataA.CountViewArrays(bufPanel.Width, Cfg);
             bufPanel.Refresh();
         }
 
-        private void bufPanel_MouseMove(object sender, MouseEventArgs e)
+        private void bufPanel_MouseMove(object? sender, MouseEventArgs e)
         {
             labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, e.Y);
         }
 
-        private void trackBarAmp_ValueChanged(object sender, EventArgs e)
+        private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
         {
             double a = trackBarAmp.Value;
             ScaleY = Math.Pow(2, a / 2);
             bufPanel.Refresh();
         }
 
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void numUDownSmooth_ValueChanged(object sender, EventArgs e)
+        private void numUDownSmooth_ValueChanged(object? sender, EventArgs e)
         {
             Cfg.SmoothWindowSize = (int)numUDownSmooth.Value;
         }

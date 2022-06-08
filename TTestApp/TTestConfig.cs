@@ -17,7 +17,6 @@ namespace TTestApp
         public int WindowHeight { get; set; }
         public int SmoothWindowSize { get; set; }
 
-
         public TTestConfig()
         {
             DataDir = Directory.GetCurrentDirectory() + @"\Data\";
@@ -58,6 +57,5 @@ namespace TTestApp
             writer.Close();
             sw.Close();         
         }
-
     }
 }

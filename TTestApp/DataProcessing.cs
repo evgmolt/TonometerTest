@@ -9,7 +9,7 @@ namespace TTestApp
     internal static class DataProcessing
     {
         public static int CompressionRatio;
-        public static event EventHandler CompressionChanged;
+        public static event EventHandler? CompressionChanged;
 
         public static void SaveArray(string fname, int[] array)
         {
@@ -24,7 +24,10 @@ namespace TTestApp
             {
                 result[i] = inputArray[i * CompressionRatio];
             }
-            CompressionChanged(null, null);
+            if (CompressionChanged != null)
+            {
+                CompressionChanged.Invoke(null, EventArgs.Empty);
+            }
             return result;
         }
 
@@ -80,6 +83,17 @@ namespace TTestApp
                 max = Math.Max(max, elem);
             }
             return (max - min);
+        }
+
+        //Вычисление производной
+        public static int[] Diff(int[] Data)
+        {
+            int[] result = new int[Data.Length];
+            for(int i = 0; i < Data.Length - 1; i++)
+            {
+                result[i] = Data[i + 1] - Data[i];
+            }
+            return result;
         }
 
         public static int[] Smooth(int[] inputArray, int windowSize)
