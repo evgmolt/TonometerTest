@@ -106,11 +106,6 @@
             }
         }
 
-        private void SaveFile(string v)
-        {
-            throw new NotImplementedException();
-        }
-
         private void butOpenFile_Click(object sender, EventArgs e)
         {
             openFileDialog1.FileName = "";
@@ -135,6 +130,7 @@
         {
             string[] lines = File.ReadAllLines(fileName);
             int size = lines.Length;
+            labRecordSize.Text = "Record size : " + (size / ByteDecomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(size);
 
             if (size == 0)
@@ -149,7 +145,6 @@
                 return;
             }
             DataA.CountViewArrays(bufPanel.Width, Cfg);
-//            MaxSize = DataProcessing.GetRange(DataA.DCRealTimeArray);
             bufPanel.Refresh();
         }
 
@@ -227,7 +222,7 @@
             else
             {
 //                ArrayList.Add(DataA.RealTimeArray);
-                ArrayList.Add(DataA.RealTimeArray);
+                ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DCRealTimeArray);
             }
             buffPanel_Paint(ArrayList, bufPanel, ScaleY, MaxSize, e);
@@ -350,6 +345,9 @@
                 labPort.Text = "Disconnected";
                 Connected = false;
             }
+            butStartRecord.Enabled = !ViewMode && !decomposer.RecordStarted!;
+            butStopRecord.Enabled = decomposer.RecordStarted;
+            butSaveFile.Enabled = ViewMode && decomposer.LineCounter != 0;
             butFlow.Text = ViewMode? "Start stream" : "Stop stream";
         }
 

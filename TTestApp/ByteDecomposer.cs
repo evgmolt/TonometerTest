@@ -11,7 +11,6 @@ namespace TTestApp
     class ByteDecomposer
     {
         public const int DataArrSize = 0x100000;
-        public const int DataArrSizeForView = 4000;
 
         public DataArrays Data;
         public event EventHandler DecomposeLineEvent;
@@ -37,13 +36,15 @@ namespace TTestApp
 
         private int _byteNum;
 
-        private const int MaxDelayCounter = 300;
         const double filterCoeff = 0.005;
 
         private bool FilterOn = true;
 
-        private const int averSize = 50;
+        private const int averSize = 60;
         Queue<int> averQ = new Queue<int>(averSize);
+
+        private const int averViewSize = 20;
+        Queue<int> averViewQ = new Queue<int>(averViewSize);
 
         public ByteDecomposer(DataArrays data)
         {
@@ -89,7 +90,7 @@ namespace TTestApp
                 return 0;
             }
             DeviceTurnedOn = true;
-            if (saveFileStream != null & RecordStarted)
+            if (saveFileStream != null && RecordStarted)
             {
                 try
                 {
@@ -128,7 +129,15 @@ namespace TTestApp
 
                         Data.RealTimeArray[MainIndex] = _pressureTmp;
                         Data.DCRealTimeArray[MainIndex] = (int)averQ.Average();
-                        Data.PressureViewArray[MainIndex] = Filter.FilterForRun(Filter.coeff50, Data.RealTimeArray, MainIndex);
+
+                        averViewQ.Enqueue(100 + _pressureTmp - (int)averQ.Average());
+                        if (averViewQ.Count > averViewSize)
+                        {
+                            averViewQ.Dequeue();
+                        }
+
+                        Data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
+
 
                         _byteNum = 0;
 

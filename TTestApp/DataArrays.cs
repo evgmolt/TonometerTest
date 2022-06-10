@@ -16,7 +16,6 @@ namespace TTestApp
         public double[] PressureFiltredArray;
         public int[] PressureFiltredViewArray;
         public int[]? PressureCompressedArray;
-        public int[]? PressureFiltredCompressedArray;
 
         public DataArrays(int size)
         {
@@ -48,14 +47,11 @@ namespace TTestApp
 
         public void CountViewArrays(int destSize, TTestConfig config)
         {
-//            DataProcessing.PrepareData(PressureArray, PressureFiltredArray, config.FilterOn, Filter.coeff10Hz);
             PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, RealTimeArray);
-//            PressureFiltredCompressedArray = DataProcessing.GetCompressedArray(destSize, PressureFiltredViewArray);
         }
 
         public String GetDataString(uint index)
         {
-            //"Dd:mm:yyyy HH:mm:ss:fff"
             return RealTimeArray[index].ToString();
         }
     }
