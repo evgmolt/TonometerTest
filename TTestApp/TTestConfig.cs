@@ -16,6 +16,8 @@ namespace TTestApp
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
         public int SmoothWindowSize { get; set; }
+        public int MedianWindowSize { get; set; }
+
 
         public TTestConfig()
         {
@@ -25,6 +27,7 @@ namespace TTestApp
             WindowWidth = 800;
             WindowHeight = 500;
             SmoothWindowSize = 10;
+            MedianWindowSize = 10;
         }
 
         public static TTestConfig GetConfig()

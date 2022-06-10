@@ -6,11 +6,12 @@
         public bool Connected;
         private DataArrays? DataA;
         private ByteDecomposer decomposer;
-        readonly StreamWriter textWriter;
+        StreamWriter textWriter;
         TTestConfig Cfg;
         string CurrentFile;
-        int MaxSize;
-        bool ViewMode = true;
+        string TmpDataFile = "tmpdata.t";
+        int MaxSize = 500;
+        bool ViewMode = false;
         int ViewShift;
         BufferedPanel bufPanel;
         double ScaleY = 1;
@@ -35,16 +36,17 @@
             }
             checkBoxFilter.Checked = Cfg.FilterOn;
             numUDownSmooth.Value = Cfg.SmoothWindowSize;
+            numUDownMedian.Value = Cfg.MedianWindowSize;
             radioButton11.Checked = true;
             panelGraph.Dock = DockStyle.Fill;
             panelGraph.Controls.Add(bufPanel);
             bufPanel.Dock = DockStyle.Fill;
             bufPanel.Paint += bufferedPanel_Paint;
-            USBPort = new USBserialPort(this, 115200);
+            USBPort = new USBserialPort(this, 19200);
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.Connect();
             DataProcessing.CompressionChanged += onCompressionChanged;
-            //            InitArraysForFlow();
+            InitArraysForFlow();
         }
 
         private void onCompressionChanged(object? sender, EventArgs e)
@@ -54,8 +56,10 @@
 
         private void InitArraysForFlow()
         {
+
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
             decomposer = new ByteDecomposer(DataA);
+            decomposer.DecomposeLineEvent += NewLineReceived;
         }
 
         private void onConnectionFailure(Exception obj)
@@ -86,12 +90,34 @@
             }
         }
 
+        private void butSaveFile_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                Cfg.DataDir = Path.GetDirectoryName(saveFileDialog1.FileName) + @"\";
+                TTestConfig.SaveConfig(Cfg);
+                CurrentFile = Path.GetFileName(saveFileDialog1.FileName);
+                if (File.Exists(Cfg.DataDir + CurrentFile))
+                {
+                    File.Delete(Cfg.DataDir + CurrentFile);
+                }
+                File.Move(Cfg.DataDir + TmpDataFile, Cfg.DataDir + CurrentFile);
+            }
+        }
+
+        private void SaveFile(string v)
+        {
+            throw new NotImplementedException();
+        }
+
         private void butOpenFile_Click(object sender, EventArgs e)
         {
             openFileDialog1.FileName = "";
             openFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
+                ViewMode = true;
                 if (File.Exists(openFileDialog1.FileName))
                 {
                     Cfg.DataDir = Path.GetDirectoryName(openFileDialog1.FileName) + @"\";
@@ -102,7 +128,7 @@
                     ReadFile(Cfg.DataDir + CurrentFile);
                 }
             }
-
+            Text = "File : " + CurrentFile;
         }
 
         private void ReadFile(string fileName)
@@ -123,7 +149,7 @@
                 return;
             }
             DataA.CountViewArrays(bufPanel.Width, Cfg);
-            MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
+//            MaxSize = DataProcessing.GetRange(DataA.DCRealTimeArray);
             bufPanel.Refresh();
         }
 
@@ -156,8 +182,13 @@
             e.Graphics.DrawRectangle(pen0, R0);
             if (!ViewMode)
             {
-                Point[] OutArray = ViewArrayMaker.MakeArray(panel, data[0], (uint)data[0].Length, MaxSize, ScaleY);
-                e.Graphics.DrawCurve(pen0, OutArray, tension);
+                for (int i = 0; i < data.Count; i++)
+                {
+                    var pen = new Pen(curveColors[i], 1);
+                    Point[] OutArray = ViewArrayMaker.MakeArray(panel, data[i], decomposer.MainIndex, MaxSize, ScaleY);
+                    e.Graphics.DrawCurve(pen, OutArray, tension);
+                    pen.Dispose();
+                }
             }
             else
             {
@@ -183,22 +214,21 @@
             
             if (ViewMode)
             {
-                if (radioButton11.Checked)
+                if (radioButton11.Checked) //1:1
                 {
-                    ArrayList.Add(DataA.PressureViewArray);
-                    ArrayList.Add(DataA.PressureFiltredMedian);
-//                    ArrayList.Add(DataA.DiffArray);
+                    ArrayList.Add(DataA.RealTimeArray);
+                    ArrayList.Add(DataA.DCRealTimeArray);
                 }
-                else
+                else //fit
                 {
                     ArrayList.Add(DataA.PressureCompressedArray);
-                    ArrayList.Add(DataA.PressureFiltredCompressedArray);
-                    ArrayList.Add(DataA.PressureSmoothArray);
                 }
             }
             else
             {
-                ArrayList.Add(DataA.PressureViewArray);
+//                ArrayList.Add(DataA.RealTimeArray);
+                ArrayList.Add(DataA.RealTimeArray);
+                ArrayList.Add(DataA.DCRealTimeArray);
             }
             buffPanel_Paint(ArrayList, bufPanel, ScaleY, MaxSize, e);
             ArrayList.Clear();
@@ -232,11 +262,14 @@
 
         private void radioButton11_CheckedChanged(object? sender, EventArgs e)
         {
+            hScrollBar1.Visible = radioButton11.Checked;
             bufPanel.Refresh();
         }
 
         private void radioButtonFit_CheckedChanged(object? sender, EventArgs e)
         {
+            hScrollBar1.Visible = !radioButtonFit.Checked;
+            hScrollBar1.Value = 0;
             bufPanel.Refresh();
         }
 
@@ -265,6 +298,101 @@
         private void numUDownSmooth_ValueChanged(object? sender, EventArgs e)
         {
             Cfg.SmoothWindowSize = (int)numUDownSmooth.Value;
+        }
+
+        private void numUDownMedian_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.MedianWindowSize = (int)numUDownMedian.Value;
+        }
+
+        private void butStartRecord_Click(object sender, EventArgs e)
+        {
+            textWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            decomposer.TotalBytes = 0;
+            decomposer.LineCounter = 0;
+            decomposer.RecordStarted = true;
+            progressBarRecord.Visible = true;
+        }
+
+        private void NewLineReceived(object? sender, EventArgs e)
+        {
+            if (decomposer.MainIndex > 0)
+            {
+                label4.Text = DataA.DCRealTimeArray[decomposer.MainIndex - 1].ToString();
+            }
+            if (decomposer.RecordStarted)
+            {
+                labRecordSize.Text = "Record size : " + (decomposer.LineCounter / ByteDecomposer.SamplingFrequency).ToString() + " c";
+            }
+        }
+
+        private void timerStatus_Tick(object sender, EventArgs e)
+        {
+            if (USBPort == null)
+            {
+                labPort.Text = "Disconnected";
+                Connected = false;
+                return;
+            }
+            if (USBPort.PortHandle == null)
+            {
+                labPort.Text = "Disconnected";
+                Connected = false;
+                return;
+            }
+            if (USBPort.PortHandle.IsOpen)
+            {
+                labPort.Text = "Connected to " + USBPort.PortNames[USBPort.CurrentPort];
+                Connected = true;
+            }
+            else
+            {
+                labPort.Text = "Disconnected";
+                Connected = false;
+            }
+            butFlow.Text = ViewMode? "Start stream" : "Stop stream";
+        }
+
+        private void timerRead_Tick_1(object sender, EventArgs e)
+        {
+            if (USBPort == null) return;
+            if (USBPort.PortHandle == null) return;
+            if (!USBPort.PortHandle.IsOpen) return;
+            if (decomposer != null)
+            {
+                decomposer.Decompos(USBPort, null, textWriter);
+            }
+
+        }
+
+        private void timerPaint_Tick(object sender, EventArgs e)
+        {
+            bufPanel.Refresh();
+        }
+
+        private void butFlow_Click(object sender, EventArgs e)
+        {
+            ViewMode = !ViewMode;
+            timerRead.Enabled = !ViewMode;
+            timerPaint.Enabled = !ViewMode;
+            if (!ViewMode)
+            {
+                InitArraysForFlow();
+                hScrollBar1.Visible = false;
+            }
+        }
+
+        private void butStopRecord_Click(object sender, EventArgs e)
+        {
+            progressBarRecord.Visible = false;
+            decomposer.DecomposeLineEvent -= NewLineReceived;
+            decomposer.RecordStarted = false;
+            if (textWriter != null) textWriter.Dispose();
+
+            ViewMode = true;
+            timerRead.Enabled = false;
+
+            ReadFile(Cfg.DataDir + TmpDataFile);
         }
     }
 }

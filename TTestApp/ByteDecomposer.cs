@@ -16,7 +16,7 @@ namespace TTestApp
         public DataArrays Data;
         public event EventHandler DecomposeLineEvent;
         public event EventHandler ConnectionBreakdown;
-        public const int SamplingFrequency = 125;
+        public const int SamplingFrequency = 200;
         public const int BytesInBlock = 27;
 
 
@@ -27,28 +27,23 @@ namespace TTestApp
         public bool RecordStarted;
         public bool DeviceTurnedOn;
 
-        private const byte _marker1 = 0x19;
+        private const byte _marker1 = 25;
 
         private int _pressureTmp;
 
-        private int _nextPressure;
-
-        private double _detrendPressure = 0;
-
-        private int _prevPressure;
 
         private const int _maxNoDataCounter = 10;
         private int _noDataCounter;
 
         private int _byteNum;
 
-        private int _delayCounter1;
-        private int _delayCounter2;
         private const int MaxDelayCounter = 300;
         const double filterCoeff = 0.005;
-        const double filterCoeffReo = 0.01;
 
         private bool FilterOn = true;
+
+        private const int averSize = 50;
+        Queue<int> averQ = new Queue<int>(averSize);
 
         public ByteDecomposer(DataArrays data)
         {
@@ -74,11 +69,6 @@ namespace TTestApp
         public int Decompos(USBserialPort usbport)
         {
             return Decompos(usbport, null, null);
-        }
-
-        private double FilterRecursDetrend(double filterK, double next, double detrend, double prev)
-        {
-            return ((1 - filterK) * next - (1 - filterK) * prev + (1 - 2 * filterK) * detrend);
         }
 
         public int Decompos(USBserialPort usbport, Stream saveFileStream)
@@ -122,30 +112,23 @@ namespace TTestApp
                             _byteNum = 1;
                         }
                         break;
-                    case 1:// ECG1_0
+                    case 1:// pressure1_0
                         _pressureTmp = (int)usbport.PortBuf[i];
                         _byteNum = 2;
                         break;
-                    case 2:// ECG1_1
+                    case 2:// E1_1
                         _pressureTmp += 0x100 * (int)usbport.PortBuf[i];
                         _byteNum = 3;
-                        break;
-                    case 3:// ECG1_2
-                        _pressureTmp += 0x10000 * (int)usbport.PortBuf[i];
-                        if ((_pressureTmp & 0x800000) != 0)
-                            _pressureTmp -= 0x1000000;
 
-                        Data.PressureArray[MainIndex] = _pressureTmp;
-
-                        _nextPressure = _pressureTmp;
-                         if (FilterOn)
+                        averQ.Enqueue(_pressureTmp);
+                        if (averQ.Count > averSize)
                         {
-                            _nextPressure = Filter.FilterForRun(Filter.coeff50, Data.PressureArray, MainIndex);
+                            averQ.Dequeue();
                         }
-                        _detrendPressure = FilterRecursDetrend(filterCoeff, _nextPressure, _detrendPressure, _prevPressure);
-                        Data.PressureViewArray[MainIndex] = (int)Math.Round(_detrendPressure);
-                            
-                        _prevPressure = _nextPressure;
+
+                        Data.RealTimeArray[MainIndex] = _pressureTmp;
+                        Data.DCRealTimeArray[MainIndex] = (int)averQ.Average();
+                        Data.PressureViewArray[MainIndex] = Filter.FilterForRun(Filter.coeff50, Data.RealTimeArray, MainIndex);
 
                         _byteNum = 0;
 

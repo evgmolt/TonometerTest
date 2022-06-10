@@ -16,6 +16,7 @@ namespace TTestApp
             var stringsArr = array.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
+
         public static int[] GetCompressedArray(int destSize, int[] inputArray)
         {
             int[] result = new int[destSize];

@@ -153,7 +153,7 @@ namespace TTestApp
                                     +1.4955781797938609e-002 };
 
 
-        public static int FilterForRun(double[] coeff, double[] inArr, uint ind)
+        public static int FilterForRun(double[] coeff, int[] inArr, uint ind)
         {
             double sum = 0;
             for (int i = 0; i < coeff.Length; i++)
