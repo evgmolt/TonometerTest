@@ -9,17 +9,17 @@ namespace TTestApp
 {
     static class ViewArrayMaker
     {
-        public static Point[] MakeArray(Control view, int[] DataSource, uint index, int max)
+        public static Point[] MakeArray(Control view, double[] DataSource, uint index, int max)
         {
             return MakeArray(view, DataSource, index, max, 1, 1);
         }
 
-        public static Point[] MakeArray(Control view, int[] DataSource, uint index, int max, double scaleY)
+        public static Point[] MakeArray(Control view, double[] DataSource, uint index, int max, double scaleY)
         {
             return MakeArray(view, DataSource, index, max, scaleY, 1);
         }
 
-        public static Point[] MakeArray(Control view, int[] DataSource, uint index, int max, double scaleY, int scaleX)
+        public static Point[] MakeArray(Control view, double[] DataSource, uint index, int max, double scaleY, int scaleX)
         {
             var size = ByteDecomposer.DataArrSize;
             var h = view.Height;
@@ -33,17 +33,7 @@ namespace TTestApp
             }
             return arr;
         }
-
-        public static Point[] MakeArrayForView(Control view, int[] dataSource, int shift, int max)
-        {
-            return MakeArrayForView(view, dataSource, shift, max, 1, 1);
-        }
-
-        public static Point[] MakeArrayForView(Control view, int[] dataSource, int shift, int max, double scaleY)
-        {
-            return MakeArrayForView(view, dataSource, shift, max, scaleY, 1);
-        }
-
+        
         public static Point[] MakeArrayForView(Control view, int[] dataSource, int shift, int max, double scaleY, int scaleX)
         {
             int H = view.Height;
@@ -60,7 +50,7 @@ namespace TTestApp
                 }
                 else
                 {
-                    res = H - scaleY * (H * dataSource[shift + i]) / max;
+                    res = H / 2 - scaleY * (H * dataSource[shift + i]) / max;
                 }
                 arr[i].Y = (int)Math.Round(res);
             }
@@ -77,13 +67,13 @@ namespace TTestApp
                 if (i > W - 1) break;
                 arr[i].X = i * (int)scaleX;
                 double res;
-                if (i > dataSource.Length - 1)
+                if (i + shift > dataSource.Length - 1)
                 {
                     res = H / 2;
                 }
                 else
                 {
-                    res = H - scaleY * (H * dataSource[shift + i]) / max;
+                    res = H / 2 - scaleY * (H * dataSource[shift + i]) / max;
                 }
                 arr[i].Y = (int)Math.Round(res);
             }

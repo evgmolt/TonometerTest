@@ -12,10 +12,12 @@ namespace TTestApp
         public int[] RealTimeArray;
         public int[] DCRealTimeArray;
         public double[] PressureArray;
-        public int[] PressureViewArray;
+        public double[] PressureViewArray;
         public double[] PressureFiltredArray;
-        public int[] PressureFiltredViewArray;
-        public int[]? PressureCompressedArray;
+        public double[] PressureFiltredViewArray;
+        public double[]? PressureCompressedArray;
+
+        public double[] DetrendArray;
 
         public DataArrays(int size)
         {
@@ -23,9 +25,9 @@ namespace TTestApp
             RealTimeArray = new int[size];
             DCRealTimeArray = new int[size];
             PressureArray = new double[size];
-            PressureViewArray = new int[size];
+            PressureViewArray = new double[size];
             PressureFiltredArray = new double[size];
-            PressureFiltredViewArray = new int[size];
+            PressureFiltredViewArray = new double[size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -47,6 +49,7 @@ namespace TTestApp
 
         public void CountViewArrays(int destSize, TTestConfig config)
         {
+
             PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, RealTimeArray);
         }
 

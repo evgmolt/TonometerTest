@@ -144,8 +144,46 @@
                 MessageBox.Show("Error reading file");
                 return;
             }
+            CreateDetrendArray(size);
             DataA.CountViewArrays(bufPanel.Width, Cfg);
             bufPanel.Refresh();
+        }
+
+        private void CreateDetrendArray(int size)
+        {
+            for (int i = 0; i < DataA.RealTimeArray.Length; i++)
+            {
+                DataA.PressureViewArray[i] = Filter.Median(6, DataA.RealTimeArray, i);
+            }
+            DataA.DetrendArray = new double[size];
+            double max = DataA.PressureViewArray.Max<double>();
+            int maxInd = DataA.PressureViewArray.ToList().IndexOf(max);
+            double startVal = DataA.PressureViewArray[0];
+            for (int i = 0; i < maxInd; i++)
+            {
+                DataA.DetrendArray[i] = startVal + i * (max - startVal) / maxInd;
+            }
+
+            for (int i = 0; i < maxInd; i++)
+            {
+                DataA.PressureArray[i] = DataA.PressureViewArray[i] - DataA.DetrendArray[i];
+            }
+
+            //int aver = (int)DataA.RealTimeArray.Average();
+            //for (int i = 0; i < DataA.RealTimeArray.Length; i++)
+            //{
+            //    DataA.PressureViewArray[i] -= aver;
+            //}
+
+            DataA.PressureViewArray = DataProcessing.GetSmoothArray(DataA.PressureArray, 40);
+            
+            string[] corr = File.ReadAllLines("corr.txt");
+            int[] corrArray = new int[corr.Length];
+            for (int i = 0; i < corr.Length; i++)
+            {
+                corrArray[i] = int.Parse(corr[i]);
+            }
+            DataA.PressureArray = DataProcessing.Corr(DataA.PressureViewArray, corrArray);
         }
 
         private void UpdateScrollBar(int size)
@@ -159,7 +197,7 @@
             hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;
         }
 
-        private void buffPanel_Paint(List<int[]> data, Control panel, double ScaleY, int MaxSize, PaintEventArgs e)
+        private void buffPanel_Paint(List<double[]> data, Control panel, double ScaleY, int MaxSize, PaintEventArgs e)
         {
             Color[] curveColors = { Color.Red, Color.Blue, Color.Green };
             if (data == null)
@@ -205,14 +243,14 @@
             {
                 return;
             }
-            var ArrayList = new List<int[]>();
+            var ArrayList = new List<double[]>();
             
             if (ViewMode)
             {
                 if (radioButton11.Checked) //1:1
                 {
-                    ArrayList.Add(DataA.RealTimeArray);
-                    ArrayList.Add(DataA.DCRealTimeArray);
+//                    ArrayList.Add(DataA.RealTimeArray);
+                    ArrayList.Add(DataA.PressureViewArray);
                 }
                 else //fit
                 {
@@ -223,7 +261,6 @@
             {
 //                ArrayList.Add(DataA.RealTimeArray);
                 ArrayList.Add(DataA.PressureViewArray);
-                ArrayList.Add(DataA.DCRealTimeArray);
             }
             buffPanel_Paint(ArrayList, bufPanel, ScaleY, MaxSize, e);
             ArrayList.Clear();

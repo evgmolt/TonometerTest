@@ -17,9 +17,9 @@ namespace TTestApp
             File.WriteAllLines(fname, stringsArr);
         }
 
-        public static int[] GetCompressedArray(int destSize, int[] inputArray)
+        public static double[] GetCompressedArray(int destSize, int[] inputArray)
         {
-            int[] result = new int[destSize];
+            double[] result = new double[destSize];
             CompressionRatio = inputArray.Length / destSize;
             for (int i = 0; i < destSize; i++)
             {
@@ -32,15 +32,15 @@ namespace TTestApp
             return result;
         }
 
-        public static int[] GetSmoothArray(int windowSize, int[] inputArray)
+        public static double[] GetSmoothArray(double[] inputArray, int windowSize)
         {
-            int[] result = new int[inputArray.Length];
-            for (int i = 0; i < result.Length - windowSize * 2 - 1; i++)
+            double[] result = new double[inputArray.Length];
+            for (int i = 0; i < result.Length - windowSize; i++)
             {
-                int aver = 0;
+                double aver = 0;
                 for (int j = 0; j < windowSize; j++)
                 {
-                    aver += inputArray[i  * windowSize + j];
+                    aver += inputArray[i + j];
                 }
                 result[i] = aver /= windowSize;
             }
@@ -74,7 +74,7 @@ namespace TTestApp
             }
         }
 
-        public static int GetRange(int[] Data)
+        public static int GetRange(double[] Data)
         {
             int min = 10000000;
             int max = 0;
@@ -92,11 +92,29 @@ namespace TTestApp
             int[] result = new int[Data.Length];
             for(int i = 0; i < Data.Length - 1; i++)
             {
-                result[i] = Data[i + 1] - Data[i];
+                double n = (Data[i + 1] * 100 - Data[i] * 100);
+                result[i] = (int)n;
             }
             return result;
         }
 
+        //Корреляционная функция - весь массив
+        public static double[] Corr(double[] inputArray, int[] corrPattern)
+        {
+            double[] result = new double[inputArray.Length - corrPattern.Length];
+            for (int i = 0; i < inputArray.Length - corrPattern.Length; i++)
+            {
+                double val = 0;
+                for(int j = 0; j < corrPattern.Length; j++)
+                {
+                    val += inputArray[i + j] * corrPattern[j];
+                }
+                result[i] = val / (corrPattern.Length * 10);
+            }
+            return result;
+        }
+
+        //Скользящее среднее - весь массив
         public static int[] Smooth(int[] inputArray, int windowSize)
         {
             int size = inputArray.Length;

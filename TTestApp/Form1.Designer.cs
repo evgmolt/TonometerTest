@@ -257,8 +257,7 @@
             // 
             this.trackBarAmp.Dock = System.Windows.Forms.DockStyle.Fill;
             this.trackBarAmp.Location = new System.Drawing.Point(909, 3);
-            this.trackBarAmp.Maximum = 5;
-            this.trackBarAmp.Minimum = -5;
+            this.trackBarAmp.Minimum = -10;
             this.trackBarAmp.Name = "trackBarAmp";
             this.trackBarAmp.Orientation = System.Windows.Forms.Orientation.Vertical;
             this.trackBarAmp.Size = new System.Drawing.Size(46, 308);
