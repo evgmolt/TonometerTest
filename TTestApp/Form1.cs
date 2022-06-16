@@ -169,19 +169,13 @@
                 DataA.PressureArray[i] = DataA.PressureViewArray[i] - DataA.DetrendArray[i];
             }
 
-            //int aver = (int)DataA.RealTimeArray.Average();
-            //for (int i = 0; i < DataA.RealTimeArray.Length; i++)
-            //{
-            //    DataA.PressureViewArray[i] -= aver;
-            //}
-
             DataA.PressureViewArray = DataProcessing.GetSmoothArray(DataA.PressureArray, 40);
             
-            string[] corr = File.ReadAllLines("corr.txt");
-            int[] corrArray = new int[corr.Length];
+            string[] corr = File.ReadAllLines("file.txt");
+            double[] corrArray = new double[corr.Length];
             for (int i = 0; i < corr.Length; i++)
             {
-                corrArray[i] = int.Parse(corr[i]);
+                corrArray[i] = double.Parse(corr[i]);
             }
             DataA.PressureArray = DataProcessing.Corr(DataA.PressureViewArray, corrArray);
         }
@@ -197,7 +191,13 @@
             hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;
         }
 
-        private void buffPanel_Paint(List<double[]> data, Control panel, double ScaleY, int MaxSize, PaintEventArgs e)
+        private void buffPanel_Paint(
+            List<double[]> data, 
+            List<int[]> visirs, 
+            Control panel, 
+            double ScaleY, 
+            int MaxSize, 
+            PaintEventArgs e)
         {
             Color[] curveColors = { Color.Red, Color.Blue, Color.Green };
             if (data == null)
@@ -218,7 +218,12 @@
                 for (int i = 0; i < data.Count; i++)
                 {
                     var pen = new Pen(curveColors[i], 1);
-                    Point[] OutArray = ViewArrayMaker.MakeArray(panel, data[i], decomposer.MainIndex, MaxSize, ScaleY);
+                    Point[] OutArray = ViewArrayMaker.MakeArray(panel, 
+                                                                data[i], 
+                                                                decomposer.MainIndex, 
+                                                                MaxSize, 
+                                                                ScaleY);
+
                     e.Graphics.DrawCurve(pen, OutArray, tension);
                     pen.Dispose();
                 }
@@ -229,8 +234,28 @@
                 {
                     if (data[i] == null) break;
                     var pen = new Pen(curveColors[i], 1);
-                    Point[] OutArray = ViewArrayMaker.MakeArrayForView(panel, data[i], ViewShift, MaxSize, ScaleY, 1);
+                    Point[] OutArray = ViewArrayMaker.MakeArrayForView(panel, 
+                                                                       data[i], 
+                                                                       ViewShift, 
+                                                                       MaxSize, 
+                                                                       ScaleY, 
+                                                                       1);
                     e.Graphics.DrawCurve(pen, OutArray, tension);
+                    pen.Dispose();
+                }
+                int X1 = ViewShift;
+                int X2 = panel.Width + ViewShift;
+                for (int i = 0; i < visirs.Count; i++)
+                {
+                    if (visirs[i] == null) break;
+                    var pen = new Pen(curveColors[i], 1);
+                    for (int j = 0; j < visirs[i].Length; j++)
+                    {
+                        if (visirs[i][j] > X1 && visirs[i][j] < X2)
+                        {
+                            e.Graphics.DrawLine(pen, visirs[i][j] - ViewShift, 0, visirs[i][j] - ViewShift, panel.Width);
+                        }
+                    }
                     pen.Dispose();
                 }
             }
@@ -244,12 +269,15 @@
                 return;
             }
             var ArrayList = new List<double[]>();
-            
+            var VisirList = new List<int[]>();
+            int[] visirs1 = { 100, 1500, 1600, 3000, 6000 };
+            VisirList.Add(visirs1);
+
             if (ViewMode)
             {
                 if (radioButton11.Checked) //1:1
                 {
-//                    ArrayList.Add(DataA.RealTimeArray);
+                    ArrayList.Add(DataA.PressureArray);
                     ArrayList.Add(DataA.PressureViewArray);
                 }
                 else //fit
@@ -259,10 +287,10 @@
             }
             else
             {
-//                ArrayList.Add(DataA.RealTimeArray);
+                ArrayList.Add(DataA.PressureArray);
                 ArrayList.Add(DataA.PressureViewArray);
             }
-            buffPanel_Paint(ArrayList, bufPanel, ScaleY, MaxSize, e);
+            buffPanel_Paint(ArrayList, VisirList, bufPanel, ScaleY, MaxSize, e);
             ArrayList.Clear();
         }
 

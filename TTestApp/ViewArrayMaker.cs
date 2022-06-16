@@ -34,29 +34,6 @@ namespace TTestApp
             return arr;
         }
         
-        public static Point[] MakeArrayForView(Control view, int[] dataSource, int shift, int max, double scaleY, int scaleX)
-        {
-            int H = view.Height;
-            int W = view.Width;
-            var arr = new Point[W / scaleX];
-            for (int i = 0; i < W / scaleX; i++)
-            {
-                if (i > W-1) break;
-                arr[i].X = i * scaleX;
-                double res;
-                if (shift + i > dataSource.Length - 1)
-                {
-                    res = H / 2;
-                }
-                else
-                {
-                    res = H / 2 - scaleY * (H * dataSource[shift + i]) / max;
-                }
-                arr[i].Y = (int)Math.Round(res);
-            }
-            return arr;
-        }
-
         public static Point[] MakeArrayForView(Control view, double[] dataSource, int shift, double max, double scaleY, double scaleX)
         {
             double H = view.Height;

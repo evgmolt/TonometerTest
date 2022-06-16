@@ -87,19 +87,18 @@ namespace TTestApp
         }
 
         //Вычисление производной
-        public static int[] Diff(int[] Data)
+        public static double[] Diff(double[] Data)
         {
-            int[] result = new int[Data.Length];
+            double[] result = new double[Data.Length];
             for(int i = 0; i < Data.Length - 1; i++)
             {
-                double n = (Data[i + 1] * 100 - Data[i] * 100);
-                result[i] = (int)n;
+                result[i] = (Data[i + 1] * 100 - Data[i] * 100);
             }
             return result;
         }
 
         //Корреляционная функция - весь массив
-        public static double[] Corr(double[] inputArray, int[] corrPattern)
+        public static double[] Corr(double[] inputArray, double[] corrPattern)
         {
             double[] result = new double[inputArray.Length - corrPattern.Length];
             for (int i = 0; i < inputArray.Length - corrPattern.Length; i++)
