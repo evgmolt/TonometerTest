@@ -15,6 +15,8 @@
         int ViewShift;
         BufferedPanel bufPanel;
         double ScaleY = 1;
+        WaveDetector WD;
+        List<int[]> VisirList;
 
         public event Action<Message> WindowsMessage;
 
@@ -42,6 +44,8 @@
             panelGraph.Controls.Add(bufPanel);
             bufPanel.Dock = DockStyle.Fill;
             bufPanel.Paint += bufferedPanel_Paint;
+            WD = new WaveDetector();
+            VisirList = new List<int[]>();
             USBPort = new USBserialPort(this, 19200);
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.Connect();
@@ -146,6 +150,23 @@
             }
             CreateDetrendArray(size);
             DataA.CountViewArrays(bufPanel.Width, Cfg);
+            double maxD = 0;
+            for (int i = 0; i < DataA.PressureViewArray.Length; i++)
+            {
+                maxD = Math.Max(maxD, DataA.PressureViewArray[i]);
+            }
+
+            for (int i = 0; i < DataA.PressureViewArray.Length; i++)
+            {
+                WD.Detect(0, DataA.PressureViewArray, DataA.PressureViewArray, i);
+            }
+            var NNArray = new int[WD.NNPointArr.Length];
+            for (int i = 0; i < WD.NNPointArr.Length; i++)
+            {
+                NNArray[i] = WD.NNPointArr[i].X;
+            }
+            VisirList.Clear();
+            VisirList.Add(NNArray);
             bufPanel.Refresh();
         }
 
@@ -170,14 +191,7 @@
             }
 
             DataA.PressureViewArray = DataProcessing.GetSmoothArray(DataA.PressureArray, 40);
-            
-            string[] corr = File.ReadAllLines("file.txt");
-            double[] corrArray = new double[corr.Length];
-            for (int i = 0; i < corr.Length; i++)
-            {
-                corrArray[i] = double.Parse(corr[i]);
-            }
-            DataA.PressureArray = DataProcessing.Corr(DataA.PressureViewArray, corrArray);
+            DataA.PressureArray = DataProcessing.Diff(DataA.PressureViewArray);
         }
 
         private void UpdateScrollBar(int size)
@@ -269,10 +283,8 @@
                 return;
             }
             var ArrayList = new List<double[]>();
-            var VisirList = new List<int[]>();
-            int[] visirs1 = { 100, 1500, 1600, 3000, 6000 };
-            VisirList.Add(visirs1);
-
+            //int[] visirs1 = { 100, 1500, 1600, 3000, 6000 };
+            //VisirList.Add(visirs1);
             if (ViewMode)
             {
                 if (radioButton11.Checked) //1:1
