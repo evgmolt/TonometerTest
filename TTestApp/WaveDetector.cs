@@ -12,7 +12,7 @@ namespace TTestApp
         private int InsideC;
         public double DetectLevel = 0.2;
         private const double MinDetectLevel = 0.05;
-        private const int DiffShift = 8;
+        private const int DiffShift = 13;
         private const int LockInterval = 48;
         private int NoWaveInterval1 = 400;
         private int NoWaveInterval2 = 480;
@@ -37,8 +37,16 @@ namespace TTestApp
             LevelArr = new double[ByteDecomposer.DataArrSize];
         }
 
-        private int GetCurrentPulse()
+        public int GetCurrentPulse(int NumNNForAver)
         {
+            if (NumNNForAver != 0)
+            {
+                NumOfIntForAver = NumNNForAver;
+                if (NumOfIntForAver < NNIndex)
+                {
+                    NumOfIntForAver = NNIndex;
+                }
+            }
             int sum = 0;
             for (int i = 0; i<NumOfIntForAver; i++)
             {
@@ -93,7 +101,7 @@ namespace TTestApp
                             NumOfIntForAver++;
                             NumOfIntForAver = Math.Min(NumOfIntForAver, MaxNumOfIntForAver);
                             if (NumOfIntForAver > MinNumOfIntForAver)
-                                PulseRate = GetCurrentPulse();
+                                PulseRate = GetCurrentPulse(0);
                             else PulseRate = 0;
                             double Max = 0;
                             double Min = 0;

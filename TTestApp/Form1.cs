@@ -165,6 +165,7 @@
             {
                 NNArray[i] = WD.NNPointArr[i].X;
             }
+            labPulse.Text = WD.GetCurrentPulse(10).ToString();
             VisirList.Clear();
             VisirList.Add(NNArray);
             bufPanel.Refresh();

@@ -89,7 +89,7 @@ namespace TTestApp
         //Вычисление производной
         public static double[] Diff(double[] Data)
         {
-            int DiffShift = 8;
+            int DiffShift = 13;
             double[] result = new double[Data.Length];
             for(int i = DiffShift; i < Data.Length - 1; i++)
             {
