@@ -10,12 +10,12 @@ namespace TTestApp
     {
         public int PulseRate;
         private int InsideC;
-        public double DetectLevel = 0.2;
-        private const double MinDetectLevel = 0.05;
+        public double DetectLevel = 20;
+        private const double MinDetectLevel = 15;
         private const int DiffShift = 13;
-        private const int LockInterval = 48;
-        private int NoWaveInterval1 = 400;
-        private int NoWaveInterval2 = 480;
+        private const int LockInterval = 60;
+        private int NoWaveInterval1 = 600;
+        private int NoWaveInterval2 = 800;
         private double MaxD;
         private const int NNArrSize = 1000;
         public Point[] NNPointArr;
@@ -27,22 +27,29 @@ namespace TTestApp
         private const int MinNumOfIntForAver = 3;
         private const int MaxNumOfIntForAver = 10;
         public double[] DiffArr;
-        public double[] LevelArr;
 
         public WaveDetector()
         {
             NNPointArr = new Point[NNArrSize];
             NNArray = new int[NNArrSize];
             DiffArr = new double[ByteDecomposer.DataArrSize];
-            LevelArr = new double[ByteDecomposer.DataArrSize];
         }
 
+        public void Reset()
+        {
+            NNPointIndex = 0;
+            NNIndex = 0;
+        }
         public int GetCurrentPulse(int NumNNForAver)
         {
+            if (NNIndex == 0)
+            {
+                return 0;
+            }
             if (NumNNForAver != 0)
             {
                 NumOfIntForAver = NumNNForAver;
-                if (NumOfIntForAver < NNIndex)
+                if (NNIndex < NumOfIntForAver)
                 {
                     NumOfIntForAver = NNIndex;
                 }
@@ -59,13 +66,13 @@ namespace TTestApp
             return (int)Math.Round(d);
         }
 
-        public void Detect(int OverflowState, double[] OriginalDataArr, double[] DataArr, int Ind)
+        public double Detect(int OverflowState, double[] DataArr, int Ind)
         {
             if (OverflowState !=0)
             {
                 PulseRate = 0;
                 NumOfIntForAver = 0;
-                return;
+                return 0;
             }
             InsideC++;
             if (InsideC == NoWaveInterval1)
@@ -77,11 +84,11 @@ namespace TTestApp
                 NumOfIntForAver = 0;
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
-            LevelArr[Ind] = DetectLevel;
-            if (Ind < DiffShift) return;
-            double Deriv = DataArr[Ind] - DataArr[Ind - DiffShift];
+            if (Ind < DiffShift) return DetectLevel;
+//            double Deriv = DataArr[Ind] - DataArr[Ind - DiffShift];
+            double Deriv = DataArr[Ind];
             DiffArr[Ind] = Deriv;
-            if (InsideC < LockInterval) return;
+            if (InsideC < LockInterval) return DetectLevel;
             if (Deriv > DetectLevel)
             {
                     MaxD = Math.Max(MaxD, Deriv);
@@ -92,7 +99,7 @@ namespace TTestApp
                         NNPointArr[NNPointIndex].Y = (int)MaxD;
                         if (NNPointIndex > 1)
                         {
-                        tmpNN = NNPointArr[NNPointIndex].X - NNPointArr[NNPointIndex - 1].X;
+                            tmpNN = NNPointArr[NNPointIndex].X - NNPointArr[NNPointIndex - 1].X;
                         }
                         if (Filter25percent(tmpNN))
                         {
@@ -100,31 +107,17 @@ namespace TTestApp
                             NNIndex++;
                             NumOfIntForAver++;
                             NumOfIntForAver = Math.Min(NumOfIntForAver, MaxNumOfIntForAver);
-                            if (NumOfIntForAver > MinNumOfIntForAver)
-                                PulseRate = GetCurrentPulse(0);
-                            else PulseRate = 0;
-                            double Max = 0;
-                            double Min = 0;
-                            int count = 0;
-                            double sum = 0;
-                            for (int i = NNPointArr[(NNPointIndex - 1) & (NNArrSize - 1)].X; i < NNPointArr[NNPointIndex].X; i++)
-                            {
-                                Max = Math.Max(Max, DataArr[i]);
-                                Min = Math.Min(Min, DataArr[i]);
-                                sum = sum + OriginalDataArr[i];
-                                count++;
-                            }
-                            double constLevel = sum / count;
-                            double tmp = Max - Min;
-                            tmp = tmp / constLevel;
+                            //if (NumOfIntForAver > MinNumOfIntForAver)
+                            //    PulseRate = GetCurrentPulse(0);
+                            //else PulseRate = 0;
                         }
                         InsideC = 0;
                         NNPointIndex++;
-                        NNPointIndex = NNPointIndex & (NNArrSize - 1);
-                        DetectLevel = MaxD / 2;
+                        DetectLevel = MaxD - MaxD / 5;
                         MaxD = 0;
                     }
             }
+            return DetectLevel;
         }
 
         private int GetDerivative(int[] DataArr, uint Ind)

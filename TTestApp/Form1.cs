@@ -155,10 +155,10 @@
             {
                 maxD = Math.Max(maxD, DataA.PressureViewArray[i]);
             }
-
+            WD.Reset();
             for (int i = 0; i < DataA.PressureViewArray.Length; i++)
             {
-                WD.Detect(0, DataA.PressureViewArray, DataA.PressureViewArray, i);
+                DataA.DebugArray[i] = WD.Detect(0, DataA.PressureViewArray, i);
             }
             var NNArray = new int[WD.NNPointArr.Length];
             for (int i = 0; i < WD.NNPointArr.Length; i++)
@@ -167,7 +167,7 @@
             }
             labPulse.Text = WD.GetCurrentPulse(10).ToString();
             VisirList.Clear();
-            VisirList.Add(NNArray);
+//            VisirList.Add(NNArray);
             bufPanel.Refresh();
         }
 
@@ -290,8 +290,9 @@
             {
                 if (radioButton11.Checked) //1:1
                 {
-                    ArrayList.Add(DataA.PressureArray);
+                    ArrayList.Add(DataA.PressureFiltredArray);
                     ArrayList.Add(DataA.PressureViewArray);
+//                    ArrayList.Add(DataA.DebugArray);
                 }
                 else //fit
                 {
@@ -358,7 +359,11 @@
 
         private void bufPanel_MouseMove(object? sender, MouseEventArgs e)
         {
-            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, e.Y);
+            if (DataA == null)
+            {
+                return;
+            }
+            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, DataA.PressureViewArray[e.X + ViewShift]);
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)

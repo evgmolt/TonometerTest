@@ -29,6 +29,9 @@ namespace TTestApp
         private const byte _marker1 = 25;
 
         private int _pressureTmp;
+        private double _detrend;
+        private double _next;
+        private double _prev;
 
 
         private const int _maxNoDataCounter = 10;
@@ -36,7 +39,7 @@ namespace TTestApp
 
         private int _byteNum;
 
-        const double filterCoeff = 0.005;
+        const double filterCoeff = 0.01;
 
         private bool FilterOn = true;
 
@@ -55,6 +58,11 @@ namespace TTestApp
             MainIndex = 0;
             _noDataCounter = 0;
             _byteNum = 0;
+        }
+
+        private double FilterRecursDetrend(double filterK, double next, double detrend, double prev)
+        {
+            return ((1 - filterK) * next - (1 - filterK) * prev + (1 - 2 * filterK) * detrend);
         }
 
         protected virtual void OnDecomposeLineEvent()
@@ -131,6 +139,7 @@ namespace TTestApp
                         Data.DCRealTimeArray[MainIndex] = (int)averQ.Average();
 
                         averViewQ.Enqueue(100 + _pressureTmp - (int)averQ.Average());
+//                        averViewQ.Enqueue(_pressureTmp - 100);
                         if (averViewQ.Count > averViewSize)
                         {
                             averViewQ.Dequeue();
@@ -138,6 +147,9 @@ namespace TTestApp
 
                         Data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
 
+                        //_next = (int)averViewQ.Average();
+                        //_detrend = FilterRecursDetrend(filterCoeff, _next, _detrend, _prev);
+                        //Data.PressureViewArray[MainIndex] = _detrend;
 
                         _byteNum = 0;
 

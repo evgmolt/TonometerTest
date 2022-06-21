@@ -16,6 +16,7 @@ namespace TTestApp
         public double[] PressureFiltredArray;
         public double[] PressureFiltredViewArray;
         public double[]? PressureCompressedArray;
+        public double[] DebugArray;
 
         public double[] DetrendArray;
 
@@ -26,8 +27,9 @@ namespace TTestApp
             DCRealTimeArray = new int[size];
             PressureArray = new double[size];
             PressureViewArray = new double[size];
-            PressureFiltredArray = new double[size];
+//            PressureFiltredArray = new double[size];
             PressureFiltredViewArray = new double[size];
+            DebugArray = new double[size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -49,7 +51,17 @@ namespace TTestApp
 
         public void CountViewArrays(int destSize, TTestConfig config)
         {
-
+            string[] lines = File.ReadAllLines("file.txt");
+            double[] corr = new double[lines.Length];
+            for (int i = 0; i < lines.Length; i++)
+            {
+                corr[i] = Convert.ToDouble(lines[i]);
+            }
+            PressureFiltredArray = DataProcessing.Corr(PressureViewArray, corr);
+            for (int i = 0; i < PressureFiltredArray.Length; i++)
+            {
+                PressureFiltredArray[i] = PressureFiltredArray[i] * 10;
+            }
             PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, RealTimeArray);
         }
 

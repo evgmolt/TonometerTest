@@ -98,18 +98,47 @@ namespace TTestApp
             return result;
         }
 
-        //Корреляционная функция - весь массив
+        ////Корреляционная функция - весь массив
+        //public static double[] Corr(double[] inputArray, double[] corrPattern)
+        //{
+        //    double[] result = new double[inputArray.Length - corrPattern.Length];
+        //    for (int i = 0; i < inputArray.Length - corrPattern.Length; i++)
+        //    {
+        //        double val = 0;
+        //        for(int j = 0; j < corrPattern.Length; j++)
+        //        {
+        //            val += inputArray[i + j] * corrPattern[j];
+        //        }
+        //        result[i] = val / (corrPattern.Length * 10);
+        //    }
+        //    return result;
+        //}
+
+        //Корреляционная функция - весь массив, коэффициент корреляции Пирсона
         public static double[] Corr(double[] inputArray, double[] corrPattern)
         {
+            //Среднее шаблона
+            double patternAver = corrPattern.Average();
+            double[] window = new double[corrPattern.Length];
             double[] result = new double[inputArray.Length - corrPattern.Length];
             for (int i = 0; i < inputArray.Length - corrPattern.Length; i++)
             {
-                double val = 0;
-                for(int j = 0; j < corrPattern.Length; j++)
+                for (int j = 0; j < corrPattern.Length; j++)
                 {
-                    val += inputArray[i + j] * corrPattern[j];
+                    window[j] = inputArray[i + j];
                 }
-                result[i] = val / (corrPattern.Length * 10);
+                double windowAver = window.Average();
+                double numerator = 0;
+                double denominator1 = 0;
+                double denominator2 = 0;
+                for (int j = 0; j < corrPattern.Length; j++)
+                {
+                    numerator += (window[j] - windowAver) * (corrPattern[j] - patternAver);
+                    denominator1 += (window[j] - windowAver) * (window[j] - windowAver);
+                    denominator2 += (corrPattern[j] - patternAver) * (corrPattern[j] - patternAver);
+                }
+
+                result[i] = (double)(numerator / Math.Sqrt(denominator1 * denominator2));
             }
             return result;
         }
