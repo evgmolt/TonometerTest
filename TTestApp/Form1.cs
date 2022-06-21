@@ -156,18 +156,18 @@
                 maxD = Math.Max(maxD, DataA.PressureViewArray[i]);
             }
             WD.Reset();
-            for (int i = 0; i < DataA.PressureViewArray.Length; i++)
+            for (int i = 0; i < DataA.CorrelationArray.Length; i++)
             {
-                DataA.DebugArray[i] = WD.Detect(0, DataA.PressureViewArray, i);
+                DataA.DebugArray[i] = WD.Detect(0, DataA.CorrelationArray, i);
             }
             var NNArray = new int[WD.NNPointArr.Length];
-            for (int i = 0; i < WD.NNPointArr.Length; i++)
+            for (int i = 0; i < WD.FiltredPoints.Count(); i++)
             {
-                NNArray[i] = WD.NNPointArr[i].X;
+                NNArray[i] = WD.FiltredPoints[i];
             }
             labPulse.Text = WD.GetCurrentPulse(10).ToString();
             VisirList.Clear();
-//            VisirList.Add(NNArray);
+            VisirList.Add(NNArray);
             bufPanel.Refresh();
         }
 
@@ -249,6 +249,7 @@
                 {
                     if (data[i] == null) break;
                     var pen = new Pen(curveColors[i], 1);
+                    
                     Point[] OutArray = ViewArrayMaker.MakeArrayForView(panel, 
                                                                        data[i], 
                                                                        ViewShift, 
@@ -290,9 +291,9 @@
             {
                 if (radioButton11.Checked) //1:1
                 {
-                    ArrayList.Add(DataA.PressureFiltredArray);
+                    ArrayList.Add(DataA.CorrelationArray);
                     ArrayList.Add(DataA.PressureViewArray);
-//                    ArrayList.Add(DataA.DebugArray);
+                    ArrayList.Add(DataA.DebugArray);
                 }
                 else //fit
                 {
@@ -363,7 +364,7 @@
             {
                 return;
             }
-            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, DataA.PressureViewArray[e.X + ViewShift]);
+            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, DataA.CorrelationArray[e.X + ViewShift]);
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)

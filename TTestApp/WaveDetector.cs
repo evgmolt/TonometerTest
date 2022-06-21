@@ -10,8 +10,8 @@ namespace TTestApp
     {
         public int PulseRate;
         private int InsideC;
-        public double DetectLevel = 20;
-        private const double MinDetectLevel = 15;
+        public double DetectLevel = 7;
+        private const double MinDetectLevel = 3;
         private const int DiffShift = 13;
         private const int LockInterval = 60;
         private int NoWaveInterval1 = 600;
@@ -27,18 +27,21 @@ namespace TTestApp
         private const int MinNumOfIntForAver = 3;
         private const int MaxNumOfIntForAver = 10;
         public double[] DiffArr;
+        public List<int> FiltredPoints;
 
         public WaveDetector()
         {
             NNPointArr = new Point[NNArrSize];
             NNArray = new int[NNArrSize];
             DiffArr = new double[ByteDecomposer.DataArrSize];
+            FiltredPoints = new List<int>();
         }
 
         public void Reset()
         {
             NNPointIndex = 0;
             NNIndex = 0;
+            FiltredPoints.Clear();
         }
         public int GetCurrentPulse(int NumNNForAver)
         {
@@ -95,7 +98,7 @@ namespace TTestApp
                     if (MaxD > Deriv)
                     {
                         int tmpNN = 0;
-                        NNPointArr[NNPointIndex].X = (int)Ind;
+                        NNPointArr[NNPointIndex].X = Ind;
                         NNPointArr[NNPointIndex].Y = (int)MaxD;
                         if (NNPointIndex > 1)
                         {
@@ -107,13 +110,11 @@ namespace TTestApp
                             NNIndex++;
                             NumOfIntForAver++;
                             NumOfIntForAver = Math.Min(NumOfIntForAver, MaxNumOfIntForAver);
-                            //if (NumOfIntForAver > MinNumOfIntForAver)
-                            //    PulseRate = GetCurrentPulse(0);
-                            //else PulseRate = 0;
+                            FiltredPoints.Add(Ind);
                         }
                         InsideC = 0;
                         NNPointIndex++;
-                        DetectLevel = MaxD - MaxD / 5;
+                        DetectLevel = MaxD / 2;
                         MaxD = 0;
                     }
             }

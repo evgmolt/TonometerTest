@@ -13,7 +13,7 @@ namespace TTestApp
         public int[] DCRealTimeArray;
         public double[] PressureArray;
         public double[] PressureViewArray;
-        public double[] PressureFiltredArray;
+        public double[] CorrelationArray;
         public double[] PressureFiltredViewArray;
         public double[]? PressureCompressedArray;
         public double[] DebugArray;
@@ -27,7 +27,7 @@ namespace TTestApp
             DCRealTimeArray = new int[size];
             PressureArray = new double[size];
             PressureViewArray = new double[size];
-//            PressureFiltredArray = new double[size];
+            CorrelationArray = new double[size];
             PressureFiltredViewArray = new double[size];
             DebugArray = new double[size];
         }
@@ -57,10 +57,10 @@ namespace TTestApp
             {
                 corr[i] = Convert.ToDouble(lines[i]);
             }
-            PressureFiltredArray = DataProcessing.Corr(PressureViewArray, corr);
-            for (int i = 0; i < PressureFiltredArray.Length; i++)
+            DataProcessing.Corr(PressureViewArray, CorrelationArray, corr);
+            for (int i = 0; i < CorrelationArray.Length; i++)
             {
-                PressureFiltredArray[i] = PressureFiltredArray[i] * 10;
+                CorrelationArray[i] = CorrelationArray[i] * 10;
             }
             PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, RealTimeArray);
         }

@@ -115,12 +115,11 @@ namespace TTestApp
         //}
 
         //Корреляционная функция - весь массив, коэффициент корреляции Пирсона
-        public static double[] Corr(double[] inputArray, double[] corrPattern)
+        public static void Corr(double[] inputArray, double[] resultArray, double[] corrPattern)
         {
             //Среднее шаблона
             double patternAver = corrPattern.Average();
             double[] window = new double[corrPattern.Length];
-            double[] result = new double[inputArray.Length - corrPattern.Length];
             for (int i = 0; i < inputArray.Length - corrPattern.Length; i++)
             {
                 for (int j = 0; j < corrPattern.Length; j++)
@@ -137,10 +136,16 @@ namespace TTestApp
                     denominator1 += (window[j] - windowAver) * (window[j] - windowAver);
                     denominator2 += (corrPattern[j] - patternAver) * (corrPattern[j] - patternAver);
                 }
-
-                result[i] = (double)(numerator / Math.Sqrt(denominator1 * denominator2));
+                if (denominator1 == 0)
+                {
+                    resultArray[i] = 0;
+                }
+                else
+                {
+                    resultArray[i] = (double)(numerator / Math.Sqrt(denominator1 * denominator2));
+                }
             }
-            return result;
+            return;
         }
 
         //Скользящее среднее - весь массив
