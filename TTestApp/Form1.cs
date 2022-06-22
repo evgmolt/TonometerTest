@@ -132,6 +132,10 @@
 
         private void ReadFile(string fileName)
         {
+            int StartDetectValue = 280;
+            int StopDetectValue = 380;
+            int DCArrayWindow = 100;
+
             string[] lines = File.ReadAllLines(fileName);
             int size = lines.Length;
             labRecordSize.Text = "Record size : " + (size / ByteDecomposer.SamplingFrequency).ToString() + " s";
@@ -148,15 +152,35 @@
                 MessageBox.Show("Error reading file");
                 return;
             }
-            CreateDetrendArray(size);
+            DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
+            DataA.CreateDetrendArray(size);
             DataA.CountViewArrays(bufPanel.Width, Cfg);
             double maxD = 0;
             for (int i = 0; i < DataA.PressureViewArray.Length; i++)
             {
                 maxD = Math.Max(maxD, DataA.PressureViewArray[i]);
             }
+
+            //Детектор
             WD.Reset();
-            for (int i = 0; i < DataA.CorrelationArray.Length; i++)
+            int StartIndex = 0;
+            int StopIndex = 0;
+            for (int i = 0; i < DataA.DCArray.Length; i++)
+            {
+                if (StartIndex == 0)
+                {
+                    if (DataA.DCArray[i] > StartDetectValue)
+                    {
+                        StartIndex = i;
+                    }
+                }
+                if (DataA.DCArray[i] > StopDetectValue)
+                {
+                    StopIndex = i;
+                    break;
+                }
+            }
+            for (int i = StartIndex; i < StopIndex; i++)
             {
                 DataA.DebugArray[i] = WD.Detect(0, DataA.CorrelationArray, i);
             }
@@ -171,39 +195,35 @@
             bufPanel.Refresh();
         }
 
-        private void CreateDetrendArray(int size)
+        private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
         {
-            for (int i = 0; i < DataA.RealTimeArray.Length; i++)
+            if (DataA == null)
             {
-                DataA.PressureViewArray[i] = Filter.Median(6, DataA.RealTimeArray, i);
+                return;
             }
-            DataA.DetrendArray = new double[size];
-            double max = DataA.PressureViewArray.Max<double>();
-            int maxInd = DataA.PressureViewArray.ToList().IndexOf(max);
-            double startVal = DataA.PressureViewArray[0];
-            for (int i = 0; i < maxInd; i++)
+            var ArrayList = new List<double[]>();
+            //int[] visirs1 = { 100, 1500, 1600, 3000, 6000 };
+            //VisirList.Add(visirs1);
+            if (ViewMode)
             {
-                DataA.DetrendArray[i] = startVal + i * (max - startVal) / maxInd;
+                if (radioButton11.Checked) //1:1
+                {
+                    ArrayList.Add(DataA.CorrelationArray);
+                    ArrayList.Add(DataA.PressureViewArray);
+                    ArrayList.Add(DataA.DebugArray);
+                }
+                else //fit
+                {
+                    ArrayList.Add(DataA.PressureCompressedArray);
+                }
             }
-
-            for (int i = 0; i < maxInd; i++)
+            else
             {
-                DataA.PressureArray[i] = DataA.PressureViewArray[i] - DataA.DetrendArray[i];
+                ArrayList.Add(DataA.PressureArray);
+                ArrayList.Add(DataA.PressureViewArray);
             }
-
-            DataA.PressureViewArray = DataProcessing.GetSmoothArray(DataA.PressureArray, 40);
-            DataA.PressureArray = DataProcessing.Diff(DataA.PressureViewArray);
-        }
-
-        private void UpdateScrollBar(int size)
-        {
-            int space = 14;
-            hScrollBar1.Maximum = size;
-            hScrollBar1.LargeChange = panelGraph.Width - space - 50;
-            hScrollBar1.SmallChange = panelGraph.Width - space / 10;
-            hScrollBar1.AutoSize = true;
-            hScrollBar1.Value = 0;
-            hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;
+            buffPanel_Paint(ArrayList, VisirList, bufPanel, ScaleY, MaxSize, e);
+            ArrayList.Clear();
         }
 
         private void buffPanel_Paint(
@@ -215,6 +235,7 @@
             PaintEventArgs e)
         {
             Color[] curveColors = { Color.Red, Color.Blue, Color.Green };
+            Color[] visirColors = { Color.LightGray, Color.Brown, Color.Chocolate };
             if (data == null)
             {
                 return;
@@ -264,7 +285,7 @@
                 for (int i = 0; i < visirs.Count; i++)
                 {
                     if (visirs[i] == null) break;
-                    var pen = new Pen(curveColors[i], 1);
+                    var pen = new Pen(visirColors[i], 1);
                     for (int j = 0; j < visirs[i].Length; j++)
                     {
                         if (visirs[i][j] > X1 && visirs[i][j] < X2)
@@ -278,35 +299,15 @@
             pen0.Dispose();
         }
 
-        private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
+        private void UpdateScrollBar(int size)
         {
-            if (DataA == null)
-            {
-                return;
-            }
-            var ArrayList = new List<double[]>();
-            //int[] visirs1 = { 100, 1500, 1600, 3000, 6000 };
-            //VisirList.Add(visirs1);
-            if (ViewMode)
-            {
-                if (radioButton11.Checked) //1:1
-                {
-                    ArrayList.Add(DataA.CorrelationArray);
-                    ArrayList.Add(DataA.PressureViewArray);
-                    ArrayList.Add(DataA.DebugArray);
-                }
-                else //fit
-                {
-                    ArrayList.Add(DataA.PressureCompressedArray);
-                }
-            }
-            else
-            {
-                ArrayList.Add(DataA.PressureArray);
-                ArrayList.Add(DataA.PressureViewArray);
-            }
-            buffPanel_Paint(ArrayList, VisirList, bufPanel, ScaleY, MaxSize, e);
-            ArrayList.Clear();
+            int space = 14;
+            hScrollBar1.Maximum = size;
+            hScrollBar1.LargeChange = panelGraph.Width - space - 50;
+            hScrollBar1.SmallChange = panelGraph.Width - space / 10;
+            hScrollBar1.AutoSize = true;
+            hScrollBar1.Value = 0;
+            hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;
         }
 
         private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
@@ -364,7 +365,7 @@
             {
                 return;
             }
-            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, DataA.CorrelationArray[e.X + ViewShift]);
+            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, DataA.DCArray[e.X + ViewShift]);
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
@@ -397,7 +398,7 @@
         {
             if (decomposer.MainIndex > 0)
             {
-                label4.Text = DataA.DCRealTimeArray[decomposer.MainIndex - 1].ToString();
+                label4.Text = DataA.DCArray[decomposer.MainIndex - 1].ToString();
             }
             if (decomposer.RecordStarted)
             {

@@ -47,6 +47,21 @@ namespace TTestApp
             return result;
         }
 
+        public static int[] GetSmoothArray(int[] inputArray, int windowSize)
+        {
+            int[] result = new int[inputArray.Length];
+            for (int i = 0; i < result.Length - windowSize; i++)
+            {
+                double aver = 0;
+                for (int j = 0; j < windowSize; j++)
+                {
+                    aver += inputArray[i + j];
+                }
+                result[i] = (int)(aver /= windowSize);
+            }
+            return result;
+        }
+
         public static void PrepareData(double[] inData, double[] outData, bool filterOn, double[] coeff)
         {
             int size = inData.Length;

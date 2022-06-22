@@ -43,6 +43,7 @@ namespace TTestApp
             NNIndex = 0;
             FiltredPoints.Clear();
         }
+
         public int GetCurrentPulse(int NumNNForAver)
         {
             if (NNIndex == 0)
@@ -60,11 +61,11 @@ namespace TTestApp
             int sum = 0;
             for (int i = 0; i<NumOfIntForAver; i++)
             {
-                sum = sum + NNArray[(NNIndex - 1 - i) ];
+                sum += NNArray[(NNIndex - 1 - i) ];
             }
-            sum = sum / NumOfIntForAver;
+            sum /= NumOfIntForAver;
             double d = sum;
-            d = d / ByteDecomposer.SamplingFrequency; 
+            d /= ByteDecomposer.SamplingFrequency; 
             d = 60 / d;
             return (int)Math.Round(d);
         }

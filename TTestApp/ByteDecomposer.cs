@@ -136,7 +136,7 @@ namespace TTestApp
                         }
 
                         Data.RealTimeArray[MainIndex] = _pressureTmp;
-                        Data.DCRealTimeArray[MainIndex] = (int)averQ.Average();
+                        Data.DCArray[MainIndex] = (int)averQ.Average();
 
                         averViewQ.Enqueue(100 + _pressureTmp - (int)averQ.Average());
 //                        averViewQ.Enqueue(_pressureTmp - 100);

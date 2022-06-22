@@ -10,25 +10,21 @@ namespace TTestApp
     {
         public uint Size;
         public int[] RealTimeArray;
-        public int[] DCRealTimeArray;
+        public int[] DCArray;
         public double[] PressureArray;
         public double[] PressureViewArray;
         public double[] CorrelationArray;
-        public double[] PressureFiltredViewArray;
-        public double[]? PressureCompressedArray;
+        public double[] PressureCompressedArray;
         public double[] DebugArray;
-
-        public double[] DetrendArray;
 
         public DataArrays(int size)
         {
             Size = (uint)size;
             RealTimeArray = new int[size];
-            DCRealTimeArray = new int[size];
+            DCArray = new int[size];
             PressureArray = new double[size];
             PressureViewArray = new double[size];
             CorrelationArray = new double[size];
-            PressureFiltredViewArray = new double[size];
             DebugArray = new double[size];
         }
 
@@ -47,6 +43,31 @@ namespace TTestApp
             {
                 return null;
             }
+        }
+
+        public void CreateDetrendArray(int size)
+        {
+            int SmoothWindowSize = 40;
+            for (int i = 0; i < RealTimeArray.Length; i++)
+            {
+                PressureViewArray[i] = Filter.Median(6, RealTimeArray, i);
+            }
+            double[] DetrendArray = new double[size];
+            int max = DCArray.Max<int>();
+            int maxInd = PressureViewArray.ToList().IndexOf(max);
+            double startVal = DCArray[0];
+            for (int i = 0; i < maxInd; i++)
+            {
+                DetrendArray[i] = startVal + i * (max - startVal) / maxInd;
+            }
+
+            for (int i = 0; i < maxInd; i++)
+            {
+                PressureArray[i] = PressureViewArray[i] - DetrendArray[i];
+            }
+
+            PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
+            //            DataA.PressureArray = DataProcessing.Diff(DataA.PressureViewArray);
         }
 
         public void CountViewArrays(int destSize, TTestConfig config)
