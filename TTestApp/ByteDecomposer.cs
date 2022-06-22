@@ -16,8 +16,7 @@ namespace TTestApp
         public event EventHandler DecomposeLineEvent;
         public event EventHandler ConnectionBreakdown;
         public const int SamplingFrequency = 200;
-        public const int BytesInBlock = 27;
-
+        public const int BytesInBlock = 3;
 
         public uint MainIndex = 0;
         public int LineCounter = 0;
@@ -29,10 +28,6 @@ namespace TTestApp
         private const byte _marker1 = 25;
 
         private int _pressureTmp;
-        private double _detrend;
-        private double _next;
-        private double _prev;
-
 
         private const int _maxNoDataCounter = 10;
         private int _noDataCounter;
@@ -40,8 +35,6 @@ namespace TTestApp
         private int _byteNum;
 
         const double filterCoeff = 0.01;
-
-        private bool FilterOn = true;
 
         private const int averSize = 60;
         Queue<int> averQ = new Queue<int>(averSize);
@@ -139,17 +132,12 @@ namespace TTestApp
                         Data.DCArray[MainIndex] = (int)averQ.Average();
 
                         averViewQ.Enqueue(100 + _pressureTmp - (int)averQ.Average());
-//                        averViewQ.Enqueue(_pressureTmp - 100);
                         if (averViewQ.Count > averViewSize)
                         {
                             averViewQ.Dequeue();
                         }
 
                         Data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
-
-                        //_next = (int)averViewQ.Average();
-                        //_detrend = FilterRecursDetrend(filterCoeff, _next, _detrend, _prev);
-                        //Data.PressureViewArray[MainIndex] = _detrend;
 
                         _byteNum = 0;
 

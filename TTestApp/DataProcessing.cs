@@ -17,7 +17,7 @@ namespace TTestApp
             File.WriteAllLines(fname, stringsArr);
         }
 
-        public static double[] GetCompressedArray(int destSize, int[] inputArray)
+        public static double[] GetCompressedArray(int destSize, double[] inputArray)
         {
             double[] result = new double[destSize];
             CompressionRatio = inputArray.Length / destSize;

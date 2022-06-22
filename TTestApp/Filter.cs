@@ -180,13 +180,13 @@ namespace TTestApp
             return sum;
         }
 
-        public static int Median(int windowSize, int[] inArr, int ind)
+        public static double Median(int windowSize, double[] inArr, int ind)
         {
             if (ind > inArr.Length - windowSize)
             {
                 return 0;
             }
-            int[] tmpArr = new int[windowSize];
+            double[] tmpArr = new double[windowSize];
             for (int i = 0; i < windowSize; i++)
             {
                 tmpArr[i] = inArr[ind + i];

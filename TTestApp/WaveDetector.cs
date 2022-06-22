@@ -17,7 +17,7 @@ namespace TTestApp
         private int NoWaveInterval1 = 600;
         private int NoWaveInterval2 = 800;
         private double MaxD;
-        private const int NNArrSize = 1000;
+        private const int NNArrSize = 10000;
         public Point[] NNPointArr;
         private int NNPointIndex;
         private int PrevInterval;
