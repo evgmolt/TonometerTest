@@ -132,10 +132,6 @@
 
         private void ReadFile(string fileName)
         {
-            int StartDetectValue = 280;
-            int StopDetectValue = 380;
-            int DCArrayWindow = 100;
-
             string[] lines = File.ReadAllLines(fileName);
             int size = lines.Length;
             labRecordSize.Text = "Record size : " + (size / ByteDecomposer.SamplingFrequency).ToString() + " s";
@@ -152,8 +148,17 @@
                 MessageBox.Show("Error reading file");
                 return;
             }
+            PrepareData(size);
+            bufPanel.Refresh();
+        }
+
+        private void PrepareData(int size)
+        {
+            int StartDetectValue = 280;
+            int StopDetectValue = 380;
+            int DCArrayWindow = 100;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
-            DataA.CreateDetrendArray(size);
+            DataA.CreateDetrendAndSmoothArray(size);
             DataA.CountViewArrays(bufPanel.Width, Cfg);
             double maxD = 0;
             for (int i = 0; i < DataA.PressureViewArray.Length; i++)
@@ -185,14 +190,16 @@
                 DataA.DebugArray[i] = WD.Detect(0, DataA.CorrelationArray, i);
             }
             var NNArray = new int[WD.NNPointArr.Length];
+            var MaxArray = new int[WD.NNPointArr.Length];
             for (int i = 0; i < WD.FiltredPoints.Count(); i++)
             {
                 NNArray[i] = WD.FiltredPoints[i];
+                MaxArray[i] = WD.FiltredPoints[i] + 50;
             }
-            labPulse.Text = WD.GetCurrentPulse(10).ToString();
+            labPulse.Text = WD.GetCurrentPulse().ToString();
             VisirList.Clear();
             VisirList.Add(NNArray);
-            bufPanel.Refresh();
+            VisirList.Add(MaxArray);
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -208,13 +215,14 @@
             {
                 if (radioButton11.Checked) //1:1
                 {
-                    ArrayList.Add(DataA.CorrelationArray);
+                    ArrayList.Add(DataA.DCArray);
                     ArrayList.Add(DataA.PressureViewArray);
+                    ArrayList.Add(DataA.CorrelationArray);
                     ArrayList.Add(DataA.DebugArray);
                 }
                 else //fit
                 {
-                    ArrayList.Add(DataA.PressureCompressedArray);
+                    ArrayList.Add(DataA.CompressedArray);
                 }
             }
             else
@@ -234,8 +242,8 @@
             int MaxSize, 
             PaintEventArgs e)
         {
-            Color[] curveColors = { Color.Red, Color.Blue, Color.Green };
-            Color[] visirColors = { Color.LightGray, Color.Brown, Color.Chocolate };
+            Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Aqua };
+            Color[] visirsColors = { Color.LightGray, Color.Brown, Color.Chocolate };
             if (data == null)
             {
                 return;
@@ -254,11 +262,12 @@
                 for (int i = 0; i < data.Count; i++)
                 {
                     var pen = new Pen(curveColors[i], 1);
-                    Point[] OutArray = ViewArrayMaker.MakeArray(panel, 
-                                                                data[i], 
-                                                                decomposer.MainIndex, 
-                                                                MaxSize, 
-                                                                ScaleY);
+                    Point[] OutArray = ViewArrayMaker.MakeArray(
+                                                            panel, 
+                                                            data[i], 
+                                                            decomposer.MainIndex, 
+                                                            MaxSize, 
+                                                            ScaleY);
 
                     e.Graphics.DrawCurve(pen, OutArray, tension);
                     pen.Dispose();
@@ -271,12 +280,13 @@
                     if (data[i] == null) break;
                     var pen = new Pen(curveColors[i], 1);
                     
-                    Point[] OutArray = ViewArrayMaker.MakeArrayForView(panel, 
-                                                                       data[i], 
-                                                                       ViewShift, 
-                                                                       MaxSize, 
-                                                                       ScaleY, 
-                                                                       1);
+                    Point[] OutArray = ViewArrayMaker.MakeArrayForView(
+                                                                    panel, 
+                                                                    data[i], 
+                                                                    ViewShift, 
+                                                                    MaxSize, 
+                                                                    ScaleY, 
+                                                                    1);
                     e.Graphics.DrawCurve(pen, OutArray, tension);
                     pen.Dispose();
                 }
@@ -285,7 +295,7 @@
                 for (int i = 0; i < visirs.Count; i++)
                 {
                     if (visirs[i] == null) break;
-                    var pen = new Pen(visirColors[i], 1);
+                    var pen = new Pen(visirsColors[i], 1);
                     for (int j = 0; j < visirs[i].Length; j++)
                     {
                         if (visirs[i][j] > X1 && visirs[i][j] < X2)
@@ -408,15 +418,22 @@
 
         private void timerStatus_Tick(object sender, EventArgs e)
         {
+            butStartRecord.Enabled = !ViewMode && !decomposer.RecordStarted!;
+            butStopRecord.Enabled = decomposer.RecordStarted;
+            butSaveFile.Enabled = ViewMode && decomposer.LineCounter != 0;
+            butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
+
             if (USBPort == null)
             {
                 labPort.Text = "Disconnected";
+                ViewMode = true;
                 Connected = false;
                 return;
             }
             if (USBPort.PortHandle == null)
             {
                 labPort.Text = "Disconnected";
+                ViewMode = true;
                 Connected = false;
                 return;
             }
@@ -428,12 +445,9 @@
             else
             {
                 labPort.Text = "Disconnected";
+                ViewMode = true;
                 Connected = false;
             }
-            butStartRecord.Enabled = !ViewMode && !decomposer.RecordStarted!;
-            butStopRecord.Enabled = decomposer.RecordStarted;
-            butSaveFile.Enabled = ViewMode && decomposer.LineCounter != 0;
-            butFlow.Text = ViewMode? "Start stream" : "Stop stream";
         }
 
         private void timerRead_Tick_1(object sender, EventArgs e)
@@ -445,7 +459,6 @@
             {
                 decomposer.Decompos(USBPort, null, textWriter);
             }
-
         }
 
         private void timerPaint_Tick(object sender, EventArgs e)

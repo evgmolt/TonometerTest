@@ -14,7 +14,8 @@ namespace TTestApp
         public double[] PressureArray;
         public double[] PressureViewArray;
         public double[] CorrelationArray;
-        public double[] PressureCompressedArray;
+        public double[] CompressedArray;
+        public double[] DerivArray;
         public double[] DebugArray;
 
         public DataArrays(int size)
@@ -25,6 +26,7 @@ namespace TTestApp
             PressureArray = new double[size];
             PressureViewArray = new double[size];
             CorrelationArray = new double[size];
+            DerivArray = new double[size];  
             DebugArray = new double[size];
         }
 
@@ -45,7 +47,7 @@ namespace TTestApp
             }
         }
 
-        public void CreateDetrendArray(int size)
+        public void CreateDetrendAndSmoothArray(int size)
         {
             int SmoothWindowSize = 40;
             for (int i = 0; i < RealTimeArray.Length; i++)
@@ -67,12 +69,12 @@ namespace TTestApp
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
-            //            DataA.PressureArray = DataProcessing.Diff(DataA.PressureViewArray);
         }
 
         public void CountViewArrays(int destSize, TTestConfig config)
         {
-            string[] lines = File.ReadAllLines("file.txt");
+            string[] lines = File.ReadAllLines("pattern200Hz.txt");
+//            string[] lines = File.ReadAllLines("pattern100Hz.txt");
             double[] corr = new double[lines.Length];
             for (int i = 0; i < lines.Length; i++)
             {
@@ -83,7 +85,12 @@ namespace TTestApp
             {
                 CorrelationArray[i] = CorrelationArray[i] * 10;
             }
-            PressureCompressedArray = DataProcessing.GetCompressedArray(destSize, RealTimeArray);
+            //for (int i = 0; i < PressureViewArray.Length; i++)
+            //{
+            //    DerivArray[i] = DataProcessing.GetDerivative(CorrelationArray, i);
+            //}
+
+            CompressedArray = DataProcessing.GetCompressedArray(destSize, RealTimeArray);
         }
 
         public String GetDataString(uint index)

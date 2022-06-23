@@ -62,33 +62,6 @@ namespace TTestApp
             return result;
         }
 
-        public static void PrepareData(double[] inData, double[] outData, bool filterOn, double[] coeff)
-        {
-            int size = inData.Length;
-            double aver = 0;
-            var tmpBuf = new double[size];
-            for (int i = 0; i < size; i++)
-            {
-                aver += inData[i];
-            }
-            aver /= size;
-            for (int i = 0; i < size; i++)
-            {
-                tmpBuf[i] = inData[i] - aver;
-            }
-            for (int i = 0; i < size; i++)
-            {
-                if (filterOn)
-                {
-                    outData[i] = Filter.FilterForView(coeff, tmpBuf, i);
-                }
-                else
-                {
-                    outData[i] = tmpBuf[i];
-                }
-            }
-        }
-
         public static int GetRange(double[] Data)
         {
             int min = 10000000;
@@ -113,42 +86,61 @@ namespace TTestApp
             return result;
         }
 
-        ////Корреляционная функция - весь массив
-        //public static double[] Corr(double[] inputArray, double[] corrPattern)
-        //{
-        //    double[] result = new double[inputArray.Length - corrPattern.Length];
-        //    for (int i = 0; i < inputArray.Length - corrPattern.Length; i++)
-        //    {
-        //        double val = 0;
-        //        for(int j = 0; j < corrPattern.Length; j++)
-        //        {
-        //            val += inputArray[i + j] * corrPattern[j];
-        //        }
-        //        result[i] = val / (corrPattern.Length * 10);
-        //    }
-        //    return result;
-        //}
+        public static double GetDerivative(double[] DataArr, int Ind)
+        {
+            int DiffShift = 13;
+            const int Width = 4;
+            if (Ind < Width / 2 + DiffShift)
+            {
+                return 0;
+            }
+            if (Ind - Width / 2 + Width > DataArr.Length - 1)
+            {
+                return 0;
+            }
+            List<double> L1 = new List<double>();
+            List<double> L2 = new List<double>();
+            for (int i = 0; i < Width; i++)
+            {
+                {
+                    L1.Add(DataArr[Ind - Width / 2 + i]);
+                    L2.Add(DataArr[Ind - Width / 2 - DiffShift + i]);
+                }
+            }
+            if (L1.Count > 0 && L2.Count > 0)
+            {
+                double A1 = L1.Average();
+                double A2 = L2.Average();
+                return (A1 - A2);
+            }
+            else
+            {
+                return 0;
+            }
+
+        }
+
 
         //Корреляционная функция - весь массив, коэффициент корреляции Пирсона
         public static void Corr(double[] inputArray, double[] resultArray, double[] corrPattern)
         {
             //Среднее шаблона
             double patternAver = corrPattern.Average();
-            double[] window = new double[corrPattern.Length];
+            double[] slidingWindow = new double[corrPattern.Length];
             for (int i = 0; i < inputArray.Length - corrPattern.Length; i++)
             {
                 for (int j = 0; j < corrPattern.Length; j++)
                 {
-                    window[j] = inputArray[i + j];
+                    slidingWindow[j] = inputArray[i + j];
                 }
-                double windowAver = window.Average();
+                double windowAver = slidingWindow.Average();
                 double numerator = 0;
                 double denominator1 = 0;
                 double denominator2 = 0;
                 for (int j = 0; j < corrPattern.Length; j++)
                 {
-                    numerator += (window[j] - windowAver) * (corrPattern[j] - patternAver);
-                    denominator1 += (window[j] - windowAver) * (window[j] - windowAver);
+                    numerator += (slidingWindow[j] - windowAver) * (corrPattern[j] - patternAver);
+                    denominator1 += (slidingWindow[j] - windowAver) * (slidingWindow[j] - windowAver);
                     denominator2 += (corrPattern[j] - patternAver) * (corrPattern[j] - patternAver);
                 }
                 if (denominator1 == 0)

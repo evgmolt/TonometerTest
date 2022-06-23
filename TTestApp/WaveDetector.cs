@@ -44,19 +44,15 @@ namespace TTestApp
             FiltredPoints.Clear();
         }
 
-        public int GetCurrentPulse(int NumNNForAver)
+        public int GetCurrentPulse()
         {
             if (NNIndex == 0)
             {
                 return 0;
             }
-            if (NumNNForAver != 0)
+            if (NNIndex < NumOfIntForAver)
             {
-                NumOfIntForAver = NumNNForAver;
-                if (NNIndex < NumOfIntForAver)
-                {
-                    NumOfIntForAver = NNIndex;
-                }
+                NumOfIntForAver = NNIndex;
             }
             int sum = 0;
             for (int i = 0; i<NumOfIntForAver; i++)
@@ -95,52 +91,37 @@ namespace TTestApp
             if (InsideC < LockInterval) return DetectLevel;
             if (Deriv > DetectLevel)
             {
-                    MaxD = Math.Max(MaxD, Deriv);
-                    if (MaxD > Deriv)
+                MaxD = Math.Max(MaxD, Deriv);
+                if (MaxD > Deriv)
+                {
+                    int tmpNN = 0;
+                    NNPointArr[NNPointIndex].X = Ind;
+                    NNPointArr[NNPointIndex].Y = (int)MaxD;
+                    if (NNPointIndex > 1)
                     {
-                        int tmpNN = 0;
-                        NNPointArr[NNPointIndex].X = Ind;
-                        NNPointArr[NNPointIndex].Y = (int)MaxD;
-                        if (NNPointIndex > 1)
-                        {
-                            tmpNN = NNPointArr[NNPointIndex].X - NNPointArr[NNPointIndex - 1].X;
-                        }
-                        if (Filter25percent(tmpNN))
-                        {
-                            NNArray[NNIndex] = tmpNN;
-                            NNIndex++;
-                            NumOfIntForAver++;
-                            NumOfIntForAver = Math.Min(NumOfIntForAver, MaxNumOfIntForAver);
-                            FiltredPoints.Add(Ind);
-                        }
-                        InsideC = 0;
-                        NNPointIndex++;
-                        DetectLevel = MaxD / 2;
-                        MaxD = 0;
+                        tmpNN = NNPointArr[NNPointIndex].X - NNPointArr[NNPointIndex - 1].X;
                     }
+                    if (Filter25percent(tmpNN))
+                    {
+                        NNArray[NNIndex] = tmpNN;
+                        NNIndex++;
+                        NumOfIntForAver++;
+                        NumOfIntForAver = Math.Min(NumOfIntForAver, MaxNumOfIntForAver);
+                        FiltredPoints.Add(Ind);
+                    }
+                    InsideC = 0;
+                    NNPointIndex++;
+                    DetectLevel = MaxD / 2;
+                    MaxD = 0;
+                }
             }
             return DetectLevel;
         }
 
-        private int GetDerivative(int[] DataArr, uint Ind)
-        {
-            const int Width = 4;
-            List<int> L1 = new List<int>();
-            List<int> L2 = new List<int>();
-            for (int i=0; i<Width; i++)
-            {
-                L1.Add(DataArr[(Ind - Width /2 + i) & (ByteDecomposer.DataArrSize - 1)]);
-                L2.Add(DataArr[(Ind - DiffShift - Width/2 + i) & (ByteDecomposer.DataArrSize - 1)]);
-            }
-            double A1 = L1.Average();
-            double A2 = L2.Average();
-            return (int)(A1 - A2);
-        }
-
         private bool Filter25percent(int NewInterval)
         {
-            const int LoLimit = 30; //ms - 250 уд / мин 
-            const int HiLimit = 300; //ms - 25  уд / мин 
+            const int LoLimit = 50; //ms - 240 уд / мин 
+            const int HiLimit = 400; //ms - 30  уд / мин 
             if (NewInterval < LoLimit) return false;
             if (NewInterval > HiLimit) return false;
             int PrevInt = PrevInterval;
