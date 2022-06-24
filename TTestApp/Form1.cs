@@ -273,7 +273,7 @@
                     pen.Dispose();
                 }
             }
-            else
+            else //Режим просмотра
             {
                 for (int i = 0; i < data.Count; i++)
                 {
@@ -304,6 +304,18 @@
                         }
                     }
                     pen.Dispose();
+                }
+                int index = 1;
+                int timeTickSize = 10;
+                while (index * ByteDecomposer.SamplingFrequency < panel.Width)
+                {
+                    e.Graphics.DrawLine(
+                        pen0,
+                        index * ByteDecomposer.SamplingFrequency,
+                        panel.Height,
+                        index * ByteDecomposer.SamplingFrequency,
+                        panel.Height - timeTickSize);
+                    index++;
                 }
             }
             pen0.Dispose();
@@ -375,7 +387,13 @@
             {
                 return;
             }
-            labelXY.Text = String.Format("X : {0}  Y : {1}", e.X + ViewShift, DataA.DCArray[e.X + ViewShift]);
+            double x = e.X + ViewShift;
+            double sec = x / ByteDecomposer.SamplingFrequency;
+            labelXY.Text = String.Format(
+                "X : {0}, Time {1:f2} s, Y : {2}", 
+                e.X + ViewShift,
+                sec,
+                DataA.DCArray[e.X + ViewShift]);
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
