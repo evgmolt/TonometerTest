@@ -9,8 +9,9 @@
         StreamWriter textWriter;
         TTestConfig Cfg;
         string CurrentFile;
+        int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
-        int MaxSize = 500;
+        int MaxValue = 500;
         bool ViewMode = false;
         int ViewShift;
         BufferedPanel bufPanel;
@@ -133,11 +134,11 @@
         private void ReadFile(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
-            int size = lines.Length;
-            labRecordSize.Text = "Record size : " + (size / ByteDecomposer.SamplingFrequency).ToString() + " s";
-            UpdateScrollBar(size);
+            CurrentFileSize = lines.Length;
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / ByteDecomposer.SamplingFrequency).ToString() + " s";
+            UpdateScrollBar(CurrentFileSize);
 
-            if (size == 0)
+            if (CurrentFileSize == 0)
             {
                 MessageBox.Show("Error reading file " + fileName);
                 return;
@@ -148,7 +149,7 @@
                 MessageBox.Show("Error reading file");
                 return;
             }
-            PrepareData(size);
+            PrepareData(CurrentFileSize);
             bufPanel.Refresh();
         }
 
@@ -158,8 +159,7 @@
             int StopDetectValue = 380;
             int DCArrayWindow = 100;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
-            DataA.CreateDetrendAndSmoothArray(size);
-            DataA.CountViewArrays(bufPanel.Width, Cfg);
+            DataA.CountViewArrays(size, bufPanel, Cfg);
             double maxD = 0;
             for (int i = 0; i < DataA.PressureViewArray.Length; i++)
             {
@@ -189,8 +189,8 @@
             {
                 DataA.DebugArray[i] = WD.Detect(0, DataA.CorrelationArray, i);
             }
-            var NNArray = new int[WD.NNPointArr.Length];
-            var MaxArray = new int[WD.NNPointArr.Length];
+            var NNArray = new int[WD.FiltredPoints.Count];
+            var MaxArray = new int[WD.FiltredPoints.Count];
             for (int i = 0; i < WD.FiltredPoints.Count(); i++)
             {
                 NNArray[i] = WD.FiltredPoints[i];
@@ -230,7 +230,7 @@
                 ArrayList.Add(DataA.PressureArray);
                 ArrayList.Add(DataA.PressureViewArray);
             }
-            buffPanel_Paint(ArrayList, VisirList, bufPanel, ScaleY, MaxSize, e);
+            buffPanel_Paint(ArrayList, VisirList, bufPanel, ScaleY, MaxValue, e);
             ArrayList.Clear();
         }
 
@@ -345,8 +345,8 @@
             {
                 return;
             }
-            DataA.CountViewArrays(bufPanel.Width, Cfg);
-            MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
+            DataA.CountViewArrays(CurrentFileSize, bufPanel, Cfg);
+//            MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
 
@@ -360,15 +360,24 @@
 
         private void radioButton11_CheckedChanged(object? sender, EventArgs e)
         {
-            hScrollBar1.Visible = radioButton11.Checked;
-            bufPanel.Refresh();
+            RadioButton radioButton = (RadioButton)sender;
+            if (radioButton.Checked)
+            {
+                hScrollBar1.Visible = radioButton11.Checked;
+                bufPanel.Refresh();
+            }
         }
 
         private void radioButtonFit_CheckedChanged(object? sender, EventArgs e)
         {
-            hScrollBar1.Visible = !radioButtonFit.Checked;
-            hScrollBar1.Value = 0;
-            bufPanel.Refresh();
+            RadioButton radioButton = (RadioButton)sender;
+            if (radioButton.Checked)
+            {
+                hScrollBar1.Visible = !radioButtonFit.Checked;
+                hScrollBar1.Value = 0;
+                MaxValue = 2 * (int)DataA.CompressedArray.Max();
+                bufPanel.Refresh();
+            }
         }
 
         private void Form1_Resize(object? sender, EventArgs e)
@@ -377,7 +386,7 @@
             {
                 return;
             }
-            DataA.CountViewArrays(bufPanel.Width, Cfg);
+            DataA.CountViewArrays(CurrentFileSize, bufPanel, Cfg);
             bufPanel.Refresh();
         }
 

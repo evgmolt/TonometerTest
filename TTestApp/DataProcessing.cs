@@ -17,13 +17,13 @@ namespace TTestApp
             File.WriteAllLines(fname, stringsArr);
         }
 
-        public static double[] GetCompressedArray(int destSize, double[] inputArray)
+        public static double[] GetCompressedArray(Control panel, double[] inputArray)
         {
-            double[] result = new double[destSize];
-            CompressionRatio = inputArray.Length / destSize;
-            for (int i = 0; i < destSize; i++)
+            double[] result = new double[panel.Width];
+            CompressionRatio = inputArray.Length / panel.Width;
+            for (int i = 0; i < panel.Width; i++)
             {
-                result[i] = inputArray[i * CompressionRatio];
+                result[i] = inputArray[i * CompressionRatio] - panel.Height / 2;
             }
             if (CompressionChanged != null)
             {

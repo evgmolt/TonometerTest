@@ -47,7 +47,7 @@ namespace TTestApp
             }
         }
 
-        public void CreateDetrendAndSmoothArray(int size)
+        public void CountViewArrays(int size, Control panel, TTestConfig config)
         {
             int SmoothWindowSize = 40;
             for (int i = 0; i < RealTimeArray.Length; i++)
@@ -69,10 +69,7 @@ namespace TTestApp
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
-        }
 
-        public void CountViewArrays(int destSize, TTestConfig config)
-        {
             string[] lines = File.ReadAllLines("pattern200Hz.txt");
 //            string[] lines = File.ReadAllLines("pattern100Hz.txt");
             double[] corr = new double[lines.Length];
@@ -90,7 +87,7 @@ namespace TTestApp
             //    DerivArray[i] = DataProcessing.GetDerivative(CorrelationArray, i);
             //}
 
-            CompressedArray = DataProcessing.GetCompressedArray(destSize, RealTimeArray);
+            CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }
 
         public String GetDataString(uint index)
