@@ -8,7 +8,6 @@ namespace TTestApp
 {
     class WaveDetector
     {
-        public int PulseRate;
         private int InsideC;
         public double DetectLevel = 7;
         private const double MinDetectLevel = 3;
@@ -70,7 +69,6 @@ namespace TTestApp
         {
             if (OverflowState !=0)
             {
-                PulseRate = 0;
                 NumOfIntForAver = 0;
                 return 0;
             }
@@ -80,7 +78,6 @@ namespace TTestApp
             if (InsideC > NoWaveInterval2)
             {
                 DetectLevel = DetectLevel / 2;
-                PulseRate = 0;
                 NumOfIntForAver = 0;
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);

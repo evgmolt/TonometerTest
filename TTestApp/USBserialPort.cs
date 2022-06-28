@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.IO.Ports;
+using System.Management;
 
 namespace TTestApp
 {
@@ -61,8 +62,8 @@ namespace TTestApp
 
         public bool WriteByte(byte b)
         {
-            byte[] buf = new byte[1];
-            buf[0] = b;
+            byte[] buf = { b }; // new byte[1];
+//            buf[0] = b;
             try
             {
                 if (PortHandle != null)
@@ -77,8 +78,50 @@ namespace TTestApp
             }
         }
 
+        private string GetUSBSerialPortName()
+        {
+            string portName;
+            string usbSerialString = "USB-SERIAL";
+            ManagementObjectCollection collection = null;
+            try
+            {
+                using (var searcher = new ManagementObjectSearcher(
+                        "root\\CIMV2",
+                        @"Select Caption,DeviceID,PnpClass From Win32_PnpEntity WHERE DeviceID like '%USB%'"))
+                    collection = searcher.Get();
+            }
+            catch (Exception)
+            {
+                portName = "";
+            }
+            List<string> list = new List<string>();
+            if (collection != null)
+            {
+                foreach (var device in collection)
+                {
+                    foreach (var p in device.Properties)
+                    {
+                        if (p.Value != null)
+                        {
+                            list.Add(p.Value.ToString());
+                        }
+                    }
+                }
+            }
+            try
+            {
+                portName = list.Where(p => p.IndexOf(usbSerialString) >= 0).First();
+            }
+            catch (Exception)
+            {
+
+                portName = "";
+            }
+            return portName;
+        }
         public void Connect()
         {
+            string name = GetUSBSerialPortName();
             PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Count(); i++)
@@ -89,27 +132,26 @@ namespace TTestApp
                     Parity = Parity.None,
                     StopBits = StopBits.One
                 };
-                ReadEnabled = true;
                 try
                 {
                     PortHandle.Open();
+                    ReadEnabled = true;
                 }
                 catch (Exception e)
                 {
                     ConnectionFailure?.Invoke(e);
                 }
-
                 ReadTimer.Change(0, _USBTimerInterval);
                 CurrentPort = i;
                 break;
             }
         }
 
-
         //Return array of port names with VCP string;
         private string[] GetPortsNames()
         {
-            const string VCP = @"Serial2";
+            const string serialString = "Serial";
+            const string serialString0 = "Serial0";
 
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
@@ -117,22 +159,17 @@ namespace TTestApp
             RegistryKey r_port = r_device.OpenSubKey("SERIALCOMM");
             if (r_port == null) return null;
             string[] portvalues = r_port.GetValueNames();
-            int numOfVCP = 0;
-            for (int i = 0; i < portvalues.Count(); i++)
-            {
-                if (portvalues[i].IndexOf(VCP) >= 0) numOfVCP++;
-            }
-            string[] pn = new string[numOfVCP];
+            List<string> portNames = new List<string>();
             int Ind = 0;
             for (int i = 0; i < portvalues.Count(); i++)
             {
-                if (portvalues[i].IndexOf(VCP) >= 0)
+                if (portvalues[i].IndexOf(serialString) >= 0 && portvalues[i].IndexOf(serialString0) < 0)
                 {
-                    pn[Ind] = (string)r_port.GetValue(portvalues[i]);
+                    portNames.Add((string)r_port.GetValue(portvalues[i]));
                     Ind++;
                 }
             }
-            return pn;
+            return portNames.ToArray();
         }
 
         private void OnMessage(Message m)

@@ -79,7 +79,10 @@
             const int WM_DEVICECHANGE = 0x0219;
             if (WindowsMessage != null)
             {
-                if (m.Msg == WM_DEVICECHANGE) WindowsMessage(m);
+                if (m.Msg == WM_DEVICECHANGE)
+                {
+                    WindowsMessage(m);
+                }
             }
             base.WndProc(ref m);
         }
@@ -468,6 +471,7 @@
             {
                 labPort.Text = "Connected to " + USBPort.PortNames[USBPort.CurrentPort];
                 Connected = true;
+                ViewMode = false;
             }
             else
             {
