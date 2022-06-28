@@ -6,6 +6,7 @@
         public bool Connected;
         private DataArrays? DataA;
         private ByteDecomposer decomposer;
+        private Painter painter;
         StreamWriter textWriter;
         TTestConfig Cfg;
         string CurrentFile;
@@ -65,6 +66,7 @@
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
             decomposer = new ByteDecomposer(DataA);
             decomposer.DecomposeLineEvent += NewLineReceived;
+            painter = new Painter(bufPanel, decomposer);
         }
 
         private void onConnectionFailure(Exception obj)
@@ -230,99 +232,13 @@
             }
             else
             {
-                ArrayList.Add(DataA.PressureArray);
-                ArrayList.Add(DataA.PressureViewArray);
+                ArrayList.Add(DataA.RealTimeArray);
+                ArrayList.Add(DataA.DCArray);
             }
-            buffPanel_Paint(ArrayList, VisirList, bufPanel, ScaleY, MaxValue, e);
+            painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();
         }
 
-        private void buffPanel_Paint(
-            List<double[]> data, 
-            List<int[]> visirs, 
-            Control panel, 
-            double ScaleY, 
-            int MaxSize, 
-            PaintEventArgs e)
-        {
-            Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Aqua };
-            Color[] visirsColors = { Color.LightGray, Color.Brown, Color.Chocolate };
-            if (data == null)
-            {
-                return;
-            }
-            if (data.Count == 0)
-            {
-                return;
-            }
-            float tension = 0.1F;
-            var R0 = new Rectangle(0, 0, panel.Width - 1, panel.Height - 1);
-            var pen0 = new Pen(Color.Black, 1);
-            e.Graphics.Clear(Color.White);
-            e.Graphics.DrawRectangle(pen0, R0);
-            if (!ViewMode)
-            {
-                for (int i = 0; i < data.Count; i++)
-                {
-                    var pen = new Pen(curveColors[i], 1);
-                    Point[] OutArray = ViewArrayMaker.MakeArray(
-                                                            panel, 
-                                                            data[i], 
-                                                            decomposer.MainIndex, 
-                                                            MaxSize, 
-                                                            ScaleY);
-
-                    e.Graphics.DrawCurve(pen, OutArray, tension);
-                    pen.Dispose();
-                }
-            }
-            else //Режим просмотра
-            {
-                for (int i = 0; i < data.Count; i++)
-                {
-                    if (data[i] == null) break;
-                    var pen = new Pen(curveColors[i], 1);
-                    
-                    Point[] OutArray = ViewArrayMaker.MakeArrayForView(
-                                                                    panel, 
-                                                                    data[i], 
-                                                                    ViewShift, 
-                                                                    MaxSize, 
-                                                                    ScaleY, 
-                                                                    1);
-                    e.Graphics.DrawCurve(pen, OutArray, tension);
-                    pen.Dispose();
-                }
-                int X1 = ViewShift;
-                int X2 = panel.Width + ViewShift;
-                for (int i = 0; i < visirs.Count; i++)
-                {
-                    if (visirs[i] == null) break;
-                    var pen = new Pen(visirsColors[i], 1);
-                    for (int j = 0; j < visirs[i].Length; j++)
-                    {
-                        if (visirs[i][j] > X1 && visirs[i][j] < X2)
-                        {
-                            e.Graphics.DrawLine(pen, visirs[i][j] - ViewShift, 0, visirs[i][j] - ViewShift, panel.Width);
-                        }
-                    }
-                    pen.Dispose();
-                }
-                int index = 1;
-                int timeTickSize = 10;
-                while (index * ByteDecomposer.SamplingFrequency < panel.Width)
-                {
-                    e.Graphics.DrawLine(
-                        pen0,
-                        index * ByteDecomposer.SamplingFrequency,
-                        panel.Height,
-                        index * ByteDecomposer.SamplingFrequency,
-                        panel.Height - timeTickSize);
-                    index++;
-                }
-            }
-            pen0.Dispose();
-        }
 
         private void UpdateScrollBar(int size)
         {
@@ -471,12 +387,10 @@
             {
                 labPort.Text = "Connected to " + USBPort.PortNames[USBPort.CurrentPort];
                 Connected = true;
-                ViewMode = false;
             }
             else
             {
                 labPort.Text = "Disconnected";
-                ViewMode = true;
                 Connected = false;
             }
         }
@@ -515,8 +429,8 @@
             decomposer.DecomposeLineEvent -= NewLineReceived;
             decomposer.RecordStarted = false;
             if (textWriter != null) textWriter.Dispose();
-
             ViewMode = true;
+            timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;
 
             ReadFile(Cfg.DataDir + TmpDataFile);

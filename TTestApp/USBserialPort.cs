@@ -87,7 +87,7 @@ namespace TTestApp
             {
                 using (var searcher = new ManagementObjectSearcher(
                         "root\\CIMV2",
-                        @"Select Caption,DeviceID,PnpClass From Win32_PnpEntity WHERE DeviceID like '%USB%'"))
+                        @"Select Caption,DeviceID,PnpClass From Win32_PnpEntity WHERE DeviceID like '%USB%'")) 
                     collection = searcher.Get();
             }
             catch (Exception)
@@ -119,9 +119,51 @@ namespace TTestApp
             }
             return portName;
         }
+
+        private string GetPortString(string deviceName)
+        {
+            List<USBDeviceInfo> devices = new List<USBDeviceInfo>();
+            ManagementObjectSearcher searcher =
+                new ManagementObjectSearcher("root\\CIMV2",
+                "SELECT * FROM Win32_PnPEntity");
+            foreach (ManagementObject queryObj in searcher.Get())
+            {
+                devices.Add(new USBDeviceInfo(
+                    (string)queryObj["DeviceID"],
+                    (string)queryObj["PNPDeviceID"],
+                    (string)queryObj["Name"]
+                ));
+            }
+            string result = String.Empty;
+            foreach (USBDeviceInfo usbDevice in devices)
+            {
+                if (usbDevice.Description != null)
+                {
+                    if (usbDevice.Description.Contains(deviceName)) 
+                    {
+                        int i = usbDevice.Description.IndexOf("COM");
+                        char[] arr = usbDevice.Description.ToCharArray();
+                        result = "COM" + arr[i + 3];
+                        if (arr[i + 4] != ')')
+                        {
+                            result += arr[i + 4];
+                        }
+                        break;
+                    }
+                }
+            }
+            return result;
+        }
         public void Connect()
         {
-            string name = GetUSBSerialPortName();
+            try
+            {
+                string name = GetPortString("USB-SERIAL");
+            }
+            catch (Exception)
+            {
+
+            }
             PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Count(); i++)
@@ -136,18 +178,17 @@ namespace TTestApp
                 {
                     PortHandle.Open();
                     ReadEnabled = true;
+                    ReadTimer.Change(0, _USBTimerInterval);
+                    CurrentPort = i;
+                    break;
                 }
                 catch (Exception e)
                 {
                     ConnectionFailure?.Invoke(e);
                 }
-                ReadTimer.Change(0, _USBTimerInterval);
-                CurrentPort = i;
-                break;
             }
         }
 
-        //Return array of port names with VCP string;
         private string[] GetPortsNames()
         {
             const string serialString = "Serial";
