@@ -98,8 +98,8 @@ namespace TTestApp
             {
                 return 0;
             }
-            List<double> L1 = new List<double>();
-            List<double> L2 = new List<double>();
+            List<double> L1 = new();
+            List<double> L2 = new();
             for (int i = 0; i < Width; i++)
             {
                 {
@@ -119,7 +119,6 @@ namespace TTestApp
             }
 
         }
-
 
         //Корреляционная функция - весь массив, коэффициент корреляции Пирсона
         public static void Corr(double[] inputArray, double[] resultArray, double[] corrPattern)

@@ -14,7 +14,6 @@ namespace TTestApp
         public const int SamplingFrequency = 200;
         public const int BytesInBlock = 3;
         private const byte _marker1 = 25;
-        const double filterCoeff = 0.01;
 
         private DataArrays _data;
 

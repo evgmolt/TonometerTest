@@ -195,16 +195,16 @@
                 DataA.DebugArray[i] = WD.Detect(0, DataA.CorrelationArray, i);
             }
             var NNArray = new int[WD.FiltredPoints.Count];
-            var MaxArray = new int[WD.FiltredPoints.Count];
+//            var MaxArray = new int[WD.FiltredPoints.Count];
             for (int i = 0; i < WD.FiltredPoints.Count(); i++)
             {
                 NNArray[i] = WD.FiltredPoints[i];
-                MaxArray[i] = WD.FiltredPoints[i] + 50;
+//                MaxArray[i] = WD.FiltredPoints[i] + 50;
             }
             labPulse.Text = WD.GetCurrentPulse().ToString();
             VisirList.Clear();
             VisirList.Add(NNArray);
-            VisirList.Add(MaxArray);
+//            VisirList.Add(MaxArray);
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)

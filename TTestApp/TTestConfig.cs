@@ -33,10 +33,10 @@ namespace TTestApp
         public static TTestConfig GetConfig()
         {
             TTestConfig tTestConfig;
-            JsonSerializer serializer = new JsonSerializer();
+            JsonSerializer serializer = new();
             try
             {
-                using (StreamReader sr = new StreamReader(_configFileName))
+                using (StreamReader sr = new(_configFileName))
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
                     tTestConfig = (TTestConfig)serializer.Deserialize(reader, typeof(TTestConfig));
@@ -53,9 +53,9 @@ namespace TTestApp
 
         public static void SaveConfig(TTestConfig cfg)
         {
-            StreamWriter sw = new StreamWriter(_configFileName);
+            StreamWriter sw = new(_configFileName);
             JsonWriter writer = new JsonTextWriter(sw);
-            JsonSerializer serializer = new JsonSerializer();
+            JsonSerializer serializer = new();
             serializer.Serialize(writer, cfg);
             writer.Close();
             sw.Close();         
