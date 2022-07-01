@@ -8,7 +8,7 @@ namespace TTestApp
 {
     internal class DataArrays
     {
-        public uint Size;
+        private readonly int _size;
         public double[] RealTimeArray;
         public double[] DCArray;
         public double[] PressureArray;
@@ -20,14 +20,14 @@ namespace TTestApp
 
         public DataArrays(int size)
         {
-            Size = (uint)size;
-            RealTimeArray = new double[size];
-            DCArray = new double[size];
-            PressureArray = new double[size];
-            PressureViewArray = new double[size];
-            CorrelationArray = new double[size];
-            DerivArray = new double[size];  
-            DebugArray = new double[size];
+            _size = size;
+            RealTimeArray = new double[_size];
+            DCArray = new double[_size];
+            PressureArray = new double[_size];
+            PressureViewArray = new double[_size];
+            CorrelationArray = new double[_size];
+            DerivArray = new double[_size];  
+            DebugArray = new double[_size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -47,14 +47,14 @@ namespace TTestApp
             }
         }
 
-        public void CountViewArrays(int size, Control panel, TTestConfig config)
+        public void CountViewArrays(Control panel, TTestConfig config)
         {
             int SmoothWindowSize = 40;
             for (int i = 0; i < RealTimeArray.Length; i++)
             {
                 PressureViewArray[i] = Filter.Median(6, RealTimeArray, i);
             }
-            double[] DetrendArray = new double[size];
+            double[] DetrendArray = new double[_size];
             double max = DCArray.Max<double>();
             int maxInd = DCArray.ToList().IndexOf(max);
             double startVal = DCArray[0];
