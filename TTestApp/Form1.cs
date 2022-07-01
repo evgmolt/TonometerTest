@@ -3,21 +3,21 @@
     public partial class Form1 : Form, IMessageHandler
     {
         USBserialPort USBPort;
-        public bool Connected;
-        private DataArrays? DataA;
-        private ByteDecomposer decomposer;
-        private Painter painter;
-        StreamWriter textWriter;
+        DataArrays? DataA;
+        ByteDecomposer decomposer;
+        Painter painter;
+        WaveDetector WD;
+        BufferedPanel bufPanel;
         TTestConfig Cfg;
+        StreamWriter textWriter;
+        bool Connected;
         string CurrentFile;
         int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
         int MaxValue = 500;
         bool ViewMode = false;
         int ViewShift;
-        BufferedPanel bufPanel;
         double ScaleY = 1;
-        WaveDetector WD;
         List<int[]> VisirList;
 
         public event Action<Message> WindowsMessage;
@@ -154,17 +154,17 @@
                 MessageBox.Show("Error reading file");
                 return;
             }
-            PrepareData(CurrentFileSize);
+            PrepareData();
             bufPanel.Refresh();
         }
 
-        private void PrepareData(int size)
+        private void PrepareData()
         {
             int StartDetectValue = 280;
             int StopDetectValue = 380;
             int DCArrayWindow = 100;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
-            DataA.CountViewArrays(size, bufPanel, Cfg);
+            DataA.CountViewArrays(bufPanel, Cfg);
             double maxD = 0;
             for (int i = 0; i < DataA.PressureViewArray.Length; i++)
             {
@@ -264,7 +264,7 @@
             {
                 return;
             }
-            DataA.CountViewArrays(CurrentFileSize, bufPanel, Cfg);
+            DataA.CountViewArrays(bufPanel, Cfg);
 //            MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
@@ -305,7 +305,7 @@
             {
                 return;
             }
-            DataA.CountViewArrays(CurrentFileSize, bufPanel, Cfg);
+            DataA.CountViewArrays(bufPanel, Cfg);
             bufPanel.Refresh();
         }
 
@@ -344,7 +344,6 @@
         private void butStartRecord_Click(object sender, EventArgs e)
         {
             textWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
-            decomposer.TotalBytes = 0;
             decomposer.LineCounter = 0;
             decomposer.RecordStarted = true;
             progressBarRecord.Visible = true;

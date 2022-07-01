@@ -82,10 +82,6 @@ namespace TTestApp
             {
                 CorrelationArray[i] = CorrelationArray[i] * 10;
             }
-            //for (int i = 0; i < PressureViewArray.Length; i++)
-            //{
-            //    DerivArray[i] = DataProcessing.GetDerivative(CorrelationArray, i);
-            //}
 
             CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }

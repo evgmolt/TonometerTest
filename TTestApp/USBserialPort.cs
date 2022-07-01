@@ -120,50 +120,8 @@ namespace TTestApp
             return portName;
         }
 
-        private string GetPortString(string deviceName)
-        {
-            List<USBDeviceInfo> devices = new List<USBDeviceInfo>();
-            ManagementObjectSearcher searcher =
-                new ManagementObjectSearcher("root\\CIMV2",
-                "SELECT * FROM Win32_PnPEntity");
-            foreach (ManagementObject queryObj in searcher.Get())
-            {
-                devices.Add(new USBDeviceInfo(
-                    (string)queryObj["DeviceID"],
-                    (string)queryObj["PNPDeviceID"],
-                    (string)queryObj["Name"]
-                ));
-            }
-            string result = String.Empty;
-            foreach (USBDeviceInfo usbDevice in devices)
-            {
-                if (usbDevice.Description != null)
-                {
-                    if (usbDevice.Description.Contains(deviceName)) 
-                    {
-                        int i = usbDevice.Description.IndexOf("COM");
-                        char[] arr = usbDevice.Description.ToCharArray();
-                        result = "COM" + arr[i + 3];
-                        if (arr[i + 4] != ')')
-                        {
-                            result += arr[i + 4];
-                        }
-                        break;
-                    }
-                }
-            }
-            return result;
-        }
         public void Connect()
         {
-            try
-            {
-                string name = GetPortString("USB-SERIAL");
-            }
-            catch (Exception)
-            {
-
-            }
             PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Count(); i++)

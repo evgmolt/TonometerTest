@@ -2,12 +2,13 @@
 {
     public class BufferedPanel : Panel
     {
-        public int Number;
+        private readonly int _number;
         public BufferedPanel(int number)
         {
             this.BorderStyle = BorderStyle.FixedSingle;
-            Number = number;
+            _number = number;
             DoubleBuffered = true;
         }
+        public int Number { get { return _number; } }
     }
 }

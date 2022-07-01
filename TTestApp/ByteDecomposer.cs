@@ -11,21 +11,21 @@ namespace TTestApp
     class ByteDecomposer
     {
         public const int DataArrSize = 0x100000;
-
-        public DataArrays Data;
-        public event EventHandler DecomposeLineEvent;
-        public event EventHandler ConnectionBreakdown;
         public const int SamplingFrequency = 200;
         public const int BytesInBlock = 3;
+        private const byte _marker1 = 25;
+        const double filterCoeff = 0.01;
+
+        private DataArrays _data;
+
+        public event EventHandler DecomposeLineEvent;
+        public event EventHandler ConnectionBreakdown;
 
         public uint MainIndex = 0;
         public int LineCounter = 0;
-        public int TotalBytes;
 
         public bool RecordStarted;
         public bool DeviceTurnedOn;
-
-        private const byte _marker1 = 25;
 
         private int _pressureTmp;
 
@@ -33,8 +33,6 @@ namespace TTestApp
         private int _noDataCounter;
 
         private int _byteNum;
-
-        const double filterCoeff = 0.01;
 
         private const int averSize = 60;
         Queue<int> averQ = new Queue<int>(averSize);
@@ -44,18 +42,12 @@ namespace TTestApp
 
         public ByteDecomposer(DataArrays data)
         {
-            Data = data;
+            _data = data;
             RecordStarted = false;
             DeviceTurnedOn = true;
-            TotalBytes = 0;
             MainIndex = 0;
             _noDataCounter = 0;
             _byteNum = 0;
-        }
-
-        private double FilterRecursDetrend(double filterK, double next, double detrend, double prev)
-        {
-            return ((1 - filterK) * next - (1 - filterK) * prev + (1 - 2 * filterK) * detrend);
         }
 
         protected virtual void OnDecomposeLineEvent()
@@ -96,7 +88,6 @@ namespace TTestApp
                 try
                 {
                     saveFileStream.Write(usbport.PortBuf, 0, bytes);
-                    TotalBytes += bytes;
                 }
                 catch (Exception ex)
                 {
@@ -128,8 +119,8 @@ namespace TTestApp
                             averQ.Dequeue();
                         }
 
-                        Data.RealTimeArray[MainIndex] = _pressureTmp;
-                        Data.DCArray[MainIndex] = (int)averQ.Average();
+                        _data.RealTimeArray[MainIndex] = _pressureTmp;
+                        _data.DCArray[MainIndex] = (int)averQ.Average();
 
                         averViewQ.Enqueue(100 + _pressureTmp - (int)averQ.Average());
                         if (averViewQ.Count > averViewSize)
@@ -137,13 +128,13 @@ namespace TTestApp
                             averViewQ.Dequeue();
                         }
 
-                        Data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
+                        _data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
 
                         _byteNum = 0;
 
                         if (RecordStarted)
                         {
-                            txtFileStream.WriteLine(Data.GetDataString(MainIndex));
+                            txtFileStream.WriteLine(_data.GetDataString(MainIndex));
                         }
                         OnDecomposeLineEvent();
                         LineCounter++;

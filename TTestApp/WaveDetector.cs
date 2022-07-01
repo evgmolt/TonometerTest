@@ -25,14 +25,12 @@ namespace TTestApp
         private int NumOfIntForAver;
         private const int MinNumOfIntForAver = 3;
         private const int MaxNumOfIntForAver = 10;
-        public double[] DiffArr;
         public List<int> FiltredPoints;
 
         public WaveDetector()
         {
             NNPointArr = new Point[NNArrSize];
             NNArray = new int[NNArrSize];
-            DiffArr = new double[ByteDecomposer.DataArrSize];
             FiltredPoints = new List<int>();
         }
 
@@ -82,14 +80,12 @@ namespace TTestApp
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
             if (Ind < DiffShift) return DetectLevel;
-//            double Deriv = DataArr[Ind] - DataArr[Ind - DiffShift];
-            double Deriv = DataArr[Ind];
-            DiffArr[Ind] = Deriv;
+            double CurrentValue = DataArr[Ind];
             if (InsideC < LockInterval) return DetectLevel;
-            if (Deriv > DetectLevel)
+            if (CurrentValue > DetectLevel)
             {
-                MaxD = Math.Max(MaxD, Deriv);
-                if (MaxD > Deriv)
+                MaxD = Math.Max(MaxD, CurrentValue);
+                if (MaxD > CurrentValue)
                 {
                     int tmpNN = 0;
                     NNPointArr[NNPointIndex].X = Ind;
