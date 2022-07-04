@@ -44,6 +44,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labPulse = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.labPort = new System.Windows.Forms.Label();
             this.labCompressionRatio = new System.Windows.Forms.Label();
@@ -61,7 +62,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labPulse = new System.Windows.Forms.Label();
+            this.labMeanPressure = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).BeginInit();
@@ -86,13 +87,12 @@
             this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 219F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1095, 672);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 164F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 504);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel1
@@ -109,18 +109,16 @@
             this.panel1.Controls.Add(this.checkBoxFilter);
             this.panel1.Controls.Add(this.butOpenFile);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 4);
-            this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(158, 410);
+            this.panel1.Size = new System.Drawing.Size(138, 308);
             this.panel1.TabIndex = 0;
             // 
             // butFlow
             // 
-            this.butFlow.Location = new System.Drawing.Point(25, 23);
-            this.butFlow.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butFlow.Location = new System.Drawing.Point(22, 17);
             this.butFlow.Name = "butFlow";
-            this.butFlow.Size = new System.Drawing.Size(97, 31);
+            this.butFlow.Size = new System.Drawing.Size(85, 23);
             this.butFlow.TabIndex = 9;
             this.butFlow.Text = "Stop stream";
             this.butFlow.UseVisualStyleBackColor = true;
@@ -133,8 +131,7 @@
             0,
             0,
             0});
-            this.numUDownMedian.Location = new System.Drawing.Point(25, 248);
-            this.numUDownMedian.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.numUDownMedian.Location = new System.Drawing.Point(22, 186);
             this.numUDownMedian.Maximum = new decimal(new int[] {
             2000,
             0,
@@ -146,7 +143,7 @@
             0,
             0});
             this.numUDownMedian.Name = "numUDownMedian";
-            this.numUDownMedian.Size = new System.Drawing.Size(86, 27);
+            this.numUDownMedian.Size = new System.Drawing.Size(75, 23);
             this.numUDownMedian.TabIndex = 8;
             this.numUDownMedian.Value = new decimal(new int[] {
             5,
@@ -158,18 +155,18 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 224);
+            this.label3.Location = new System.Drawing.Point(22, 168);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(59, 20);
+            this.label3.Size = new System.Drawing.Size(47, 15);
             this.label3.TabIndex = 7;
             this.label3.Text = "Median";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 149);
+            this.label2.Location = new System.Drawing.Point(22, 112);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(61, 20);
+            this.label2.Size = new System.Drawing.Size(49, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "Smooth";
             // 
@@ -180,15 +177,14 @@
             0,
             0,
             0});
-            this.numUDownSmooth.Location = new System.Drawing.Point(25, 173);
-            this.numUDownSmooth.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.numUDownSmooth.Location = new System.Drawing.Point(22, 130);
             this.numUDownSmooth.Maximum = new decimal(new int[] {
             1000,
             0,
             0,
             0});
             this.numUDownSmooth.Name = "numUDownSmooth";
-            this.numUDownSmooth.Size = new System.Drawing.Size(86, 27);
+            this.numUDownSmooth.Size = new System.Drawing.Size(75, 23);
             this.numUDownSmooth.TabIndex = 5;
             this.numUDownSmooth.Value = new decimal(new int[] {
             10,
@@ -200,19 +196,18 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(25, 295);
+            this.label1.Location = new System.Drawing.Point(22, 221);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 20);
+            this.label1.Size = new System.Drawing.Size(32, 15);
             this.label1.TabIndex = 4;
             this.label1.Text = "View";
             // 
             // radioButtonFit
             // 
             this.radioButtonFit.AutoSize = true;
-            this.radioButtonFit.Location = new System.Drawing.Point(25, 352);
-            this.radioButtonFit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.radioButtonFit.Location = new System.Drawing.Point(22, 264);
             this.radioButtonFit.Name = "radioButtonFit";
-            this.radioButtonFit.Size = new System.Drawing.Size(46, 24);
+            this.radioButtonFit.Size = new System.Drawing.Size(38, 19);
             this.radioButtonFit.TabIndex = 3;
             this.radioButtonFit.TabStop = true;
             this.radioButtonFit.Text = "Fit";
@@ -222,10 +217,9 @@
             // radioButton11
             // 
             this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(25, 319);
-            this.radioButton11.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.radioButton11.Location = new System.Drawing.Point(22, 239);
             this.radioButton11.Name = "radioButton11";
-            this.radioButton11.Size = new System.Drawing.Size(49, 24);
+            this.radioButton11.Size = new System.Drawing.Size(40, 19);
             this.radioButton11.TabIndex = 2;
             this.radioButton11.TabStop = true;
             this.radioButton11.Text = "1:1";
@@ -235,10 +229,9 @@
             // checkBoxFilter
             // 
             this.checkBoxFilter.AutoSize = true;
-            this.checkBoxFilter.Location = new System.Drawing.Point(25, 112);
-            this.checkBoxFilter.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.checkBoxFilter.Location = new System.Drawing.Point(22, 84);
             this.checkBoxFilter.Name = "checkBoxFilter";
-            this.checkBoxFilter.Size = new System.Drawing.Size(64, 24);
+            this.checkBoxFilter.Size = new System.Drawing.Size(52, 19);
             this.checkBoxFilter.TabIndex = 1;
             this.checkBoxFilter.Text = "Filter";
             this.checkBoxFilter.UseVisualStyleBackColor = true;
@@ -246,10 +239,9 @@
             // 
             // butOpenFile
             // 
-            this.butOpenFile.Location = new System.Drawing.Point(25, 73);
-            this.butOpenFile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butOpenFile.Location = new System.Drawing.Point(22, 55);
             this.butOpenFile.Name = "butOpenFile";
-            this.butOpenFile.Size = new System.Drawing.Size(97, 31);
+            this.butOpenFile.Size = new System.Drawing.Size(85, 23);
             this.butOpenFile.TabIndex = 0;
             this.butOpenFile.Text = "Open file";
             this.butOpenFile.UseVisualStyleBackColor = true;
@@ -258,73 +250,80 @@
             // panelGraph
             // 
             this.panelGraph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelGraph.Location = new System.Drawing.Point(167, 4);
-            this.panelGraph.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panelGraph.Location = new System.Drawing.Point(147, 3);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(862, 410);
+            this.panelGraph.Size = new System.Drawing.Size(756, 308);
             this.panelGraph.TabIndex = 1;
             // 
             // trackBarAmp
             // 
             this.trackBarAmp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBarAmp.Location = new System.Drawing.Point(1035, 4);
-            this.trackBarAmp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.trackBarAmp.Location = new System.Drawing.Point(909, 3);
             this.trackBarAmp.Minimum = -10;
             this.trackBarAmp.Name = "trackBarAmp";
             this.trackBarAmp.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBarAmp.Size = new System.Drawing.Size(57, 410);
+            this.trackBarAmp.Size = new System.Drawing.Size(46, 308);
             this.trackBarAmp.TabIndex = 4;
             this.trackBarAmp.ValueChanged += new System.EventHandler(this.trackBarAmp_ValueChanged);
             // 
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labMeanPressure);
             this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.label4);
             this.panelBottom.Controls.Add(this.labPort);
             this.panelBottom.Controls.Add(this.labCompressionRatio);
             this.panelBottom.Controls.Add(this.labelXY);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(167, 457);
-            this.panelBottom.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panelBottom.Location = new System.Drawing.Point(147, 343);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(862, 211);
+            this.panelBottom.Size = new System.Drawing.Size(756, 158);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labPulse
+            // 
+            this.labPulse.AutoSize = true;
+            this.labPulse.Location = new System.Drawing.Point(387, 30);
+            this.labPulse.Name = "labPulse";
+            this.labPulse.Size = new System.Drawing.Size(68, 15);
+            this.labPulse.TabIndex = 6;
+            this.labPulse.Text = "Heart rate : ";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(215, 28);
+            this.label4.Location = new System.Drawing.Point(188, 21);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(90, 37);
+            this.label4.Size = new System.Drawing.Size(71, 30);
             this.label4.TabIndex = 5;
             this.label4.Text = "label4";
             // 
             // labPort
             // 
             this.labPort.AutoSize = true;
-            this.labPort.Location = new System.Drawing.Point(15, 115);
+            this.labPort.Location = new System.Drawing.Point(13, 86);
             this.labPort.Name = "labPort";
-            this.labPort.Size = new System.Drawing.Size(46, 20);
+            this.labPort.Size = new System.Drawing.Size(38, 15);
             this.labPort.TabIndex = 4;
             this.labPort.Text = "Port : ";
             // 
             // labCompressionRatio
             // 
             this.labCompressionRatio.AutoSize = true;
-            this.labCompressionRatio.Location = new System.Drawing.Point(15, 33);
+            this.labCompressionRatio.Location = new System.Drawing.Point(13, 25);
             this.labCompressionRatio.Name = "labCompressionRatio";
-            this.labCompressionRatio.Size = new System.Drawing.Size(114, 20);
+            this.labCompressionRatio.Size = new System.Drawing.Size(92, 15);
             this.labCompressionRatio.TabIndex = 3;
             this.labCompressionRatio.Text = "Compression : 1";
             // 
             // labelXY
             // 
             this.labelXY.AutoSize = true;
-            this.labelXY.Location = new System.Drawing.Point(15, 13);
+            this.labelXY.Location = new System.Drawing.Point(13, 10);
             this.labelXY.Name = "labelXY";
-            this.labelXY.Size = new System.Drawing.Size(72, 20);
+            this.labelXY.Size = new System.Drawing.Size(57, 15);
             this.labelXY.TabIndex = 2;
             this.labelXY.Text = "X : 0  Y : 0";
             // 
@@ -333,10 +332,9 @@
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.hScrollBar1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(167, 422);
-            this.panel2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panel2.Location = new System.Drawing.Point(147, 317);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(862, 27);
+            this.panel2.Size = new System.Drawing.Size(756, 20);
             this.panel2.TabIndex = 5;
             // 
             // hScrollBar1
@@ -344,7 +342,7 @@
             this.hScrollBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hScrollBar1.Location = new System.Drawing.Point(0, 0);
             this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(860, 25);
+            this.hScrollBar1.Size = new System.Drawing.Size(754, 18);
             this.hScrollBar1.TabIndex = 0;
             this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
@@ -357,28 +355,25 @@
             this.panel3.Controls.Add(this.butStopRecord);
             this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 457);
-            this.panel3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panel3.Location = new System.Drawing.Point(3, 343);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(158, 211);
+            this.panel3.Size = new System.Drawing.Size(138, 158);
             this.panel3.TabIndex = 6;
             // 
             // progressBarRecord
             // 
-            this.progressBarRecord.Location = new System.Drawing.Point(25, 92);
-            this.progressBarRecord.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.progressBarRecord.Location = new System.Drawing.Point(22, 69);
             this.progressBarRecord.Name = "progressBarRecord";
-            this.progressBarRecord.Size = new System.Drawing.Size(97, 31);
+            this.progressBarRecord.Size = new System.Drawing.Size(85, 23);
             this.progressBarRecord.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBarRecord.TabIndex = 4;
             this.progressBarRecord.Visible = false;
             // 
             // butSaveFile
             // 
-            this.butSaveFile.Location = new System.Drawing.Point(25, 151);
-            this.butSaveFile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butSaveFile.Location = new System.Drawing.Point(22, 113);
             this.butSaveFile.Name = "butSaveFile";
-            this.butSaveFile.Size = new System.Drawing.Size(97, 31);
+            this.butSaveFile.Size = new System.Drawing.Size(85, 23);
             this.butSaveFile.TabIndex = 3;
             this.butSaveFile.Text = "Save file";
             this.butSaveFile.UseVisualStyleBackColor = true;
@@ -387,18 +382,17 @@
             // labRecordSize
             // 
             this.labRecordSize.AutoSize = true;
-            this.labRecordSize.Location = new System.Drawing.Point(27, 127);
+            this.labRecordSize.Location = new System.Drawing.Point(24, 95);
             this.labRecordSize.Name = "labRecordSize";
-            this.labRecordSize.Size = new System.Drawing.Size(92, 20);
+            this.labRecordSize.Size = new System.Drawing.Size(72, 15);
             this.labRecordSize.TabIndex = 2;
             this.labRecordSize.Text = "Record size :";
             // 
             // butStopRecord
             // 
-            this.butStopRecord.Location = new System.Drawing.Point(25, 47);
-            this.butStopRecord.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butStopRecord.Location = new System.Drawing.Point(22, 35);
             this.butStopRecord.Name = "butStopRecord";
-            this.butStopRecord.Size = new System.Drawing.Size(97, 31);
+            this.butStopRecord.Size = new System.Drawing.Size(85, 23);
             this.butStopRecord.TabIndex = 1;
             this.butStopRecord.Text = "Stop record";
             this.butStopRecord.UseVisualStyleBackColor = true;
@@ -406,10 +400,9 @@
             // 
             // butStartRecord
             // 
-            this.butStartRecord.Location = new System.Drawing.Point(25, 8);
-            this.butStartRecord.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butStartRecord.Location = new System.Drawing.Point(22, 6);
             this.butStartRecord.Name = "butStartRecord";
-            this.butStartRecord.Size = new System.Drawing.Size(97, 31);
+            this.butStartRecord.Size = new System.Drawing.Size(85, 23);
             this.butStartRecord.TabIndex = 0;
             this.butStartRecord.Text = "Start record";
             this.butStartRecord.UseVisualStyleBackColor = true;
@@ -443,22 +436,22 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // labPulse
+            // labMeanPressure
             // 
-            this.labPulse.AutoSize = true;
-            this.labPulse.Location = new System.Drawing.Point(442, 40);
-            this.labPulse.Name = "labPulse";
-            this.labPulse.Size = new System.Drawing.Size(87, 20);
-            this.labPulse.TabIndex = 6;
-            this.labPulse.Text = "Heart rate : ";
+            this.labMeanPressure.AutoSize = true;
+            this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labMeanPressure.Location = new System.Drawing.Point(188, 62);
+            this.labMeanPressure.Name = "labMeanPressure";
+            this.labMeanPressure.Size = new System.Drawing.Size(79, 30);
+            this.labMeanPressure.TabIndex = 7;
+            this.labMeanPressure.Text = "Mean: ";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1095, 672);
+            this.ClientSize = new System.Drawing.Size(958, 504);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -514,5 +507,6 @@
         private SaveFileDialog saveFileDialog1;
         private ProgressBar progressBarRecord;
         private Label labPulse;
+        private Label labMeanPressure;
     }
 }

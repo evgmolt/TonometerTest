@@ -161,8 +161,8 @@
 
         private void PrepareData()
         {
-            int StartDetectValue = 280;
-            int StopDetectValue = 380;
+            int StartDetectValue = 150;
+            int StopDetectValue = 420;
             int DCArrayWindow = 100;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
             DataA.CountViewArrays(bufPanel, Cfg);
@@ -191,21 +191,21 @@
                     break;
                 }
             }
+            StartIndex = 0;
             for (int i = StartIndex; i < StopIndex; i++)
             {
                 DataA.DebugArray[i] = WD.Detect(0, DataA.CorrelationArray, i);
             }
             var NNArray = new int[WD.FiltredPoints.Count];
-//            var MaxArray = new int[WD.FiltredPoints.Count];
             for (int i = 0; i < WD.FiltredPoints.Count(); i++)
             {
                 NNArray[i] = WD.FiltredPoints[i];
-//                MaxArray[i] = WD.FiltredPoints[i] + 50;
             }
+            var NNArrSeq = DataProcessing.GetSequentialArray(NNArray);
             labPulse.Text = WD.GetCurrentPulse().ToString();
             VisirList.Clear();
-            VisirList.Add(NNArray);
-//            VisirList.Add(MaxArray);
+            VisirList.Add(NNArrSeq);
+            labMeanPressure.Text = ValueToMmhG(DataA.DCArray[WD.MeanPressureInd]).ToString();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)

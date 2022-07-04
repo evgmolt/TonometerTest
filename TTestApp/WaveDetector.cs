@@ -15,7 +15,7 @@ namespace TTestApp
         private const int LockInterval = 60;
         private int NoWaveInterval1 = 600;
         private int NoWaveInterval2 = 800;
-        private double MaxD;
+        public double MaxD;
         private const int NNArrSize = 10000;
         private Point[] NNPointArr;
         private int NNPointIndex;
@@ -26,6 +26,7 @@ namespace TTestApp
         private const int MinNumOfIntForAver = 3;
         private const int MaxNumOfIntForAver = 10;
         public List<int> FiltredPoints;
+        public int MeanPressureInd = 0;
 
         public WaveDetector()
         {
@@ -39,6 +40,7 @@ namespace TTestApp
             NNPointIndex = 0;
             NNIndex = 0;
             FiltredPoints.Clear();
+            MeanPressureInd = 0;
         }
 
         public int GetCurrentPulse()
@@ -84,7 +86,11 @@ namespace TTestApp
             if (InsideC < LockInterval) return DetectLevel;
             if (CurrentValue > DetectLevel)
             {
-                MaxD = Math.Max(MaxD, CurrentValue);
+                if (CurrentValue > MaxD)
+                {
+                    MaxD = CurrentValue;
+                    MeanPressureInd = Ind;
+                }
                 if (MaxD > CurrentValue)
                 {
                     int tmpNN = 0;

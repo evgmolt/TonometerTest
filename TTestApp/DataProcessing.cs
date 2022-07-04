@@ -17,6 +17,36 @@ namespace TTestApp
             File.WriteAllLines(fname, stringsArr);
         }
 
+        private static bool IsSequential(int[] inputArray, int num, int index)
+        {
+            for (int i = 1; i < num; i++)
+            {
+                if (i > inputArray.Length)
+                {
+                    return false;
+                }
+                if (inputArray[i + index] - inputArray[i + index - 1] > inputArray[i + index - 1] / 5)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+        public static int[] GetSequentialArray(int[] inputArray)
+        {
+            int numOfSeq = 10;
+            int startSeqIndex = 0;
+            for (int i = 0; i < inputArray.Length; i++)
+            {
+                if (IsSequential(inputArray, numOfSeq, i))
+                {
+                    startSeqIndex = i;
+                    break;
+                }
+            }    
+            int[] result = inputArray.Skip(startSeqIndex).ToArray();
+            return result;
+        }
         public static double[] GetCompressedArray(Control panel, double[] inputArray)
         {
             double[] result = new double[panel.Width];
