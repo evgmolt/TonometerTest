@@ -19,6 +19,7 @@
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
+        int MaxPress = 0;
 
         public event Action<Message> WindowsMessage;
 
@@ -305,6 +306,10 @@
             {
                 return;
             }
+            if (!ViewMode)
+            {
+                return;
+            }
             DataA.CountViewArrays(bufPanel, Cfg);
             bufPanel.Refresh();
         }
@@ -351,9 +356,10 @@
 
         private void NewLineReceived(object? sender, EventArgs e)
         {
+
             if (decomposer.MainIndex > 0)
             {
-                label4.Text = DataA.DCArray[decomposer.MainIndex - 1].ToString();
+                label4.Text = ValueToMmhG(DataA.DCArray[decomposer.MainIndex - 1]).ToString();
             }
             if (decomposer.RecordStarted)
             {
@@ -361,6 +367,13 @@
             }
         }
 
+        private int ValueToMmhG(double value)
+        {
+            double zero = 100;
+            double pressure = 172;
+            double val = 459;
+            return (int)((value - zero) * pressure / (val - zero));
+        }
         private void timerStatus_Tick(object sender, EventArgs e)
         {
             butStartRecord.Enabled = !ViewMode && !decomposer.RecordStarted!;
