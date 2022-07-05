@@ -201,15 +201,15 @@
             {
                 NNArray[i] = WD.FiltredPoints[i];
             }
-            var NNArrSeq1 = DataProcessing.GetSequentialArray(NNArray);
-            var NNArrSeq = DataProcessing.ExpandArray(NNArrSeq1, DataA.CorrelationArray, 5);
+            var NNArrSeq0 = DataProcessing.GetSequentialArray(NNArray);
+            labPulse.Text = DataProcessing.GetPulseFromPoints(NNArrSeq0).ToString();
+            var NNArrSeq = DataProcessing.ExpandArray(NNArrSeq0, DataA.CorrelationArray, 5);
             int X1 = NNArrSeq[0];
             int X2 = NNArrSeq[^1];
             double V1 = DataA.RealTimeArray[X1];
             double V2 = DataA.RealTimeArray[X2];
             int P1 = ValueToMmhG(V1);
             int P2 = ValueToMmhG(V2);
-            labPulse.Text = WD.GetCurrentPulse().ToString();
             VisirList.Clear();
             //for (int i = 0; i < NNArrSeq.Length; i++)
             //{

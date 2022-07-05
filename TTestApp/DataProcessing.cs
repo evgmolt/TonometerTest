@@ -16,6 +16,19 @@ namespace TTestApp
             var stringsArr = array.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
+
+        public static int GetPulseFromPoints(int[] points)
+        {
+            double mean = 0;
+            for (int i = 1; i < points.Length; i++)
+            {
+                mean += points[i] - points[i - 1];
+            }
+            mean /= points.Length - 1;
+            mean /= ByteDecomposer.SamplingFrequency;
+            mean = 60 / mean;
+            return (int)mean;
+        }
         public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)
         {
             int[] resultArray = new int[inputArray.Length + expandBy * 2];
