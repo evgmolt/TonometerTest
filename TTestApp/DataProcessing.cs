@@ -16,8 +16,19 @@ namespace TTestApp
             var stringsArr = array.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
+        public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)
+        {
+            int meanInterval = 0;
+            for (int i = 1; i < inputArray.Length; i++)
+            {
+                meanInterval += inputArray[i] - inputArray[i - 1];
+            }
 
-        private static bool IsSequential(int[] inputArray, int num, int index)
+            meanInterval /= inputArray.Length - 1;
+            return new int[1];
+        }
+
+        private static bool IsSequential(int[] inputArray, int mean, int num, int index)
         {
             for (int i = 1; i < num; i++)
             {
@@ -25,7 +36,8 @@ namespace TTestApp
                 {
                     return false;
                 }
-                if (inputArray[i + index] - inputArray[i + index - 1] > inputArray[i + index - 1] / 5)
+                int interval = inputArray[i + index] - inputArray[i + index - 1];
+                if (Math.Abs(interval - mean) > mean / 5)
                 {
                     return false;
                 }
@@ -37,11 +49,18 @@ namespace TTestApp
         //не более чем на 20%. Возвращает исходный массив начиная с найденного индекса.
         public static int[] GetSequentialArray(int[] inputArray)
         {
+            int[] intervalsArray = new int[inputArray.Length - 1];
+            for (int i = 1; i < intervalsArray.Length; i++)
+            {
+                intervalsArray[i] = inputArray[i] - inputArray[i - 1];
+            }
+            Array.Sort(intervalsArray);
+            int medianValue = intervalsArray[intervalsArray.Length / 2];
             int numOfSeq = 10;
             int startSeqIndex = 0;
             for (int i = 0; i < inputArray.Length; i++)
             {
-                if (IsSequential(inputArray, numOfSeq, i))
+                if (IsSequential(inputArray, medianValue, numOfSeq, i))
                 {
                     startSeqIndex = i;
                     break;

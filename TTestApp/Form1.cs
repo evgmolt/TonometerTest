@@ -202,6 +202,7 @@
                 NNArray[i] = WD.FiltredPoints[i];
             }
             var NNArrSeq = DataProcessing.GetSequentialArray(NNArray);
+//            NNArrSeq = DataProcessing.ExpandArray(NNArrSeq1, DataA.CorrelationArray, 3);
             int X1 = NNArrSeq[0];
             int X2 = NNArrSeq[^1];
             double V1 = DataA.RealTimeArray[X1];

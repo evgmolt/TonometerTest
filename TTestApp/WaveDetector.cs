@@ -10,7 +10,7 @@ namespace TTestApp
     {
         private int InsideC;
         public double DetectLevel = 7;
-        private const double MinDetectLevel = 3;
+        private const double MinDetectLevel = 2;
         private const int DiffShift = 13;
         private const int LockInterval = 60;
         private int NoWaveInterval1 = 600;
