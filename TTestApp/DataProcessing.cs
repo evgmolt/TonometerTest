@@ -32,6 +32,9 @@ namespace TTestApp
             }
             return true;
         }
+
+        //Ищет индекс, после которого идут numOfSeq элементов, каждый из которых отличается от предыдущего 
+        //не более чем на 20%. Возвращает исходный массив начиная с найденного индекса.
         public static int[] GetSequentialArray(int[] inputArray)
         {
             int numOfSeq = 10;
@@ -47,6 +50,7 @@ namespace TTestApp
             int[] result = inputArray.Skip(startSeqIndex).ToArray();
             return result;
         }
+
         public static double[] GetCompressedArray(Control panel, double[] inputArray)
         {
             double[] result = new double[panel.Width];

@@ -202,10 +202,54 @@
                 NNArray[i] = WD.FiltredPoints[i];
             }
             var NNArrSeq = DataProcessing.GetSequentialArray(NNArray);
+            int X1 = NNArrSeq[0];
+            int X2 = NNArrSeq[^1];
+            double V1 = DataA.RealTimeArray[X1];
+            double V2 = DataA.RealTimeArray[X2];
+            int P1 = ValueToMmhG(V1);
+            int P2 = ValueToMmhG(V2);
             labPulse.Text = WD.GetCurrentPulse().ToString();
             VisirList.Clear();
+            //for (int i = 0; i < NNArrSeq.Length; i++)
+            //{
+            //    NNArrSeq[i] +=  50;
+            //}
             VisirList.Add(NNArrSeq);
-            labMeanPressure.Text = ValueToMmhG(DataA.DCArray[WD.MeanPressureInd]).ToString();
+            double max = 0;
+            int XMax = 0;
+            int XMaxIndex = 0;
+            for (int i = 0; i < NNArrSeq.Length; i++)
+            {
+                if (DataA.PressureViewArray[NNArrSeq[i] + 50] > max)
+                {
+                    max = DataA.PressureViewArray[NNArrSeq[i] + 50];
+                    XMax = NNArrSeq[i] + 50;
+                    XMaxIndex = i;
+                }
+            }
+            double CoeffLeft = 0.4;
+            double CoeffRight = 0.6;
+            V1 = max * CoeffLeft;
+            V2 = max * CoeffRight;
+            for (int i = XMaxIndex; i > 0; i--)
+            {
+                if (DataA.PressureViewArray[NNArrSeq[i] + 50] < V1)
+                {
+                    P1 = (int)DataA.RealTimeArray[NNArrSeq[i] + 50];
+                    break;
+                }
+            }
+            for (int i = XMaxIndex; i < NNArrSeq.Length; i++)
+            {
+                if (DataA.PressureViewArray[NNArrSeq[i] + 50] < V2)
+                {
+                    P2 = (int)DataA.RealTimeArray[NNArrSeq[i] + 50];
+                    break;
+                }
+            }
+            labMeanPressure.Text = "Mean : " + ValueToMmhG(DataA.RealTimeArray[XMax]).ToString();
+            labSys.Text = "Sys : " + ValueToMmhG(P1).ToString();
+            labDia.Text = "Dia : " + ValueToMmhG(P2).ToString();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -239,7 +283,6 @@
             painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();
         }
-
 
         private void UpdateScrollBar(int size)
         {

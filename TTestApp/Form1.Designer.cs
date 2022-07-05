@@ -44,6 +44,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labMeanPressure = new System.Windows.Forms.Label();
             this.labPulse = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.labPort = new System.Windows.Forms.Label();
@@ -62,7 +63,8 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labMeanPressure = new System.Windows.Forms.Label();
+            this.labSys = new System.Windows.Forms.Label();
+            this.labDia = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).BeginInit();
@@ -269,6 +271,8 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labDia);
+            this.panelBottom.Controls.Add(this.labSys);
             this.panelBottom.Controls.Add(this.labMeanPressure);
             this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.label4);
@@ -280,6 +284,16 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(756, 158);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labMeanPressure
+            // 
+            this.labMeanPressure.AutoSize = true;
+            this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labMeanPressure.Location = new System.Drawing.Point(188, 51);
+            this.labMeanPressure.Name = "labMeanPressure";
+            this.labMeanPressure.Size = new System.Drawing.Size(79, 30);
+            this.labMeanPressure.TabIndex = 7;
+            this.labMeanPressure.Text = "Mean: ";
             // 
             // labPulse
             // 
@@ -436,15 +450,25 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // labMeanPressure
+            // labSys
             // 
-            this.labMeanPressure.AutoSize = true;
-            this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labMeanPressure.Location = new System.Drawing.Point(188, 62);
-            this.labMeanPressure.Name = "labMeanPressure";
-            this.labMeanPressure.Size = new System.Drawing.Size(79, 30);
-            this.labMeanPressure.TabIndex = 7;
-            this.labMeanPressure.Text = "Mean: ";
+            this.labSys.AutoSize = true;
+            this.labSys.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labSys.Location = new System.Drawing.Point(212, 80);
+            this.labSys.Name = "labSys";
+            this.labSys.Size = new System.Drawing.Size(55, 30);
+            this.labSys.TabIndex = 8;
+            this.labSys.Text = "Sys: ";
+            // 
+            // labDia
+            // 
+            this.labDia.AutoSize = true;
+            this.labDia.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labDia.Location = new System.Drawing.Point(210, 113);
+            this.labDia.Name = "labDia";
+            this.labDia.Size = new System.Drawing.Size(49, 30);
+            this.labDia.TabIndex = 9;
+            this.labDia.Text = "Dia:";
             // 
             // Form1
             // 
@@ -508,5 +532,7 @@
         private ProgressBar progressBarRecord;
         private Label labPulse;
         private Label labMeanPressure;
+        private Label labDia;
+        private Label labSys;
     }
 }
