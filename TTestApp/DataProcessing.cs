@@ -18,14 +18,49 @@ namespace TTestApp
         }
         public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)
         {
+            int[] resultArray = new int[inputArray.Length + expandBy * 2];
+            int intervalForSearch = 50;
             int meanInterval = 0;
             for (int i = 1; i < inputArray.Length; i++)
             {
                 meanInterval += inputArray[i] - inputArray[i - 1];
             }
-
             meanInterval /= inputArray.Length - 1;
-            return new int[1];
+            
+            int index = inputArray[0];
+            for (int k = 0; k < expandBy; k++)
+            {
+                index -= meanInterval;
+                double max = -1000000;
+                int maxIndex = 0;
+                for (int i = index - intervalForSearch / 2; i < index + intervalForSearch; i++)
+                {
+                    if (CorrArray[i] > max)
+                    {
+                        max = CorrArray[i];
+                        maxIndex = i;
+                    }
+                }
+                resultArray[expandBy - 1 - k] = maxIndex;
+            }
+            Array.Copy(inputArray, 0, resultArray, expandBy, inputArray.Length);
+            index = inputArray[inputArray.Length - 1];
+            for (int k = 0; k < expandBy; k++)
+            {
+                index += meanInterval;
+                double max = -1000000;
+                int maxIndex = 0;
+                for (int i = index + intervalForSearch / 2; i < index + intervalForSearch; i++)
+                {
+                    if (CorrArray[i] > max)
+                    {
+                        max = CorrArray[i];
+                        maxIndex = i;
+                    }
+                }
+                resultArray[expandBy + inputArray.Length + k] = maxIndex;
+            }
+            return resultArray;
         }
 
         private static bool IsSequential(int[] inputArray, int mean, int num, int index)
@@ -46,7 +81,7 @@ namespace TTestApp
         }
 
         //Ищет индекс, после которого идут numOfSeq элементов, каждый из которых отличается от предыдущего 
-        //не более чем на 20%. Возвращает исходный массив начиная с найденного индекса.
+        //не более чем на 20% от медианного значения. Возвращает исходный массив начиная с найденного индекса.
         public static int[] GetSequentialArray(int[] inputArray)
         {
             int[] intervalsArray = new int[inputArray.Length - 1];

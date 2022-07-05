@@ -201,8 +201,8 @@
             {
                 NNArray[i] = WD.FiltredPoints[i];
             }
-            var NNArrSeq = DataProcessing.GetSequentialArray(NNArray);
-//            NNArrSeq = DataProcessing.ExpandArray(NNArrSeq1, DataA.CorrelationArray, 3);
+            var NNArrSeq1 = DataProcessing.GetSequentialArray(NNArray);
+            var NNArrSeq = DataProcessing.ExpandArray(NNArrSeq1, DataA.CorrelationArray, 5);
             int X1 = NNArrSeq[0];
             int X2 = NNArrSeq[^1];
             double V1 = DataA.RealTimeArray[X1];
@@ -228,8 +228,9 @@
                     XMaxIndex = i;
                 }
             }
-            double CoeffLeft = 0.4;
-            double CoeffRight = 0.6;
+            int MaxPress = (int)DataA.RealTimeArray[XMax];
+            double CoeffLeft = 0.3;
+            double CoeffRight = 0.83;
             V1 = max * CoeffLeft;
             V2 = max * CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
@@ -248,9 +249,17 @@
                     break;
                 }
             }
-            labMeanPressure.Text = "Mean : " + ValueToMmhG(DataA.RealTimeArray[XMax]).ToString();
-            labSys.Text = "Sys : " + ValueToMmhG(P1).ToString();
-            labDia.Text = "Dia : " + ValueToMmhG(P2).ToString();
+
+            int[] envelopeArray = new int[NNArrSeq.Length];
+            int[] envelopeMmhGArray = new int[NNArrSeq.Length];
+            for (int i = 0; i < NNArrSeq.Length; i++)
+            {
+                envelopeArray[i] = (int)DataA.RealTimeArray[NNArrSeq[i] + 50];
+                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[NNArrSeq[i] + 50]);
+            }
+            labMeanPressure.Text = "Mean : " + ValueToMmhG(MaxPress).ToString();
+            labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
+            labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
