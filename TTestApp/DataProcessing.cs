@@ -19,6 +19,7 @@ namespace TTestApp
 
         public static int GetPulseFromPoints(int[] points)
         {
+            int secondPerMin = 60;
             double mean = 0;
             for (int i = 1; i < points.Length; i++)
             {
@@ -26,7 +27,7 @@ namespace TTestApp
             }
             mean /= points.Length - 1;
             mean /= ByteDecomposer.SamplingFrequency;
-            mean = 60 / mean;
+            mean = secondPerMin / mean;
             return (int)mean;
         }
         public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)
