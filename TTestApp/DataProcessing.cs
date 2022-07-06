@@ -66,6 +66,10 @@ namespace TTestApp
                 int maxIndex = 0;
                 for (int i = index + intervalForSearch / 2; i < index + intervalForSearch; i++)
                 {
+                    if (i > CorrArray.Length - 1)
+                    {
+                        break;
+                    }
                     if (CorrArray[i] > max)
                     {
                         max = CorrArray[i];
@@ -96,8 +100,13 @@ namespace TTestApp
 
         //Ищет индекс, после которого идут numOfSeq элементов, каждый из которых отличается от предыдущего 
         //не более чем на 20% от медианного значения. Возвращает исходный массив начиная с найденного индекса.
-        public static int[] GetSequentialArray(int[] inputArray)
+        public static int[]? GetSequentialArray(int[] inputArray)
         {
+            int numOfSeq = 10;
+            if (inputArray.Length < numOfSeq)
+            {
+                return null;
+            }
             int[] intervalsArray = new int[inputArray.Length - 1];
             for (int i = 1; i < intervalsArray.Length; i++)
             {
@@ -105,7 +114,6 @@ namespace TTestApp
             }
             Array.Sort(intervalsArray);
             int medianValue = intervalsArray[intervalsArray.Length / 2];
-            int numOfSeq = 10;
             int startSeqIndex = 0;
             for (int i = 0; i < inputArray.Length; i++)
             {

@@ -17,6 +17,8 @@ namespace TTestApp
         public double[] CompressedArray;
         public double[] DerivArray;
         public double[] DebugArray;
+        private double[] corrPattern;
+        public int CorrPatternLength;
 
         public DataArrays(int size)
         {
@@ -28,6 +30,14 @@ namespace TTestApp
             CorrelationArray = new double[_size];
             DerivArray = new double[_size];  
             DebugArray = new double[_size];
+
+            string[] lines = File.ReadAllLines("pattern200Hz.txt");
+            corrPattern = new double[lines.Length];
+            CorrPatternLength = lines.Length;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                corrPattern[i] = Convert.ToDouble(lines[i]);
+            }
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -70,14 +80,7 @@ namespace TTestApp
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
 
-            string[] lines = File.ReadAllLines("pattern200Hz.txt");
-//            string[] lines = File.ReadAllLines("pattern100Hz.txt");
-            double[] corr = new double[lines.Length];
-            for (int i = 0; i < lines.Length; i++)
-            {
-                corr[i] = Convert.ToDouble(lines[i]);
-            }
-            DataProcessing.Corr(PressureViewArray, CorrelationArray, corr);
+            DataProcessing.Corr(PressureViewArray, CorrelationArray, corrPattern);
             for (int i = 0; i < CorrelationArray.Length; i++)
             {
                 CorrelationArray[i] = CorrelationArray[i] * 10;

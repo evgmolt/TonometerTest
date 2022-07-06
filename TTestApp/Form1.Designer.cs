@@ -44,9 +44,11 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.labMeanPressure = new System.Windows.Forms.Label();
             this.labPulse = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.labDia = new System.Windows.Forms.Label();
+            this.labSys = new System.Windows.Forms.Label();
+            this.labMeanPressure = new System.Windows.Forms.Label();
+            this.labCurrentPressure = new System.Windows.Forms.Label();
             this.labPort = new System.Windows.Forms.Label();
             this.labCompressionRatio = new System.Windows.Forms.Label();
             this.labelXY = new System.Windows.Forms.Label();
@@ -63,8 +65,6 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labSys = new System.Windows.Forms.Label();
-            this.labDia = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).BeginInit();
@@ -93,7 +93,7 @@
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 164F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 182F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 504);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -113,7 +113,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(138, 308);
+            this.panel1.Size = new System.Drawing.Size(138, 290);
             this.panel1.TabIndex = 0;
             // 
             // butFlow
@@ -254,7 +254,7 @@
             this.panelGraph.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGraph.Location = new System.Drawing.Point(147, 3);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(756, 308);
+            this.panelGraph.Size = new System.Drawing.Size(756, 290);
             this.panelGraph.TabIndex = 1;
             // 
             // trackBarAmp
@@ -264,55 +264,77 @@
             this.trackBarAmp.Minimum = -10;
             this.trackBarAmp.Name = "trackBarAmp";
             this.trackBarAmp.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBarAmp.Size = new System.Drawing.Size(46, 308);
+            this.trackBarAmp.Size = new System.Drawing.Size(46, 290);
             this.trackBarAmp.TabIndex = 4;
             this.trackBarAmp.ValueChanged += new System.EventHandler(this.trackBarAmp_ValueChanged);
             // 
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.labDia);
             this.panelBottom.Controls.Add(this.labSys);
             this.panelBottom.Controls.Add(this.labMeanPressure);
-            this.panelBottom.Controls.Add(this.labPulse);
-            this.panelBottom.Controls.Add(this.label4);
+            this.panelBottom.Controls.Add(this.labCurrentPressure);
             this.panelBottom.Controls.Add(this.labPort);
             this.panelBottom.Controls.Add(this.labCompressionRatio);
             this.panelBottom.Controls.Add(this.labelXY);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(147, 343);
+            this.panelBottom.Location = new System.Drawing.Point(147, 325);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(756, 158);
+            this.panelBottom.Size = new System.Drawing.Size(756, 176);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labPulse
+            // 
+            this.labPulse.AutoSize = true;
+            this.labPulse.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labPulse.Location = new System.Drawing.Point(194, 125);
+            this.labPulse.Name = "labPulse";
+            this.labPulse.Size = new System.Drawing.Size(74, 30);
+            this.labPulse.TabIndex = 10;
+            this.labPulse.Text = "Pulse: ";
+            // 
+            // labDia
+            // 
+            this.labDia.AutoSize = true;
+            this.labDia.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labDia.Location = new System.Drawing.Point(213, 95);
+            this.labDia.Name = "labDia";
+            this.labDia.Size = new System.Drawing.Size(49, 30);
+            this.labDia.TabIndex = 9;
+            this.labDia.Text = "Dia:";
+            // 
+            // labSys
+            // 
+            this.labSys.AutoSize = true;
+            this.labSys.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labSys.Location = new System.Drawing.Point(213, 65);
+            this.labSys.Name = "labSys";
+            this.labSys.Size = new System.Drawing.Size(55, 30);
+            this.labSys.TabIndex = 8;
+            this.labSys.Text = "Sys: ";
             // 
             // labMeanPressure
             // 
             this.labMeanPressure.AutoSize = true;
             this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labMeanPressure.Location = new System.Drawing.Point(188, 51);
+            this.labMeanPressure.Location = new System.Drawing.Point(189, 36);
             this.labMeanPressure.Name = "labMeanPressure";
             this.labMeanPressure.Size = new System.Drawing.Size(79, 30);
             this.labMeanPressure.TabIndex = 7;
             this.labMeanPressure.Text = "Mean: ";
             // 
-            // labPulse
+            // labCurrentPressure
             // 
-            this.labPulse.AutoSize = true;
-            this.labPulse.Location = new System.Drawing.Point(387, 30);
-            this.labPulse.Name = "labPulse";
-            this.labPulse.Size = new System.Drawing.Size(68, 15);
-            this.labPulse.TabIndex = 6;
-            this.labPulse.Text = "Heart rate : ";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(188, 21);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(71, 30);
-            this.label4.TabIndex = 5;
-            this.label4.Text = "label4";
+            this.labCurrentPressure.AutoSize = true;
+            this.labCurrentPressure.CausesValidation = false;
+            this.labCurrentPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labCurrentPressure.Location = new System.Drawing.Point(171, 6);
+            this.labCurrentPressure.Name = "labCurrentPressure";
+            this.labCurrentPressure.Size = new System.Drawing.Size(97, 30);
+            this.labCurrentPressure.TabIndex = 5;
+            this.labCurrentPressure.Text = "Current: ";
             // 
             // labPort
             // 
@@ -346,7 +368,7 @@
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.hScrollBar1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(147, 317);
+            this.panel2.Location = new System.Drawing.Point(147, 299);
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(756, 20);
             this.panel2.TabIndex = 5;
@@ -369,9 +391,9 @@
             this.panel3.Controls.Add(this.butStopRecord);
             this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 343);
+            this.panel3.Location = new System.Drawing.Point(3, 325);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(138, 158);
+            this.panel3.Size = new System.Drawing.Size(138, 176);
             this.panel3.TabIndex = 6;
             // 
             // progressBarRecord
@@ -450,26 +472,6 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // labSys
-            // 
-            this.labSys.AutoSize = true;
-            this.labSys.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labSys.Location = new System.Drawing.Point(212, 80);
-            this.labSys.Name = "labSys";
-            this.labSys.Size = new System.Drawing.Size(55, 30);
-            this.labSys.TabIndex = 8;
-            this.labSys.Text = "Sys: ";
-            // 
-            // labDia
-            // 
-            this.labDia.AutoSize = true;
-            this.labDia.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labDia.Location = new System.Drawing.Point(210, 113);
-            this.labDia.Name = "labDia";
-            this.labDia.Size = new System.Drawing.Size(49, 30);
-            this.labDia.TabIndex = 9;
-            this.labDia.Text = "Dia:";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -524,15 +526,15 @@
         private Label labPort;
         private System.Windows.Forms.Timer timerStatus;
         private System.Windows.Forms.Timer timerPaint;
-        private Label label4;
+        private Label labCurrentPressure;
         private Button butFlow;
         private Label labRecordSize;
         private Button butSaveFile;
         private SaveFileDialog saveFileDialog1;
         private ProgressBar progressBarRecord;
-        private Label labPulse;
         private Label labMeanPressure;
         private Label labDia;
         private Label labSys;
+        private Label labPulse;
     }
 }
