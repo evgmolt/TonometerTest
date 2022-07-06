@@ -8,7 +8,7 @@ namespace TTestApp
 {
     internal class DataArrays
     {
-        private readonly int _size;
+        public int Size;
         public double[] RealTimeArray;
         public double[] DCArray;
         public double[] PressureArray;
@@ -22,14 +22,14 @@ namespace TTestApp
 
         public DataArrays(int size)
         {
-            _size = size;
-            RealTimeArray = new double[_size];
-            DCArray = new double[_size];
-            PressureArray = new double[_size];
-            PressureViewArray = new double[_size];
-            CorrelationArray = new double[_size];
-            DerivArray = new double[_size];  
-            DebugArray = new double[_size];
+            Size = size;
+            RealTimeArray = new double[Size];
+            DCArray = new double[Size];
+            PressureArray = new double[Size];
+            PressureViewArray = new double[Size];
+            CorrelationArray = new double[Size];
+            DerivArray = new double[Size];  
+            DebugArray = new double[Size];
 
             string[] lines = File.ReadAllLines("pattern200Hz.txt");
             corrPattern = new double[lines.Length];
@@ -64,7 +64,7 @@ namespace TTestApp
             {
                 PressureViewArray[i] = Filter.Median(6, RealTimeArray, i);
             }
-            double[] DetrendArray = new double[_size];
+            double[] DetrendArray = new double[Size];
             double max = DCArray.Max<double>();
             int maxInd = DCArray.ToList().IndexOf(max);
             double startVal = DCArray[0];

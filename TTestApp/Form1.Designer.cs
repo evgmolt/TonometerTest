@@ -289,52 +289,52 @@
             // 
             this.labPulse.AutoSize = true;
             this.labPulse.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labPulse.Location = new System.Drawing.Point(194, 125);
+            this.labPulse.Location = new System.Drawing.Point(189, 125);
             this.labPulse.Name = "labPulse";
-            this.labPulse.Size = new System.Drawing.Size(74, 30);
+            this.labPulse.Size = new System.Drawing.Size(80, 30);
             this.labPulse.TabIndex = 10;
-            this.labPulse.Text = "Pulse: ";
+            this.labPulse.Text = "Pulse : ";
             // 
             // labDia
             // 
             this.labDia.AutoSize = true;
             this.labDia.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labDia.Location = new System.Drawing.Point(213, 95);
+            this.labDia.Location = new System.Drawing.Point(207, 95);
             this.labDia.Name = "labDia";
-            this.labDia.Size = new System.Drawing.Size(49, 30);
+            this.labDia.Size = new System.Drawing.Size(55, 30);
             this.labDia.TabIndex = 9;
-            this.labDia.Text = "Dia:";
+            this.labDia.Text = "Dia :";
             // 
             // labSys
             // 
             this.labSys.AutoSize = true;
             this.labSys.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labSys.Location = new System.Drawing.Point(213, 65);
+            this.labSys.Location = new System.Drawing.Point(207, 66);
             this.labSys.Name = "labSys";
-            this.labSys.Size = new System.Drawing.Size(55, 30);
+            this.labSys.Size = new System.Drawing.Size(61, 30);
             this.labSys.TabIndex = 8;
-            this.labSys.Text = "Sys: ";
+            this.labSys.Text = "Sys : ";
             // 
             // labMeanPressure
             // 
             this.labMeanPressure.AutoSize = true;
             this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labMeanPressure.Location = new System.Drawing.Point(189, 36);
+            this.labMeanPressure.Location = new System.Drawing.Point(183, 36);
             this.labMeanPressure.Name = "labMeanPressure";
-            this.labMeanPressure.Size = new System.Drawing.Size(79, 30);
+            this.labMeanPressure.Size = new System.Drawing.Size(85, 30);
             this.labMeanPressure.TabIndex = 7;
-            this.labMeanPressure.Text = "Mean: ";
+            this.labMeanPressure.Text = "Mean : ";
             // 
             // labCurrentPressure
             // 
             this.labCurrentPressure.AutoSize = true;
             this.labCurrentPressure.CausesValidation = false;
             this.labCurrentPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labCurrentPressure.Location = new System.Drawing.Point(171, 6);
+            this.labCurrentPressure.Location = new System.Drawing.Point(166, 6);
             this.labCurrentPressure.Name = "labCurrentPressure";
-            this.labCurrentPressure.Size = new System.Drawing.Size(97, 30);
+            this.labCurrentPressure.Size = new System.Drawing.Size(103, 30);
             this.labCurrentPressure.TabIndex = 5;
-            this.labCurrentPressure.Text = "Current: ";
+            this.labCurrentPressure.Text = "Current : ";
             // 
             // labPort
             // 

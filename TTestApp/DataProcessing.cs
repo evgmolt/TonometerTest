@@ -45,6 +45,10 @@ namespace TTestApp
             for (int k = 0; k < expandBy; k++)
             {
                 index -= meanInterval;
+                if (index < 0)
+                {
+                    break;
+                }
                 double max = -1000000;
                 int maxIndex = 0;
                 for (int i = index - intervalForSearch / 2; i < index + intervalForSearch; i++)
@@ -85,7 +89,7 @@ namespace TTestApp
         {
             for (int i = 1; i < num; i++)
             {
-                if (i > inputArray.Length)
+                if (i + index >= inputArray.Length)
                 {
                     return false;
                 }
@@ -102,7 +106,7 @@ namespace TTestApp
         //не более чем на 20% от медианного значения. Возвращает исходный массив начиная с найденного индекса.
         public static int[]? GetSequentialArray(int[] inputArray)
         {
-            int numOfSeq = 10;
+            int numOfSeq = 7;
             if (inputArray.Length < numOfSeq)
             {
                 return null;

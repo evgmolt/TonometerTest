@@ -18,7 +18,6 @@
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
-        int MaxPress = 0;
 
         public event Action<Message> WindowsMessage;
 
@@ -176,7 +175,7 @@
             //    if (StartIndex == 0)
             //    {
             //        if (DataA.DCArray[i] > StartDetectValue)
-            //        {
+            //        {puls
             //            StartIndex = i;
             //        }
             //    }
@@ -199,8 +198,17 @@
             {
                 return;
             }
-            labPulse.Text = "Pulse: " + DataProcessing.GetPulseFromPoints(NNArrSeq0).ToString();
-            var NNArrSeq = DataProcessing.ExpandArray(NNArrSeq0, DataA.CorrelationArray, ExpandArrayBy);
+            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromPoints(NNArrSeq0).ToString();
+            int[]? NNArrSeq;
+            try
+            {
+                NNArrSeq = DataProcessing.ExpandArray(NNArrSeq0, DataA.CorrelationArray, ExpandArrayBy);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Error");
+                return;
+            }
             int X1 = NNArrSeq[0];
             int X2 = NNArrSeq[^1];
             double V1 = DataA.RealTimeArray[X1];
@@ -210,11 +218,23 @@
             VisirList.Clear();
             VisirList.Add(NNArrSeq);
 
-            double max = 0;
+            double[] NNArrSeqData = new double[NNArrSeq.Length];
+            double[] NNArrSeqPress = new double[NNArrSeq.Length];
+            for (int i = 0; i < NNArrSeq.Length; i++)
+            {
+                NNArrSeqData[i] = DataA.DCArray[NNArrSeq[i]];
+                NNArrSeqPress[i] = ValueToMmhG(NNArrSeqData[i]);
+            }
+
+            double max = -10000000;
             int XMax = 0;
             int XMaxIndex = 0;
             for (int i = 0; i < NNArrSeq.Length; i++)
             {
+                if (NNArrSeq[i] + DataA.CorrPatternLength / 2 > DataA.Size)
+                {
+                    break;
+                }
                 if (DataA.PressureViewArray[NNArrSeq[i] + DataA.CorrPatternLength / 2] > max)
                 {
                     max = DataA.PressureViewArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
@@ -222,8 +242,9 @@
                     XMaxIndex = i;
                 }
             }
-            int MaxPress = (int)DataA.RealTimeArray[XMax];
-            double CoeffLeft = 0.48;
+
+            int MeanPress = (int)DataA.RealTimeArray[XMax];
+            double CoeffLeft = 0.38;
             double CoeffRight = 0.83;
             V1 = max * CoeffLeft;
             V2 = max * CoeffRight;
@@ -266,10 +287,14 @@
             int[] envelopeMmhGArray = new int[NNArrSeq.Length];
             for (int i = 0; i < NNArrSeq.Length; i++)
             {
+                if (NNArrSeq[i] + DataA.CorrPatternLength / 2 > DataA.RealTimeArray.Length - 1)
+                {
+                    break;
+                }
                 envelopeArray[i] = (int)DataA.RealTimeArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
                 envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[NNArrSeq[i] + DataA.CorrPatternLength / 2]);
             }
-            labMeanPressure.Text = "Mean : " + ValueToMmhG(MaxPress).ToString();
+            labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
         }
@@ -422,7 +447,7 @@
 
             if (decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current: " + ValueToMmhG(DataA.DCArray[decomposer.MainIndex - 1]).ToString();
+                labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.DCArray[decomposer.MainIndex - 1]).ToString();
             }
             if (decomposer.RecordStarted)
             {
