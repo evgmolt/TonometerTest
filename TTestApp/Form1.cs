@@ -409,6 +409,10 @@
                 return;
             }
             double x = e.X + ViewShift;
+            if (x > DataA.Size - 1)
+            {
+                return;
+            }
             double sec = x / ByteDecomposer.SamplingFrequency;
             labelXY.Text = String.Format(
                 "X : {0}, Time {1:f2} s, Y : {2}", 
@@ -440,6 +444,10 @@
             decomposer.LineCounter = 0;
             decomposer.RecordStarted = true;
             progressBarRecord.Visible = true;
+            labMeanPressure.Text = "Mean : ";
+            labSys.Text = "Sys : ";
+            labDia.Text = "Dia : ";
+            labPulse.Text = "Pulse : ";
         }
 
         private void NewLineReceived(object? sender, EventArgs e)

@@ -11,9 +11,9 @@ namespace TTestApp
         public static int CompressionRatio;
         public static event EventHandler? CompressionChanged;
 
-        public static void SaveArray(string fname, int[] array)
+        public static void SaveArray(string fname, int[] inputArray)
         {
-            var stringsArr = array.Select(s => s.ToString()).ToArray();
+            var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
 
