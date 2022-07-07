@@ -65,6 +65,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.panelView = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).BeginInit();
@@ -73,6 +74,7 @@
             this.panelBottom.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panelView.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -100,14 +102,12 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.panelView);
             this.panel1.Controls.Add(this.butFlow);
             this.panel1.Controls.Add(this.numUDownMedian);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.numUDownSmooth);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Controls.Add(this.radioButtonFit);
-            this.panel1.Controls.Add(this.radioButton11);
             this.panel1.Controls.Add(this.checkBoxFilter);
             this.panel1.Controls.Add(this.butOpenFile);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -198,7 +198,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(22, 221);
+            this.label1.Location = new System.Drawing.Point(16, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(32, 15);
             this.label1.TabIndex = 4;
@@ -207,7 +207,7 @@
             // radioButtonFit
             // 
             this.radioButtonFit.AutoSize = true;
-            this.radioButtonFit.Location = new System.Drawing.Point(22, 264);
+            this.radioButtonFit.Location = new System.Drawing.Point(16, 47);
             this.radioButtonFit.Name = "radioButtonFit";
             this.radioButtonFit.Size = new System.Drawing.Size(38, 19);
             this.radioButtonFit.TabIndex = 3;
@@ -219,7 +219,7 @@
             // radioButton11
             // 
             this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(22, 239);
+            this.radioButton11.Location = new System.Drawing.Point(16, 22);
             this.radioButton11.Name = "radioButton11";
             this.radioButton11.Size = new System.Drawing.Size(40, 19);
             this.radioButton11.TabIndex = 2;
@@ -472,6 +472,16 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
+            // panelView
+            // 
+            this.panelView.Controls.Add(this.radioButton11);
+            this.panelView.Controls.Add(this.radioButtonFit);
+            this.panelView.Controls.Add(this.label1);
+            this.panelView.Location = new System.Drawing.Point(8, 215);
+            this.panelView.Name = "panelView";
+            this.panelView.Size = new System.Drawing.Size(89, 68);
+            this.panelView.TabIndex = 10;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -494,6 +504,8 @@
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.panelView.ResumeLayout(false);
+            this.panelView.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -536,5 +548,6 @@
         private Label labDia;
         private Label labSys;
         private Label labPulse;
+        private Panel panelView;
     }
 }

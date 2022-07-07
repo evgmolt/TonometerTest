@@ -477,6 +477,7 @@
             butStopRecord.Enabled = decomposer.RecordStarted;
             butSaveFile.Enabled = ViewMode && decomposer.LineCounter != 0;
             butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
+            panelView.Enabled = ViewMode;
 
             if (USBPort == null)
             {
