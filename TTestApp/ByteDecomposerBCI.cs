@@ -114,11 +114,19 @@ namespace TTestApp
                         {
                             _byteNum = 2;
                         }
+                        else
+                        {
+                            _byteNum = 0;
+                        }
                         break;
                     case 2:
                         if (usbport.PortBuf[i] == _marker2)
                         {
                             _byteNum = 3;
+                        }
+                        else
+                        {
+                            _byteNum = 0;
                         }
                         break;
                     case 3:
@@ -126,11 +134,19 @@ namespace TTestApp
                         {
                             _byteNum = 4;
                         }
+                        else
+                        {
+                            _byteNum = 0;
+                        }
                         break;
                     case 4:
                         if (usbport.PortBuf[i] == _marker4)
                         {
                             _byteNum = 5;
+                        }
+                        else
+                        {
+                            _byteNum = 0;
                         }
                         break;
                     case 5:
@@ -151,7 +167,6 @@ namespace TTestApp
                     case 11:
                         _byteNum = 12;
                         break;
-
                     case 12:// pressure1_0
                         _pressureTmp = (int)usbport.PortBuf[i];
                         _byteNum = 13;
