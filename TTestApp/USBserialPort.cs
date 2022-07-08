@@ -149,8 +149,10 @@ namespace TTestApp
 
         private string[] GetPortsNames()
         {
-            const string serialString = "Serial";
-            const string serialString0 = "Serial0";
+            const string ArduinoSerialString = "Serial";
+            const string ArduinoSerialString0 = "Serial0";
+            const string FTDIString = "VCP";
+            bool FTDI = true;
 
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
@@ -162,10 +164,21 @@ namespace TTestApp
             int Ind = 0;
             for (int i = 0; i < portvalues.Count(); i++)
             {
-                if (portvalues[i].IndexOf(serialString) >= 0 && portvalues[i].IndexOf(serialString0) < 0)
+                if (FTDI)
                 {
-                    portNames.Add((string)r_port.GetValue(portvalues[i]));
-                    Ind++;
+                    if (portvalues[i].IndexOf(FTDIString) >= 0)
+                    {
+                        portNames.Add((string)r_port.GetValue(portvalues[i]));
+                        Ind++;
+                    }
+                }
+                else
+                {
+                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0 && portvalues[i].IndexOf(ArduinoSerialString) < 0)
+                    {
+                        portNames.Add((string)r_port.GetValue(portvalues[i]));
+                        Ind++;
+                    }
                 }
             }
             return portNames.ToArray();
