@@ -158,7 +158,10 @@ namespace TTestApp
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
             RegistryKey r_device = r_hard.OpenSubKey("DEVICEMAP");
             RegistryKey r_port = r_device.OpenSubKey("SERIALCOMM");
-            if (r_port == null) return null;
+            if (r_port == null) 
+            {
+                return null;
+            }
             string[] portvalues = r_port.GetValueNames();
             List<string> portNames = new List<string>();
             int Ind = 0;
