@@ -100,7 +100,7 @@
                 {
                     File.Delete(Cfg.DataDir + CurrentFile);
                 }
-                File.Move(Cfg.DataDir + TmpDataFile, Cfg.DataDir + CurrentFile);
+                File.Move(saveFileDialog1.InitialDirectory + TmpDataFile, Cfg.DataDir + CurrentFile);
             }
         }
 
