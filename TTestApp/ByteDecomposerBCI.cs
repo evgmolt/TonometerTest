@@ -10,14 +10,16 @@ namespace TTestApp
 {
     class ByteDecomposerBCI
     {
+        public int Count = 0;
+
         public const int DataArrSize = 0x100000;
-        public const int SamplingFrequency = 200;
-        public const int BytesInBlock = 40;
+        public const int SamplingFrequency = 250;
+        public const int BytesInBlock = 65;
         private const byte _marker0 = 0xAA;
         private const byte _marker1 = 0x55;
         private const byte _marker2 = 0x66;
         private const byte _marker3 = 0x77;
-        private const byte _marker4 = 0xA1;
+        private const byte _marker4 = 0xA3;
 
 
         private DataArrays _data;
@@ -150,39 +152,48 @@ namespace TTestApp
                         }
                         break;
                     case 5:
-                        _byteNum = 6;
+                        _byteNum = 6; //Циклический номер
                         break;
                     case 6:
-                        _byteNum = 7;
+                        _byteNum = 7; //Циклический номер
                         break;
                     case 7:
-                        _byteNum = 8;
+                        _byteNum = 8; //Циклический номер
+                        break;
+                    case 8:
+                        _byteNum = 9; //Циклический номер
                         break;
                     case 9:
-                        _byteNum = 10;
+                        _byteNum = 10; //Таймштамп
                         break;
                     case 10:
-                        _byteNum = 11;
+                        _byteNum = 11; //Таймштамп
                         break;
                     case 11:
-                        _byteNum = 12;
+                        _byteNum = 12; //Таймштамп
                         break;
-                    case 12:// pressure1_0
-                        _pressureTmp = (int)usbport.PortBuf[i];
-                        _byteNum = 13;
+                    case 12:
+                        _byteNum = 13; //Таймштамп
                         break;
-                    case 13:// E1_1
-                        _pressureTmp += 0x100 * (int)usbport.PortBuf[i];
+                    case 13:
+                        _pressureTmp = 0x10000 * (int)usbport.PortBuf[i];
                         _byteNum = 14;
                         break;
-                    case 14:// E1_1
-                        _pressureTmp += 0x10000 * (int)usbport.PortBuf[i];
+                    case 14:
+                        _pressureTmp += 0x100 * (int)usbport.PortBuf[i];
+                        _byteNum = 15;
+                        break;
+                    case 15:// 
+                        _pressureTmp += (int)usbport.PortBuf[i];
                         if ((_pressureTmp & 0x800000) != 0)
                             _pressureTmp -= 0x1000000;
-                        _byteNum = 15;
+                        _byteNum = 16;
 
                         _data.RealTimeArray[MainIndex] = _pressureTmp;
-                        _data.DCArray[MainIndex] = (int)averQ.Average();
+                        if (averQ.Count > 0)
+                        {
+                            _data.DCArray[MainIndex] = (int)averQ.Average();
+                        }
 
                         averQ.Enqueue(_pressureTmp);
                         if (averQ.Count > averSize)
@@ -211,7 +222,7 @@ namespace TTestApp
                         break;
                     default:
                         _byteNum++;
-                        if (_byteNum > BytesInBlock)
+                        if (_byteNum == BytesInBlock - 1)
                         {
                             _byteNum = 0;
                         }

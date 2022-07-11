@@ -4,7 +4,7 @@
     {
         USBserialPort USBPort;
         DataArrays? DataA;
-        ByteDecomposer decomposer;
+        ByteDecomposerBCI decomposer;
         Painter painter;
         WaveDetector WD;
         BufferedPanel bufPanel;
@@ -13,7 +13,7 @@
         string CurrentFile;
         int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
-        int MaxValue = 500;
+        int MaxValue = 3000000;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -47,7 +47,7 @@
             bufPanel.Paint += bufferedPanel_Paint;
             WD = new WaveDetector();
             VisirList = new List<int[]>();
-            USBPort = new USBserialPort(this, 19200);
+            USBPort = new USBserialPort(this, 460800);
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.Connect();
             DataProcessing.CompressionChanged += onCompressionChanged;
@@ -63,7 +63,7 @@
         {
 
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
-            decomposer = new ByteDecomposer(DataA);
+            decomposer = new ByteDecomposerBCI(DataA);
             decomposer.DecomposeLineEvent += NewLineReceived;
             painter = new Painter(bufPanel, decomposer);
         }
@@ -86,17 +86,6 @@
                 }
             }
             base.WndProc(ref m);
-        }
-
-        private void timerRead_Tick(object sender, EventArgs e)
-        {
-            if (USBPort == null) return;
-            if (USBPort.PortHandle == null) return;
-            if (!USBPort.PortHandle.IsOpen) return;
-            if (decomposer != null)
-            {
-                decomposer.Decompos(USBPort, null, textWriter).ToString();
-            }
         }
 
         private void butSaveFile_Click(object sender, EventArgs e)
@@ -455,7 +444,8 @@
 
             if (decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.DCArray[decomposer.MainIndex - 1]).ToString();
+//                labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.RealTimeArray[decomposer.MainIndex - 1]).ToString();
+                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString();
             }
             if (decomposer.RecordStarted)
             {
