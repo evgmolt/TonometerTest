@@ -31,19 +31,22 @@
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.panelView = new System.Windows.Forms.Panel();
+            this.radioButton11 = new System.Windows.Forms.RadioButton();
+            this.radioButtonFit = new System.Windows.Forms.RadioButton();
+            this.label1 = new System.Windows.Forms.Label();
             this.butFlow = new System.Windows.Forms.Button();
             this.numUDownMedian = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.numUDownSmooth = new System.Windows.Forms.NumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.radioButtonFit = new System.Windows.Forms.RadioButton();
-            this.radioButton11 = new System.Windows.Forms.RadioButton();
             this.checkBoxFilter = new System.Windows.Forms.CheckBox();
             this.butOpenFile = new System.Windows.Forms.Button();
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labMaxSize = new System.Windows.Forms.Label();
             this.labPulse = new System.Windows.Forms.Label();
             this.labDia = new System.Windows.Forms.Label();
             this.labSys = new System.Windows.Forms.Label();
@@ -65,23 +68,23 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.panelView = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            this.panelView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownSmooth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).BeginInit();
             this.panelBottom.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
-            this.panelView.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 3;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 15.89404F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 84.10596F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 18.43267F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 81.56733F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panelGraph, 1, 0);
@@ -102,6 +105,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.trackBar1);
             this.panel1.Controls.Add(this.panelView);
             this.panel1.Controls.Add(this.butFlow);
             this.panel1.Controls.Add(this.numUDownMedian);
@@ -113,8 +117,62 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(138, 290);
+            this.panel1.Size = new System.Drawing.Size(161, 290);
             this.panel1.TabIndex = 0;
+            // 
+            // trackBar1
+            // 
+            this.trackBar1.LargeChange = 10000;
+            this.trackBar1.Location = new System.Drawing.Point(111, 17);
+            this.trackBar1.Maximum = 5000000;
+            this.trackBar1.Name = "trackBar1";
+            this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.trackBar1.Size = new System.Drawing.Size(45, 264);
+            this.trackBar1.TabIndex = 11;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
+            // 
+            // panelView
+            // 
+            this.panelView.Controls.Add(this.radioButton11);
+            this.panelView.Controls.Add(this.radioButtonFit);
+            this.panelView.Controls.Add(this.label1);
+            this.panelView.Location = new System.Drawing.Point(8, 215);
+            this.panelView.Name = "panelView";
+            this.panelView.Size = new System.Drawing.Size(89, 68);
+            this.panelView.TabIndex = 10;
+            // 
+            // radioButton11
+            // 
+            this.radioButton11.AutoSize = true;
+            this.radioButton11.Location = new System.Drawing.Point(16, 22);
+            this.radioButton11.Name = "radioButton11";
+            this.radioButton11.Size = new System.Drawing.Size(40, 19);
+            this.radioButton11.TabIndex = 2;
+            this.radioButton11.TabStop = true;
+            this.radioButton11.Text = "1:1";
+            this.radioButton11.UseVisualStyleBackColor = true;
+            this.radioButton11.CheckedChanged += new System.EventHandler(this.radioButton11_CheckedChanged);
+            // 
+            // radioButtonFit
+            // 
+            this.radioButtonFit.AutoSize = true;
+            this.radioButtonFit.Location = new System.Drawing.Point(16, 47);
+            this.radioButtonFit.Name = "radioButtonFit";
+            this.radioButtonFit.Size = new System.Drawing.Size(38, 19);
+            this.radioButtonFit.TabIndex = 3;
+            this.radioButtonFit.TabStop = true;
+            this.radioButtonFit.Text = "Fit";
+            this.radioButtonFit.UseVisualStyleBackColor = true;
+            this.radioButtonFit.CheckedChanged += new System.EventHandler(this.radioButtonFit_CheckedChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(16, 4);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(32, 15);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "View";
             // 
             // butFlow
             // 
@@ -195,39 +253,6 @@
             0});
             this.numUDownSmooth.ValueChanged += new System.EventHandler(this.numUDownSmooth_ValueChanged);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 15);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "View";
-            // 
-            // radioButtonFit
-            // 
-            this.radioButtonFit.AutoSize = true;
-            this.radioButtonFit.Location = new System.Drawing.Point(16, 47);
-            this.radioButtonFit.Name = "radioButtonFit";
-            this.radioButtonFit.Size = new System.Drawing.Size(38, 19);
-            this.radioButtonFit.TabIndex = 3;
-            this.radioButtonFit.TabStop = true;
-            this.radioButtonFit.Text = "Fit";
-            this.radioButtonFit.UseVisualStyleBackColor = true;
-            this.radioButtonFit.CheckedChanged += new System.EventHandler(this.radioButtonFit_CheckedChanged);
-            // 
-            // radioButton11
-            // 
-            this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(16, 22);
-            this.radioButton11.Name = "radioButton11";
-            this.radioButton11.Size = new System.Drawing.Size(40, 19);
-            this.radioButton11.TabIndex = 2;
-            this.radioButton11.TabStop = true;
-            this.radioButton11.Text = "1:1";
-            this.radioButton11.UseVisualStyleBackColor = true;
-            this.radioButton11.CheckedChanged += new System.EventHandler(this.radioButton11_CheckedChanged);
-            // 
             // checkBoxFilter
             // 
             this.checkBoxFilter.AutoSize = true;
@@ -252,9 +277,9 @@
             // panelGraph
             // 
             this.panelGraph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelGraph.Location = new System.Drawing.Point(147, 3);
+            this.panelGraph.Location = new System.Drawing.Point(170, 3);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(756, 290);
+            this.panelGraph.Size = new System.Drawing.Size(733, 290);
             this.panelGraph.TabIndex = 1;
             // 
             // trackBarAmp
@@ -271,6 +296,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labMaxSize);
             this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.labDia);
             this.panelBottom.Controls.Add(this.labSys);
@@ -280,10 +306,19 @@
             this.panelBottom.Controls.Add(this.labCompressionRatio);
             this.panelBottom.Controls.Add(this.labelXY);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(147, 325);
+            this.panelBottom.Location = new System.Drawing.Point(170, 325);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(756, 176);
+            this.panelBottom.Size = new System.Drawing.Size(733, 176);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labMaxSize
+            // 
+            this.labMaxSize.AutoSize = true;
+            this.labMaxSize.Location = new System.Drawing.Point(13, 137);
+            this.labMaxSize.Name = "labMaxSize";
+            this.labMaxSize.Size = new System.Drawing.Size(38, 15);
+            this.labMaxSize.TabIndex = 11;
+            this.labMaxSize.Text = "label4";
             // 
             // labPulse
             // 
@@ -368,9 +403,9 @@
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.hScrollBar1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(147, 299);
+            this.panel2.Location = new System.Drawing.Point(170, 299);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(756, 20);
+            this.panel2.Size = new System.Drawing.Size(733, 20);
             this.panel2.TabIndex = 5;
             // 
             // hScrollBar1
@@ -378,7 +413,7 @@
             this.hScrollBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hScrollBar1.Location = new System.Drawing.Point(0, 0);
             this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(754, 18);
+            this.hScrollBar1.Size = new System.Drawing.Size(731, 18);
             this.hScrollBar1.TabIndex = 0;
             this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
@@ -393,7 +428,7 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(3, 325);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(138, 176);
+            this.panel3.Size = new System.Drawing.Size(161, 176);
             this.panel3.TabIndex = 6;
             // 
             // progressBarRecord
@@ -472,16 +507,6 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // panelView
-            // 
-            this.panelView.Controls.Add(this.radioButton11);
-            this.panelView.Controls.Add(this.radioButtonFit);
-            this.panelView.Controls.Add(this.label1);
-            this.panelView.Location = new System.Drawing.Point(8, 215);
-            this.panelView.Name = "panelView";
-            this.panelView.Size = new System.Drawing.Size(89, 68);
-            this.panelView.TabIndex = 10;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -496,6 +521,9 @@
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            this.panelView.ResumeLayout(false);
+            this.panelView.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownSmooth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).EndInit();
@@ -504,8 +532,6 @@
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
-            this.panelView.ResumeLayout(false);
-            this.panelView.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -549,5 +575,7 @@
         private Label labSys;
         private Label labPulse;
         private Panel panelView;
+        private TrackBar trackBar1;
+        private Label labMaxSize;
     }
 }

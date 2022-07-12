@@ -13,7 +13,8 @@
         string CurrentFile;
         int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
-        int MaxValue = 3000000;
+        int MaxValue = 10000;
+//        int MaxValue = 300;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -73,6 +74,7 @@
             MessageBoxButtons but = MessageBoxButtons.OK;
             MessageBoxIcon icon = MessageBoxIcon.Error;
             MessageBox.Show("Connection failure", "Error", but, icon);
+            ViewMode = true;
         }
 
         protected override void WndProc(ref Message m)
@@ -195,7 +197,7 @@
             }
             catch (Exception)
             {
-                MessageBox.Show("Error");
+                MessageBox.Show("Error expand array");
                 return;
             }
             int X1 = NNArrSeq[0];
@@ -311,8 +313,9 @@
             }
             else
             {
-                ArrayList.Add(DataA.RealTimeArray);
-                ArrayList.Add(DataA.DCArray);
+                ArrayList.Add(DataA.PressureViewArray);
+//                ArrayList.Add(DataA.RealTimeArray);
+//                ArrayList.Add(DataA.DCArray);
             }
             painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();
@@ -445,7 +448,8 @@
             if (decomposer.MainIndex > 0)
             {
 //                labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.RealTimeArray[decomposer.MainIndex - 1]).ToString();
-                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString();
+                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
+                    DataA.DCArray[decomposer.MainIndex - 1].ToString();
             }
             if (decomposer.RecordStarted)
             {
@@ -463,6 +467,10 @@
 
         private void timerStatus_Tick(object sender, EventArgs e)
         {
+            if (decomposer is null)
+            {
+                return;
+            }
             butStartRecord.Enabled = !ViewMode && !decomposer.RecordStarted!;
             butStopRecord.Enabled = decomposer.RecordStarted;
             butSaveFile.Enabled = ViewMode && decomposer.LineCounter != 0;
@@ -530,6 +538,12 @@
             timerRead.Enabled = false;
 
             ReadFile(Cfg.DataDir + TmpDataFile);
+        }
+
+        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        {
+            MaxValue = trackBar1.Value;
+            labMaxSize.Text = MaxValue.ToString();
         }
     }
 }

@@ -31,7 +31,7 @@ namespace TTestApp
             DerivArray = new double[Size];  
             DebugArray = new double[Size];
 
-            string[] lines = File.ReadAllLines("pattern200Hz.txt");
+            string[] lines = File.ReadAllLines("patt250.txt");
             corrPattern = new double[lines.Length];
             CorrPatternLength = lines.Length;
             for (int i = 0; i < lines.Length; i++)
@@ -64,10 +64,10 @@ namespace TTestApp
             {
                 PressureViewArray[i] = Filter.Median(6, RealTimeArray, i);
             }
-            double[] DetrendArray = new double[Size];
             double max = DCArray.Max<double>();
             int maxInd = DCArray.ToList().IndexOf(max);
             double startVal = DCArray[0];
+            double[] DetrendArray = new double[maxInd];
             for (int i = 0; i < maxInd; i++)
             {
                 DetrendArray[i] = startVal + i * (max - startVal) / maxInd;
@@ -79,11 +79,15 @@ namespace TTestApp
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
+            //for (int i = 0; i < PressureViewArray.Length; i++)
+            //{
+            //    DebugArray[i] = DataProcessing.GetDerivative(PressureArray, i);
+            //}
 
             DataProcessing.Corr(PressureViewArray, CorrelationArray, corrPattern);
             for (int i = 0; i < CorrelationArray.Length; i++)
             {
-                CorrelationArray[i] = CorrelationArray[i] * 10;
+                CorrelationArray[i] = CorrelationArray[i] * 10000;
             }
 
             CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);

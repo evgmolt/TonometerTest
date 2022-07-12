@@ -40,10 +40,10 @@ namespace TTestApp
 
         private int _byteNum;
 
-        private const int averSize = 60;
+        private const int averSize = 200;
         Queue<int> averQ = new Queue<int>(averSize);
 
-        private const int averViewSize = 20;
+        private const int averViewSize = 60;
         Queue<int> averViewQ = new Queue<int>(averViewSize);
 
         public ByteDecomposerBCI(DataArrays data)
@@ -189,6 +189,8 @@ namespace TTestApp
                             _pressureTmp -= 0x1000000;
                         _byteNum = 16;
 
+//                        _pressureTmp -= 1400000;
+
                         _data.RealTimeArray[MainIndex] = _pressureTmp;
                         if (averQ.Count > 0)
                         {
@@ -201,13 +203,13 @@ namespace TTestApp
                             averQ.Dequeue();
                         }
 
-                        averViewQ.Enqueue(100 + _pressureTmp - (int)averQ.Average());
+                        averViewQ.Enqueue(_pressureTmp - (int)averQ.Average());
                         if (averViewQ.Count > averViewSize)
                         {
                             averViewQ.Dequeue();
                         }
 
-                        _data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
+                        _data.PressureViewArray[MainIndex] = (int)averViewQ.Average() + 5000;
 
                         _byteNum = 0;
 
