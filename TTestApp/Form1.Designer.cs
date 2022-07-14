@@ -45,6 +45,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labY2 = new System.Windows.Forms.Label();
             this.labY1 = new System.Windows.Forms.Label();
             this.labY0 = new System.Windows.Forms.Label();
             this.labMaxSize = new System.Windows.Forms.Label();
@@ -69,7 +70,6 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labY2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panelView.SuspendLayout();
@@ -303,6 +303,15 @@
             this.panelBottom.Size = new System.Drawing.Size(733, 176);
             this.panelBottom.TabIndex = 3;
             // 
+            // labY2
+            // 
+            this.labY2.AutoSize = true;
+            this.labY2.Location = new System.Drawing.Point(497, 86);
+            this.labY2.Name = "labY2";
+            this.labY2.Size = new System.Drawing.Size(51, 15);
+            this.labY2.TabIndex = 14;
+            this.labY2.Text = "DCArray";
+            // 
             // labY1
             // 
             this.labY1.AutoSize = true;
@@ -315,7 +324,7 @@
             // labY0
             // 
             this.labY0.AutoSize = true;
-            this.labY0.Location = new System.Drawing.Point(444, 43);
+            this.labY0.Location = new System.Drawing.Point(444, 48);
             this.labY0.Name = "labY0";
             this.labY0.Size = new System.Drawing.Size(104, 15);
             this.labY0.TabIndex = 12;
@@ -402,7 +411,7 @@
             // labelX
             // 
             this.labelX.AutoSize = true;
-            this.labelX.Location = new System.Drawing.Point(487, 18);
+            this.labelX.Location = new System.Drawing.Point(532, 33);
             this.labelX.Name = "labelX";
             this.labelX.Size = new System.Drawing.Size(35, 15);
             this.labelX.TabIndex = 2;
@@ -516,15 +525,6 @@
             // 
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            // 
-            // labY2
-            // 
-            this.labY2.AutoSize = true;
-            this.labY2.Location = new System.Drawing.Point(497, 86);
-            this.labY2.Name = "labY2";
-            this.labY2.Size = new System.Drawing.Size(51, 15);
-            this.labY2.TabIndex = 14;
-            this.labY2.Text = "DCArray";
             // 
             // Form1
             // 

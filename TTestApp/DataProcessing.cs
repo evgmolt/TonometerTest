@@ -133,11 +133,12 @@ namespace TTestApp
 
         public static double[] GetCompressedArray(Control panel, double[] inputArray)
         {
+            double min = inputArray.Min();
             double[] result = new double[panel.Width];
             CompressionRatio = inputArray.Length / panel.Width;
             for (int i = 0; i < panel.Width; i++)
             {
-                result[i] = inputArray[i * CompressionRatio] - panel.Height / 2;
+                result[i] = inputArray[i * CompressionRatio] - min;
             }
             if (CompressionChanged != null)
             {
@@ -252,9 +253,9 @@ namespace TTestApp
                 double denominator2 = 0;
                 for (int j = 0; j < corrPattern.Length; j++)
                 {
-                    numerator += (slidingWindow[j] - windowAver) * (corrPattern[j] - patternAver);
+                    numerator    += (slidingWindow[j] - windowAver) * (corrPattern[j] - patternAver);
                     denominator1 += (slidingWindow[j] - windowAver) * (slidingWindow[j] - windowAver);
-                    denominator2 += (corrPattern[j] - patternAver) * (corrPattern[j] - patternAver);
+                    denominator2 += (corrPattern[j]  - patternAver) * (corrPattern[j] - patternAver);
                 }
                 if (denominator1 == 0)
                 {

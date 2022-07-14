@@ -52,7 +52,6 @@ namespace TTestApp
                                                             _decomposer.MainIndex,
                                                             MaxSize,
                                                             ScaleY);
-
                     e.Graphics.DrawCurve(pen, OutArray, tension);
                     pen.Dispose();
                 }

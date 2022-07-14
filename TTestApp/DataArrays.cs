@@ -60,9 +60,10 @@ namespace TTestApp
         public void CountViewArrays(Control panel)
         {
             int SmoothWindowSize = 40;
+            int MedianWindowSize = 6;
             for (int i = 0; i < RealTimeArray.Length; i++)
             {
-                PressureViewArray[i] = Filter.Median(6, RealTimeArray, i);
+                PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray, i);
             }
             double max = DCArray.Max<double>();
             int maxInd = DCArray.ToList().IndexOf(max);
@@ -84,11 +85,11 @@ namespace TTestApp
                 DerivArray[i] = DataProcessing.GetDerivative(PressureArray, i);
             }
 
-            DataProcessing.Corr(PressureViewArray, CorrelationArray, corrPattern);
-            for (int i = 0; i < CorrelationArray.Length; i++)
-            {
-                CorrelationArray[i] = CorrelationArray[i] * 10000;
-            }
+            //DataProcessing.Corr(PressureViewArray, CorrelationArray, corrPattern);
+            //for (int i = 0; i < CorrelationArray.Length; i++)
+            //{
+            //    CorrelationArray[i] = CorrelationArray[i] * 10000;
+            //}
 
             CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }
