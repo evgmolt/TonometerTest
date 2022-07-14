@@ -69,6 +69,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.labY2 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panelView.SuspendLayout();
@@ -284,6 +285,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labY2);
             this.panelBottom.Controls.Add(this.labY1);
             this.panelBottom.Controls.Add(this.labY0);
             this.panelBottom.Controls.Add(this.labMaxSize);
@@ -515,6 +517,15 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
+            // labY2
+            // 
+            this.labY2.AutoSize = true;
+            this.labY2.Location = new System.Drawing.Point(497, 86);
+            this.labY2.Name = "labY2";
+            this.labY2.Size = new System.Drawing.Size(51, 15);
+            this.labY2.TabIndex = 14;
+            this.labY2.Text = "DCArray";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -585,5 +596,6 @@
         private Label labMaxSize;
         private Label labY0;
         private Label labY1;
+        private Label labY2;
     }
 }

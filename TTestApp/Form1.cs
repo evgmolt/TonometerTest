@@ -19,6 +19,7 @@
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
+        bool Compression = false;
 
         public event Action<Message> WindowsMessage;
 
@@ -103,6 +104,7 @@
                     File.Delete(Cfg.DataDir + CurrentFile);
                 }
                 File.Move(saveFileDialog1.InitialDirectory + TmpDataFile, Cfg.DataDir + CurrentFile);
+                Text = "File : " + CurrentFile;
             }
         }
 
@@ -159,56 +161,37 @@
 
             //Детектор
             WD.Reset();
-            //int StartIndex = 0;
-            //int StopIndex = 0;
-            //for (int i = 0; i < DataA.DCArray.Length; i++)
-            //{
-            //    if (StartIndex == 0)
-            //    {
-            //        if (DataA.DCArray[i] > StartDetectValue)
-            //        {puls
-            //            StartIndex = i;
-            //        }
-            //    }
-            //    if (DataA.DCArray[i] > StopDetectValue)
-            //    {
-            //        StopIndex = i;
-            //        break;
-            //    }
-            //}
-            //StartIndex = 0;
-            //for (int i = StartIndex; i < StopIndex; i++)
-
-            for (int i = 0; i < DataA.CorrelationArray.Length; i++)
+            
+            for (int i = 0; i < DataA.DerivArray.Length; i++)
             {
                 DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
             }
 
-            var NNArrSeq = WD.FiltredPoints.ToArray();
+            var NNArray = WD.FiltredPoints.ToArray();
             VisirList.Clear();
-            VisirList.Add(NNArrSeq);
+            VisirList.Add(NNArray);
 
-            double[] NNArrSeqData = new double[NNArrSeq.Length];
-            double[] NNArrSeqPress = new double[NNArrSeq.Length];
-            for (int i = 0; i < NNArrSeq.Length; i++)
+            double[] NNArrSeqData = new double[NNArray.Length];
+            double[] NNArrSeqPress = new double[NNArray.Length];
+            for (int i = 0; i < NNArray.Length; i++)
             {
-                NNArrSeqData[i] = DataA.DCArray[NNArrSeq[i]];
+                NNArrSeqData[i] = DataA.DCArray[NNArray[i]];
                 NNArrSeqPress[i] = ValueToMmhG(NNArrSeqData[i]);
             }
 
             double max = -1000000;
             int XMax =   -1000000;
             int XMaxIndex = 0;
-            for (int i = 0; i < NNArrSeq.Length; i++)
+            for (int i = 0; i < NNArray.Length; i++)
             {
-                if (NNArrSeq[i] > DataA.Size)
+                if (NNArray[i] > DataA.Size)
                 {
                     break;
                 }
-                if (DataA.PressureViewArray[NNArrSeq[i]] > max)
+                if (DataA.PressureViewArray[NNArray[i]] > max)
                 {
-                    max = DataA.PressureViewArray[NNArrSeq[i]];
-                    XMax = NNArrSeq[i];
+                    max = DataA.PressureViewArray[NNArray[i]];
+                    XMax = NNArray[i];
                     XMaxIndex = i;
                 }
             }
@@ -216,7 +199,7 @@
             int[] ArrayForPulse = new int[ArrayForPulseLen];
             for (int i = 0; i < ArrayForPulseLen; i++)
             {
-                ArrayForPulse[i] = NNArrSeq[XMaxIndex - ArrayForPulseLen / 2 + i];
+                ArrayForPulse[i] = NNArray[XMaxIndex - ArrayForPulseLen / 2 + i];
             }
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromPoints(ArrayForPulse).ToString();
 
@@ -229,10 +212,10 @@
             double V2 = max * CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
             {
-                if (DataA.PressureViewArray[NNArrSeq[i]] < V1)
+                if (DataA.PressureViewArray[NNArray[i]] < V1)
                 {
-                    int x1 = NNArrSeq[i];
-                    int x2 = NNArrSeq[i + 1];
+                    int x1 = NNArray[i];
+                    int x2 = NNArray[i + 1];
                     double y1 = DataA.PressureViewArray[x1];
                     double y2 = DataA.PressureViewArray[x2];
                     double coeff = (V1 - y1) / (y2 - y1);
@@ -242,12 +225,12 @@
                     break;
                 }
             }
-            for (int i = XMaxIndex; i < NNArrSeq.Length; i++)
+            for (int i = XMaxIndex; i < NNArray.Length; i++)
             {
-                if (DataA.PressureViewArray[NNArrSeq[i]] < V2)
+                if (DataA.PressureViewArray[NNArray[i]] < V2)
                 {
-                    int x1 = NNArrSeq[i];
-                    int x2 = NNArrSeq[i - 1];
+                    int x1 = NNArray[i];
+                    int x2 = NNArray[i - 1];
                     double y1 = DataA.PressureViewArray[x1];
                     double y2 = DataA.PressureViewArray[x2];
                     double coeff = (V2 - y1) / (y2 - y1);
@@ -258,16 +241,16 @@
                 }
             }
 
-            int[] envelopeArray = new int[NNArrSeq.Length];
-            int[] envelopeMmhGArray = new int[NNArrSeq.Length];
-            for (int i = 0; i < NNArrSeq.Length; i++)
+            int[] envelopeArray = new int[NNArray.Length];
+            int[] envelopeMmhGArray = new int[NNArray.Length];
+            for (int i = 0; i < NNArray.Length; i++)
             {
-                if (NNArrSeq[i] > DataA.RealTimeArray.Length - 1)
+                if (NNArray[i] > DataA.RealTimeArray.Length - 1)
                 {
                     break;
                 }
-                envelopeArray[i] = (int)DataA.RealTimeArray[NNArrSeq[i]];
-                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[NNArrSeq[i]]);
+                envelopeArray[i] = (int)DataA.RealTimeArray[NNArray[i]];
+                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[NNArray[i]]);
             }
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
@@ -347,6 +330,7 @@
             RadioButton radioButton = (RadioButton)sender;
             if (radioButton.Checked)
             {
+                Compression = false;
                 hScrollBar1.Visible = radioButton11.Checked;
                 bufPanel.Refresh();
             }
@@ -357,6 +341,7 @@
             RadioButton radioButton = (RadioButton)sender;
             if (radioButton.Checked)
             {
+                Compression = true;
                 hScrollBar1.Visible = !radioButtonFit.Checked;
                 hScrollBar1.Value = 0;
                 MaxValue = 2 * (int)DataA.CompressedArray.Max();
@@ -380,6 +365,10 @@
 
         private void bufPanel_MouseMove(object? sender, MouseEventArgs e)
         {
+            if (!ViewMode)
+            {
+                return;
+            }
             if (DataA == null)
             {
                 return;
@@ -389,10 +378,14 @@
             {
                 return;
             }
-            double sec = x / ByteDecomposer.SamplingFrequency;
-            labelX.Text = String.Format("X : {0}, Time {1:f2} s ", e.X + ViewShift, sec);
-            labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[e.X + ViewShift]);
-            labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[e.X + ViewShift]);
+            int compressionMult = Compression ? DataProcessing.CompressionRatio : 1;
+
+            int index = e.X * compressionMult + ViewShift;
+            double sec = index / ByteDecomposer.SamplingFrequency;
+            labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
+            labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
+            labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
+            labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]);
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
