@@ -8,6 +8,11 @@ using System.Windows.Forms;
 
 namespace TTestApp
 {
+    //Для инициализации платы BCI:
+    //Нажать "Соединить"
+    //Выбрать АЦП№1 и №2
+    //Поставить галочку АЦП (вкл/выкл)
+    //Нажать "Уст. парам. для выбранного канала
     class ByteDecomposerBCI
     {
         public int Count = 0;
@@ -40,10 +45,10 @@ namespace TTestApp
 
         private int _byteNum;
 
-        private const int averSize = 200;
+        private const int averSize = 250;
         Queue<int> averQ = new Queue<int>(averSize);
 
-        private const int averViewSize = 60;
+        private const int averViewSize = 40;
         Queue<int> averViewQ = new Queue<int>(averViewSize);
 
         public ByteDecomposerBCI(DataArrays data)
@@ -209,7 +214,7 @@ namespace TTestApp
                             averViewQ.Dequeue();
                         }
 
-                        _data.PressureViewArray[MainIndex] = (int)averViewQ.Average() + 5000;
+                        _data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
 
                         _byteNum = 0;
 

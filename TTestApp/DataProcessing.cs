@@ -26,7 +26,7 @@ namespace TTestApp
                 mean += points[i] - points[i - 1];
             }
             mean /= points.Length - 1;
-            mean /= ByteDecomposer.SamplingFrequency;
+            mean /= ByteDecomposerBCI.SamplingFrequency;
             mean = secondPerMin / mean;
             return (int)mean;
         }

@@ -28,7 +28,7 @@ namespace TTestApp
             for (int i = 0; i < w / scaleX; i++)
             {
                 arr[i].X = i * scaleX;
-                double res = h - (int)Math.Round(scaleY * (h * DataSource[(index - w / scaleX + i * scaleX) & (size - 1)])/(max));
+                double res = h / 2 - (int)Math.Round(scaleY * (h * DataSource[(index - w / scaleX + i * scaleX) & (size - 1)])/(max));
                 arr[i].Y = (int)Math.Round(res);
             }
             return arr;

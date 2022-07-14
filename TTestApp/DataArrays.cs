@@ -57,7 +57,7 @@ namespace TTestApp
             }
         }
 
-        public void CountViewArrays(Control panel, TTestConfig config)
+        public void CountViewArrays(Control panel)
         {
             int SmoothWindowSize = 40;
             for (int i = 0; i < RealTimeArray.Length; i++)
@@ -79,10 +79,10 @@ namespace TTestApp
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
-            //for (int i = 0; i < PressureViewArray.Length; i++)
-            //{
-            //    DebugArray[i] = DataProcessing.GetDerivative(PressureArray, i);
-            //}
+            for (int i = 0; i < PressureViewArray.Length; i++)
+            {
+                DerivArray[i] = DataProcessing.GetDerivative(PressureArray, i);
+            }
 
             DataProcessing.Corr(PressureViewArray, CorrelationArray, corrPattern);
             for (int i = 0; i < CorrelationArray.Length; i++)

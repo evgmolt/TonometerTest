@@ -9,8 +9,8 @@ namespace TTestApp
     class WaveDetector
     {
         private int InsideC;
-        public double DetectLevel = 7;
-        private const double MinDetectLevel = 2;
+        public double DetectLevel = 500;
+        private const double MinDetectLevel = 500;
         private const int DiffShift = 13;
         private const int LockInterval = 60;
         private int NoWaveInterval1 = 600;

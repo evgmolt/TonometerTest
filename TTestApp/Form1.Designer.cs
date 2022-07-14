@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.panelView = new System.Windows.Forms.Panel();
             this.radioButton11 = new System.Windows.Forms.RadioButton();
             this.radioButtonFit = new System.Windows.Forms.RadioButton();
@@ -46,6 +45,8 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labY1 = new System.Windows.Forms.Label();
+            this.labY0 = new System.Windows.Forms.Label();
             this.labMaxSize = new System.Windows.Forms.Label();
             this.labPulse = new System.Windows.Forms.Label();
             this.labDia = new System.Windows.Forms.Label();
@@ -54,7 +55,7 @@
             this.labCurrentPressure = new System.Windows.Forms.Label();
             this.labPort = new System.Windows.Forms.Label();
             this.labCompressionRatio = new System.Windows.Forms.Label();
-            this.labelXY = new System.Windows.Forms.Label();
+            this.labelX = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -70,7 +71,6 @@
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.panelView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownSmooth)).BeginInit();
@@ -105,7 +105,6 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.trackBar1);
             this.panel1.Controls.Add(this.panelView);
             this.panel1.Controls.Add(this.butFlow);
             this.panel1.Controls.Add(this.numUDownMedian);
@@ -119,17 +118,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(161, 290);
             this.panel1.TabIndex = 0;
-            // 
-            // trackBar1
-            // 
-            this.trackBar1.LargeChange = 10000;
-            this.trackBar1.Location = new System.Drawing.Point(111, 17);
-            this.trackBar1.Maximum = 5000000;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar1.Size = new System.Drawing.Size(45, 264);
-            this.trackBar1.TabIndex = 11;
-            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // panelView
             // 
@@ -296,6 +284,8 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labY1);
+            this.panelBottom.Controls.Add(this.labY0);
             this.panelBottom.Controls.Add(this.labMaxSize);
             this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.labDia);
@@ -304,12 +294,30 @@
             this.panelBottom.Controls.Add(this.labCurrentPressure);
             this.panelBottom.Controls.Add(this.labPort);
             this.panelBottom.Controls.Add(this.labCompressionRatio);
-            this.panelBottom.Controls.Add(this.labelXY);
+            this.panelBottom.Controls.Add(this.labelX);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBottom.Location = new System.Drawing.Point(170, 325);
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(733, 176);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labY1
+            // 
+            this.labY1.AutoSize = true;
+            this.labY1.Location = new System.Drawing.Point(486, 66);
+            this.labY1.Name = "labY1";
+            this.labY1.Size = new System.Drawing.Size(62, 15);
+            this.labY1.TabIndex = 13;
+            this.labY1.Text = "DerivArray";
+            // 
+            // labY0
+            // 
+            this.labY0.AutoSize = true;
+            this.labY0.Location = new System.Drawing.Point(444, 43);
+            this.labY0.Name = "labY0";
+            this.labY0.Size = new System.Drawing.Size(104, 15);
+            this.labY0.TabIndex = 12;
+            this.labY0.Text = "PressureViewArray";
             // 
             // labMaxSize
             // 
@@ -389,14 +397,14 @@
             this.labCompressionRatio.TabIndex = 3;
             this.labCompressionRatio.Text = "Compression : 1";
             // 
-            // labelXY
+            // labelX
             // 
-            this.labelXY.AutoSize = true;
-            this.labelXY.Location = new System.Drawing.Point(13, 10);
-            this.labelXY.Name = "labelXY";
-            this.labelXY.Size = new System.Drawing.Size(57, 15);
-            this.labelXY.TabIndex = 2;
-            this.labelXY.Text = "X : 0  Y : 0";
+            this.labelX.AutoSize = true;
+            this.labelX.Location = new System.Drawing.Point(487, 18);
+            this.labelX.Name = "labelX";
+            this.labelX.Size = new System.Drawing.Size(35, 15);
+            this.labelX.TabIndex = 2;
+            this.labelX.Text = "X : 0  ";
             // 
             // panel2
             // 
@@ -521,7 +529,6 @@
             this.tableLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.panelView.ResumeLayout(false);
             this.panelView.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDownMedian)).EndInit();
@@ -548,7 +555,7 @@
         private RadioButton radioButton11;
         private OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Timer timerRead;
-        private Label labelXY;
+        private Label labelX;
         private Panel panelBottom;
         private Label labCompressionRatio;
         private Label label1;
@@ -575,7 +582,8 @@
         private Label labSys;
         private Label labPulse;
         private Panel panelView;
-        private TrackBar trackBar1;
         private Label labMaxSize;
+        private Label labY0;
+        private Label labY1;
     }
 }

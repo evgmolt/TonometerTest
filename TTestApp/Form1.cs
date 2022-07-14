@@ -13,8 +13,8 @@
         string CurrentFile;
         int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
-        int MaxValue = 10000;
-//        int MaxValue = 300;
+        int MaxValue = 100000;
+//        int MaxValue = 1000;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -153,9 +153,9 @@
             //int StartDetectValue = 150;
             //int StopDetectValue = 420;
             int DCArrayWindow = 100;
-            int ExpandArrayBy = 5;
+            int ArrayForPulseLen = 10;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
-            DataA.CountViewArrays(bufPanel, Cfg);
+            DataA.CountViewArrays(bufPanel);
 
             //Детектор
             WD.Reset();
@@ -181,31 +181,10 @@
 
             for (int i = 0; i < DataA.CorrelationArray.Length; i++)
             {
-                DataA.DebugArray[i] = WD.Detect(0, DataA.CorrelationArray, i);
+                DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
             }
 
-            var NNArrSeq0 = DataProcessing.GetSequentialArray(WD.FiltredPoints.ToArray());
-            if (NNArrSeq0 == null)
-            {
-                return;
-            }
-            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromPoints(NNArrSeq0).ToString();
-            int[]? NNArrSeq;
-            try
-            {
-                NNArrSeq = DataProcessing.ExpandArray(NNArrSeq0, DataA.CorrelationArray, ExpandArrayBy);
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Error expand array");
-                return;
-            }
-            int X1 = NNArrSeq[0];
-            int X2 = NNArrSeq[^1];
-            double V1 = DataA.RealTimeArray[X1];
-            double V2 = DataA.RealTimeArray[X2];
-            int P1 = ValueToMmhG(V1);
-            int P2 = ValueToMmhG(V2);
+            var NNArrSeq = WD.FiltredPoints.ToArray();
             VisirList.Clear();
             VisirList.Add(NNArrSeq);
 
@@ -217,59 +196,64 @@
                 NNArrSeqPress[i] = ValueToMmhG(NNArrSeqData[i]);
             }
 
-            double max = -10000000;
-            int XMax = 0;
+            double max = -1000000;
+            int XMax =   -1000000;
             int XMaxIndex = 0;
             for (int i = 0; i < NNArrSeq.Length; i++)
             {
-                if (NNArrSeq[i] + DataA.CorrPatternLength / 2 > DataA.Size)
+                if (NNArrSeq[i] > DataA.Size)
                 {
                     break;
                 }
-                if (DataA.PressureViewArray[NNArrSeq[i] + DataA.CorrPatternLength / 2] > max)
+                if (DataA.PressureViewArray[NNArrSeq[i]] > max)
                 {
-                    max = DataA.PressureViewArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
-                    XMax = NNArrSeq[i] + DataA.CorrPatternLength / 2;
+                    max = DataA.PressureViewArray[NNArrSeq[i]];
+                    XMax = NNArrSeq[i];
                     XMaxIndex = i;
                 }
             }
 
+            int[] ArrayForPulse = new int[ArrayForPulseLen];
+            for (int i = 0; i < ArrayForPulseLen; i++)
+            {
+                ArrayForPulse[i] = NNArrSeq[XMaxIndex - ArrayForPulseLen / 2 + i];
+            }
+            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromPoints(ArrayForPulse).ToString();
+
+            double P1 = 0;
+            double P2 = 0;
             int MeanPress = (int)DataA.RealTimeArray[XMax];
             double CoeffLeft = 0.38;
             double CoeffRight = 0.83;
-            V1 = max * CoeffLeft;
-            V2 = max * CoeffRight;
+            double V1 = max * CoeffLeft;
+            double V2 = max * CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
             {
-                if (DataA.PressureViewArray[NNArrSeq[i] + DataA.CorrPatternLength / 2] < V1)
+                if (DataA.PressureViewArray[NNArrSeq[i]] < V1)
                 {
                     int x1 = NNArrSeq[i];
                     int x2 = NNArrSeq[i + 1];
-                    double y1 = DataA.PressureViewArray[x1 + DataA.CorrPatternLength / 2];
-                    double y2 = DataA.PressureViewArray[x2 + DataA.CorrPatternLength / 2];
+                    double y1 = DataA.PressureViewArray[x1];
+                    double y2 = DataA.PressureViewArray[x2];
                     double coeff = (V1 - y1) / (y2 - y1);
-                    double yDC1 = DataA.DCArray[x1 + DataA.CorrPatternLength / 2];
-                    double yDC2 = DataA.DCArray[x2 + DataA.CorrPatternLength / 2];
+                    double yDC1 = DataA.DCArray[x1];
+                    double yDC2 = DataA.DCArray[x2];
                     P1 = (int)(yDC1 + (yDC2 - yDC1) * coeff);
-                    //P1 = (int)DataA.RealTimeArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
-                    //P1 = (int)DataA.DCArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
                     break;
                 }
             }
             for (int i = XMaxIndex; i < NNArrSeq.Length; i++)
             {
-                if (DataA.PressureViewArray[NNArrSeq[i] + DataA.CorrPatternLength / 2] < V2)
+                if (DataA.PressureViewArray[NNArrSeq[i]] < V2)
                 {
                     int x1 = NNArrSeq[i];
                     int x2 = NNArrSeq[i - 1];
-                    double y1 = DataA.PressureViewArray[x1 + DataA.CorrPatternLength / 2];
-                    double y2 = DataA.PressureViewArray[x2 + DataA.CorrPatternLength / 2];
+                    double y1 = DataA.PressureViewArray[x1];
+                    double y2 = DataA.PressureViewArray[x2];
                     double coeff = (V2 - y1) / (y2 - y1);
-                    double yDC1 = DataA.DCArray[x1 + DataA.CorrPatternLength / 2];
-                    double yDC2 = DataA.DCArray[x2 + DataA.CorrPatternLength / 2];
+                    double yDC1 = DataA.DCArray[x1];
+                    double yDC2 = DataA.DCArray[x2];
                     P2 = (int)(yDC2 + (yDC1 - yDC2) * coeff);
-                    //P2 = (int)DataA.RealTimeArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
-                    //P2 = (int)DataA.DCArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
                     break;
                 }
             }
@@ -278,12 +262,12 @@
             int[] envelopeMmhGArray = new int[NNArrSeq.Length];
             for (int i = 0; i < NNArrSeq.Length; i++)
             {
-                if (NNArrSeq[i] + DataA.CorrPatternLength / 2 > DataA.RealTimeArray.Length - 1)
+                if (NNArrSeq[i] > DataA.RealTimeArray.Length - 1)
                 {
                     break;
                 }
-                envelopeArray[i] = (int)DataA.RealTimeArray[NNArrSeq[i] + DataA.CorrPatternLength / 2];
-                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[NNArrSeq[i] + DataA.CorrPatternLength / 2]);
+                envelopeArray[i] = (int)DataA.RealTimeArray[NNArrSeq[i]];
+                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[NNArrSeq[i]]);
             }
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
@@ -301,9 +285,9 @@
             {
                 if (radioButton11.Checked) //1:1
                 {
-                    ArrayList.Add(DataA.DCArray);
+//                    ArrayList.Add(DataA.DCArray);
                     ArrayList.Add(DataA.PressureViewArray);
-                    ArrayList.Add(DataA.CorrelationArray);
+                    ArrayList.Add(DataA.DerivArray);
                     ArrayList.Add(DataA.DebugArray);
                 }
                 else //fit
@@ -345,7 +329,7 @@
             {
                 return;
             }
-            DataA.CountViewArrays(bufPanel, Cfg);
+            DataA.CountViewArrays(bufPanel);
 //            MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
             bufPanel.Refresh();
         }
@@ -390,7 +374,7 @@
             {
                 return;
             }
-            DataA.CountViewArrays(bufPanel, Cfg);
+            DataA.CountViewArrays(bufPanel);
             bufPanel.Refresh();
         }
 
@@ -406,11 +390,9 @@
                 return;
             }
             double sec = x / ByteDecomposer.SamplingFrequency;
-            labelXY.Text = String.Format(
-                "X : {0}, Time {1:f2} s, Y : {2}", 
-                e.X + ViewShift,
-                sec,
-                DataA.DCArray[e.X + ViewShift]);
+            labelX.Text = String.Format("X : {0}, Time {1:f2} s ", e.X + ViewShift, sec);
+            labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[e.X + ViewShift]);
+            labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[e.X + ViewShift]);
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
@@ -447,8 +429,8 @@
 
             if (decomposer.MainIndex > 0)
             {
-//                labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.RealTimeArray[decomposer.MainIndex - 1]).ToString();
-                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
+                labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.DCArray[decomposer.MainIndex - 1]).ToString();
+//                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
                     DataA.DCArray[decomposer.MainIndex - 1].ToString();
             }
             if (decomposer.RecordStarted)
@@ -459,9 +441,9 @@
 
         private int ValueToMmhG(double value)
         {
-            double zero = 100;
-            double pressure = 172;
-            double val = 459;
+            double zero = 201230;
+            double pressure = 182;
+            double val = 1011080;
             return (int)((value - zero) * pressure / (val - zero));
         }
 
@@ -538,12 +520,6 @@
             timerRead.Enabled = false;
 
             ReadFile(Cfg.DataDir + TmpDataFile);
-        }
-
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
-        {
-            MaxValue = trackBar1.Value;
-            labMaxSize.Text = MaxValue.ToString();
         }
     }
 }
