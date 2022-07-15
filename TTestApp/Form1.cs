@@ -40,7 +40,7 @@
                 Height = Cfg.WindowHeight;
             }
             numUDLeft.Value = Cfg.CoeffLeft;
-            numUDLeft.Value = Cfg.SmoothWindowSize;
+            numUDRight.Value = Cfg.CoeffRight;
             radioButton11.Checked = true;
             panelGraph.Dock = DockStyle.Fill;
             panelGraph.Controls.Add(bufPanel);

@@ -131,11 +131,12 @@
             // 
             // numUDRight
             // 
+            this.numUDRight.DecimalPlaces = 2;
             this.numUDRight.Increment = new decimal(new int[] {
             1,
             0,
             0,
-            65536});
+            131072});
             this.numUDRight.Location = new System.Drawing.Point(27, 218);
             this.numUDRight.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numUDRight.Maximum = new decimal(new int[] {
@@ -226,6 +227,7 @@
             // 
             // numUDLeft
             // 
+            this.numUDLeft.DecimalPlaces = 2;
             this.numUDLeft.Increment = new decimal(new int[] {
             1,
             0,
