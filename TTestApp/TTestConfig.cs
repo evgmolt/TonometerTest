@@ -11,23 +11,23 @@ namespace TTestApp
     {
         private const string _configFileName = "ttconfig.json";
         public string DataDir { get; set; }
-        public bool FilterOn { get; set; }
         public bool Maximized { get; set; }
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
         public int SmoothWindowSize { get; set; }
         public int MedianWindowSize { get; set; }
-
-
+        public decimal CoeffLeft { get; set; }
+        public decimal CoeffRight { get; set; }
         public TTestConfig()
         {
             DataDir = Directory.GetCurrentDirectory() + @"\Data\";
-            FilterOn = false;
             Maximized = false;
             WindowWidth = 800;
             WindowHeight = 500;
             SmoothWindowSize = 10;
             MedianWindowSize = 10;
+            CoeffLeft = 0.4m;
+            CoeffRight = 0.8m;
         }
 
         public static TTestConfig GetConfig()

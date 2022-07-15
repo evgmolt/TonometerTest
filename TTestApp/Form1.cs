@@ -39,9 +39,8 @@
                 Width = Cfg.WindowWidth;
                 Height = Cfg.WindowHeight;
             }
-            checkBoxFilter.Checked = Cfg.FilterOn;
-            numUDownSmooth.Value = Cfg.SmoothWindowSize;
-            numUDownMedian.Value = Cfg.MedianWindowSize;
+            numUDLeft.Value = Cfg.CoeffLeft;
+            numUDLeft.Value = Cfg.SmoothWindowSize;
             radioButton11.Checked = true;
             panelGraph.Dock = DockStyle.Fill;
             panelGraph.Controls.Add(bufPanel);
@@ -204,10 +203,8 @@
             double P1 = 0;
             double P2 = 0;
             int MeanPress = (int)DataA.RealTimeArray[XMax];
-            double CoeffLeft = 0.57;
-            double CoeffRight = 0.7;
-            double V1 = max * CoeffLeft;
-            double V2 = max * CoeffRight;
+            double V1 = max * (double)Cfg.CoeffLeft;
+            double V2 = max * (double)Cfg.CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
             {
                 if (DataA.DerivArray[NNArray[i]] < V1)
@@ -303,18 +300,6 @@
             bufPanel.Refresh();
         }
 
-        private void checkBoxFilter_CheckedChanged(object? sender, EventArgs e)
-        {
-            Cfg.FilterOn = checkBoxFilter.Checked;
-            if (DataA == null)
-            {
-                return;
-            }
-            DataA.CountViewArrays(bufPanel);
-//            MaxSize = DataProcessing.GetRange(DataA.PressureViewArray);
-            bufPanel.Refresh();
-        }
-
         private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
         {
             Cfg.Maximized = WindowState == FormWindowState.Maximized;
@@ -391,16 +376,6 @@
             double a = trackBarAmp.Value;
             ScaleY = Math.Pow(2, a / 2);
             bufPanel.Refresh();
-        }
-
-        private void numUDownSmooth_ValueChanged(object? sender, EventArgs e)
-        {
-            Cfg.SmoothWindowSize = (int)numUDownSmooth.Value;
-        }
-
-        private void numUDownMedian_ValueChanged(object sender, EventArgs e)
-        {
-            Cfg.MedianWindowSize = (int)numUDownMedian.Value;
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)
@@ -511,6 +486,16 @@
             timerRead.Enabled = false;
 
             ReadFile(Cfg.DataDir + TmpDataFile);
+        }
+
+        private void numUDLeft_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.CoeffLeft = numUDLeft.Value;
+        }
+
+        private void numUDRight_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.CoeffRight = numUDRight.Value;
         }
     }
 }
