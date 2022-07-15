@@ -31,13 +31,13 @@ namespace TTestApp
             DerivArray = new double[Size];  
             DebugArray = new double[Size];
 
-            string[] lines = File.ReadAllLines("patt250.txt");
-            corrPattern = new double[lines.Length];
-            CorrPatternLength = lines.Length;
-            for (int i = 0; i < lines.Length; i++)
-            {
-                corrPattern[i] = Convert.ToDouble(lines[i]);
-            }
+            //string[] lines = File.ReadAllLines("patt250.txt");
+            //corrPattern = new double[lines.Length];
+            //CorrPatternLength = lines.Length;
+            //for (int i = 0; i < lines.Length; i++)
+            //{
+            //    corrPattern[i] = Convert.ToDouble(lines[i]);
+            //}
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)

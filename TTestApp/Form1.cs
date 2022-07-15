@@ -156,6 +156,7 @@
             //int StopDetectValue = 420;
             int DCArrayWindow = 100;
             int ArrayForPulseLen = 10;
+            int LowerThenNNArr = 10;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
             DataA.CountViewArrays(bufPanel);
 
@@ -196,6 +197,7 @@
                 }
             }
 
+            ArrayForPulseLen = NNArray.Length - LowerThenNNArr;
             int[] ArrayForPulse = new int[ArrayForPulseLen];
             for (int i = 0; i < ArrayForPulseLen; i++)
             {
