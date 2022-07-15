@@ -155,8 +155,6 @@
             //int StartDetectValue = 150;
             //int StopDetectValue = 420;
             int DCArrayWindow = 100;
-            int ArrayForPulseLen = 10;
-            int LowerThenNNArr = 10;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
             DataA.CountViewArrays(bufPanel);
 
@@ -189,37 +187,35 @@
                 {
                     break;
                 }
-                if (DataA.PressureViewArray[NNArray[i]] > max)
+                if (DataA.DerivArray[NNArray[i]] > max)
                 {
-                    max = DataA.PressureViewArray[NNArray[i]];
+                    max = DataA.DerivArray[NNArray[i]];
                     XMax = NNArray[i];
                     XMaxIndex = i;
                 }
             }
 
-            ArrayForPulseLen = NNArray.Length - LowerThenNNArr;
-            int[] ArrayForPulse = new int[ArrayForPulseLen];
-            for (int i = 0; i < ArrayForPulseLen; i++)
-            {
-                ArrayForPulse[i] = NNArray[XMaxIndex - ArrayForPulseLen / 2 + i];
-            }
+            int ArrayForPulseLen = 55;
+            int skipSize = (XMaxIndex - ArrayForPulseLen / 2) > 0 ? XMaxIndex - ArrayForPulseLen / 2 : 0;
+            int takeSize = (ArrayForPulseLen < NNArray.Length - skipSize) ? ArrayForPulseLen : NNArray.Length - skipSize;
+            int[] ArrayForPulse = NNArray.Skip(skipSize).Take(ArrayForPulseLen).ToArray();
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromPoints(ArrayForPulse).ToString();
 
             double P1 = 0;
             double P2 = 0;
             int MeanPress = (int)DataA.RealTimeArray[XMax];
-            double CoeffLeft = 0.38;
-            double CoeffRight = 0.83;
+            double CoeffLeft = 0.57;
+            double CoeffRight = 0.7;
             double V1 = max * CoeffLeft;
             double V2 = max * CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
             {
-                if (DataA.PressureViewArray[NNArray[i]] < V1)
+                if (DataA.DerivArray[NNArray[i]] < V1)
                 {
                     int x1 = NNArray[i];
                     int x2 = NNArray[i + 1];
-                    double y1 = DataA.PressureViewArray[x1];
-                    double y2 = DataA.PressureViewArray[x2];
+                    double y1 = DataA.DerivArray[x1];
+                    double y2 = DataA.DerivArray[x2];
                     double coeff = (V1 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
@@ -229,12 +225,12 @@
             }
             for (int i = XMaxIndex; i < NNArray.Length; i++)
             {
-                if (DataA.PressureViewArray[NNArray[i]] < V2)
+                if (DataA.DerivArray[NNArray[i]] < V2)
                 {
                     int x1 = NNArray[i];
                     int x2 = NNArray[i - 1];
-                    double y1 = DataA.PressureViewArray[x1];
-                    double y2 = DataA.PressureViewArray[x2];
+                    double y1 = DataA.DerivArray[x1];
+                    double y2 = DataA.DerivArray[x2];
                     double coeff = (V2 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
