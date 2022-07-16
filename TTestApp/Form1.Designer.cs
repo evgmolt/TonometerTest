@@ -69,6 +69,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.butRefresh = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -106,6 +107,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.butRefresh);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.numUDRight);
             this.panel1.Controls.Add(this.panelView);
@@ -123,7 +125,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(27, 194);
+            this.label3.Location = new System.Drawing.Point(25, 171);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(44, 20);
             this.label3.TabIndex = 12;
@@ -137,7 +139,7 @@
             0,
             0,
             131072});
-            this.numUDRight.Location = new System.Drawing.Point(27, 218);
+            this.numUDRight.Location = new System.Drawing.Point(25, 195);
             this.numUDRight.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numUDRight.Maximum = new decimal(new int[] {
             90,
@@ -219,7 +221,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 123);
+            this.label2.Location = new System.Drawing.Point(25, 116);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(34, 20);
             this.label2.TabIndex = 6;
@@ -233,7 +235,7 @@
             0,
             0,
             131072});
-            this.numUDLeft.Location = new System.Drawing.Point(25, 147);
+            this.numUDLeft.Location = new System.Drawing.Point(25, 140);
             this.numUDLeft.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.numUDLeft.Maximum = new decimal(new int[] {
             95,
@@ -538,6 +540,16 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
+            // butRefresh
+            // 
+            this.butRefresh.Location = new System.Drawing.Point(25, 241);
+            this.butRefresh.Name = "butRefresh";
+            this.butRefresh.Size = new System.Drawing.Size(94, 29);
+            this.butRefresh.TabIndex = 13;
+            this.butRefresh.Text = "Refresh";
+            this.butRefresh.UseVisualStyleBackColor = true;
+            this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -609,5 +621,6 @@
         private Label labY2;
         private Label label3;
         private NumericUpDown numUDRight;
+        private Button butRefresh;
     }
 }
