@@ -151,8 +151,6 @@
 
         private void PrepareData()
         {
-            //int StartDetectValue = 150;
-            //int StopDetectValue = 420;
             int DCArrayWindow = 100;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
             DataA.CountViewArrays(bufPanel);
@@ -164,6 +162,13 @@
             {
                 DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
             }
+
+            //WD.Reset();
+
+            //for (int i = 0; i < DataA.DerivArray.Length; i++)
+            //{
+            //    DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
+            //}
 
             var NNArray = WD.FiltredPoints.ToArray();
             VisirList.Clear();
@@ -178,7 +183,7 @@
             }
 
             double max = -1000000;
-            int XMax =   -1000000;
+            int XMax = default;
             int XMaxIndex = 0;
             for (int i = 0; i < NNArray.Length; i++)
             {
@@ -194,7 +199,7 @@
                 }
             }
 
-            int ArrayForPulseLen = 55;
+            int ArrayForPulseLen = 10;
             int skipSize = (XMaxIndex - ArrayForPulseLen / 2) > 0 ? XMaxIndex - ArrayForPulseLen / 2 : 0;
             int takeSize = (ArrayForPulseLen < NNArray.Length - skipSize) ? ArrayForPulseLen : NNArray.Length - skipSize;
             int[] ArrayForPulse = NNArray.Skip(skipSize).Take(ArrayForPulseLen).ToArray();
@@ -202,7 +207,7 @@
 
             double P1 = 0;
             double P2 = 0;
-            int MeanPress = (int)DataA.RealTimeArray[XMax];
+            int MeanPress = (int)DataA.DCArray[XMax];
             double V1 = max * (double)Cfg.CoeffLeft;
             double V2 = max * (double)Cfg.CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)

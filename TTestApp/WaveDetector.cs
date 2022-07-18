@@ -41,6 +41,7 @@ namespace TTestApp
             NNIndex = 0;
             FiltredPoints.Clear();
             MeanPressureInd = 0;
+            DetectLevel = MinDetectLevel;
         }
 
         public int GetCurrentPulse()
@@ -74,7 +75,9 @@ namespace TTestApp
             }
             InsideC++;
             if (InsideC == NoWaveInterval1)
+            {
                 DetectLevel = DetectLevel / 2;
+            }
             if (InsideC > NoWaveInterval2)
             {
                 DetectLevel = DetectLevel / 2;
@@ -96,7 +99,7 @@ namespace TTestApp
                     int tmpNN = 0;
                     NNPointArr[NNPointIndex].X = Ind;
                     NNPointArr[NNPointIndex].Y = (int)MaxD;
-                    if (NNPointIndex > 1)
+                    if (NNPointIndex > 0)
                     {
                         tmpNN = NNPointArr[NNPointIndex].X - NNPointArr[NNPointIndex - 1].X;
                     }
