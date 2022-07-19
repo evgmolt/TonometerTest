@@ -17,19 +17,20 @@ namespace TTestApp
             File.WriteAllLines(fname, stringsArr);
         }
 
-        public static int GetPulseFromPoints(int[] points)
+        public static int GetPulseFromIndexesArray(int[] indexesArray)
         {
             int secondPerMin = 60;
             double mean = 0;
-            for (int i = 1; i < points.Length; i++)
+            for (int i = 1; i < indexesArray.Length; i++) //Внимание! Цикл с 1!
             {
-                mean += points[i] - points[i - 1];
+                mean += indexesArray[i] - indexesArray[i - 1];
             }
-            mean /= points.Length - 1;
+            mean /= indexesArray.Length - 1;
             mean /= ByteDecomposerBCI.SamplingFrequency;
             mean = secondPerMin / mean;
             return (int)mean;
         }
+
         public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)
         {
             int[] resultArray = new int[inputArray.Length + expandBy * 2];

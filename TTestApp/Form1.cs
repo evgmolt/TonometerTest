@@ -157,53 +157,38 @@
 
             //Детектор
             WD.Reset();
-            
             for (int i = 0; i < DataA.DerivArray.Length; i++)
             {
                 DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
             }
 
-            //WD.Reset();
-
-            //for (int i = 0; i < DataA.DerivArray.Length; i++)
-            //{
-            //    DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
-            //}
-
-            var NNArray = WD.FiltredPoints.ToArray();
+            var ArrayOfWaveIndexes = WD.FiltredPoints.ToArray();
             VisirList.Clear();
-            VisirList.Add(NNArray);
-
-            double[] NNArrSeqData = new double[NNArray.Length];
-            double[] NNArrSeqPress = new double[NNArray.Length];
-            for (int i = 0; i < NNArray.Length; i++)
-            {
-                NNArrSeqData[i] = DataA.DCArray[NNArray[i]];
-                NNArrSeqPress[i] = ValueToMmhG(NNArrSeqData[i]);
-            }
+            VisirList.Add(ArrayOfWaveIndexes);
 
             double max = -1000000;
             int XMax = default;
             int XMaxIndex = 0;
-            for (int i = 0; i < NNArray.Length; i++)
+            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
-                if (NNArray[i] > DataA.Size)
+                if (ArrayOfWaveIndexes[i] > DataA.Size)
                 {
                     break;
                 }
-                if (DataA.DerivArray[NNArray[i]] > max)
+                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] > max)
                 {
-                    max = DataA.DerivArray[NNArray[i]];
-                    XMax = NNArray[i];
+                    max = DataA.DerivArray[ArrayOfWaveIndexes[i]];
+                    XMax = ArrayOfWaveIndexes[i];
                     XMaxIndex = i;
                 }
             }
 
-            int ArrayForPulseLen = 10;
+            int ArrayForPulseLen = 8;
             int skipSize = (XMaxIndex - ArrayForPulseLen / 2) > 0 ? XMaxIndex - ArrayForPulseLen / 2 : 0;
-            int takeSize = (ArrayForPulseLen < NNArray.Length - skipSize) ? ArrayForPulseLen : NNArray.Length - skipSize;
-            int[] ArrayForPulse = NNArray.Skip(skipSize).Take(ArrayForPulseLen).ToArray();
-            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromPoints(ArrayForPulse).ToString();
+            int takeSize = (ArrayForPulseLen < ArrayOfWaveIndexes.Length - skipSize) ? ArrayForPulseLen : ArrayOfWaveIndexes.Length - skipSize;
+            int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(skipSize).Take(ArrayForPulseLen).ToArray();
+            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse).ToString();
+            labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
 
             double P1 = 0;
             double P2 = 0;
@@ -212,10 +197,10 @@
             double V2 = max * (double)Cfg.CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
             {
-                if (DataA.DerivArray[NNArray[i]] < V1)
+                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] < V1)
                 {
-                    int x1 = NNArray[i];
-                    int x2 = NNArray[i + 1];
+                    int x1 = ArrayOfWaveIndexes[i];
+                    int x2 = ArrayOfWaveIndexes[i + 1];
                     double y1 = DataA.DerivArray[x1];
                     double y2 = DataA.DerivArray[x2];
                     double coeff = (V1 - y1) / (y2 - y1);
@@ -225,12 +210,12 @@
                     break;
                 }
             }
-            for (int i = XMaxIndex; i < NNArray.Length; i++)
+            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
-                if (DataA.DerivArray[NNArray[i]] < V2)
+                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] < V2)
                 {
-                    int x1 = NNArray[i];
-                    int x2 = NNArray[i - 1];
+                    int x1 = ArrayOfWaveIndexes[i];
+                    int x2 = ArrayOfWaveIndexes[i - 1];
                     double y1 = DataA.DerivArray[x1];
                     double y2 = DataA.DerivArray[x2];
                     double coeff = (V2 - y1) / (y2 - y1);
@@ -241,17 +226,18 @@
                 }
             }
 
-            int[] envelopeArray = new int[NNArray.Length];
-            int[] envelopeMmhGArray = new int[NNArray.Length];
-            for (int i = 0; i < NNArray.Length; i++)
+            int[] envelopeArray = new int[ArrayOfWaveIndexes.Length];
+            int[] envelopeMmhGArray = new int[ArrayOfWaveIndexes.Length];
+            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
-                if (NNArray[i] > DataA.RealTimeArray.Length - 1)
+                if (ArrayOfWaveIndexes[i] > DataA.RealTimeArray.Length - 1)
                 {
                     break;
                 }
-                envelopeArray[i] = (int)DataA.RealTimeArray[NNArray[i]];
-                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[NNArray[i]]);
+                envelopeArray[i] = (int)DataA.RealTimeArray[ArrayOfWaveIndexes[i]];
+                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
+            DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();

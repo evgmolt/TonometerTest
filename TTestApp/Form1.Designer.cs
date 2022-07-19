@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.butRefresh = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.numUDRight = new System.Windows.Forms.NumericUpDown();
             this.panelView = new System.Windows.Forms.Panel();
@@ -69,7 +70,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.butRefresh = new System.Windows.Forms.Button();
+            this.labNumOfWaves = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -95,13 +96,12 @@
             this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 35F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 243F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1095, 672);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 182F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 504);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel1
@@ -116,18 +116,28 @@
             this.panel1.Controls.Add(this.numUDLeft);
             this.panel1.Controls.Add(this.butOpenFile);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(3, 4);
-            this.panel1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(184, 386);
+            this.panel1.Size = new System.Drawing.Size(161, 290);
             this.panel1.TabIndex = 0;
+            // 
+            // butRefresh
+            // 
+            this.butRefresh.Location = new System.Drawing.Point(22, 181);
+            this.butRefresh.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.butRefresh.Name = "butRefresh";
+            this.butRefresh.Size = new System.Drawing.Size(82, 22);
+            this.butRefresh.TabIndex = 13;
+            this.butRefresh.Text = "Refresh";
+            this.butRefresh.UseVisualStyleBackColor = true;
+            this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(25, 171);
+            this.label3.Location = new System.Drawing.Point(22, 128);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(44, 20);
+            this.label3.Size = new System.Drawing.Size(35, 15);
             this.label3.TabIndex = 12;
             this.label3.Text = "Right";
             // 
@@ -139,8 +149,7 @@
             0,
             0,
             131072});
-            this.numUDRight.Location = new System.Drawing.Point(25, 195);
-            this.numUDRight.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.numUDRight.Location = new System.Drawing.Point(22, 146);
             this.numUDRight.Maximum = new decimal(new int[] {
             90,
             0,
@@ -152,7 +161,7 @@
             0,
             65536});
             this.numUDRight.Name = "numUDRight";
-            this.numUDRight.Size = new System.Drawing.Size(86, 27);
+            this.numUDRight.Size = new System.Drawing.Size(75, 23);
             this.numUDRight.TabIndex = 11;
             this.numUDRight.Value = new decimal(new int[] {
             80,
@@ -166,19 +175,17 @@
             this.panelView.Controls.Add(this.radioButton11);
             this.panelView.Controls.Add(this.radioButtonFit);
             this.panelView.Controls.Add(this.label1);
-            this.panelView.Location = new System.Drawing.Point(9, 287);
-            this.panelView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panelView.Location = new System.Drawing.Point(8, 215);
             this.panelView.Name = "panelView";
-            this.panelView.Size = new System.Drawing.Size(102, 91);
+            this.panelView.Size = new System.Drawing.Size(89, 68);
             this.panelView.TabIndex = 10;
             // 
             // radioButton11
             // 
             this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(18, 29);
-            this.radioButton11.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.radioButton11.Location = new System.Drawing.Point(16, 22);
             this.radioButton11.Name = "radioButton11";
-            this.radioButton11.Size = new System.Drawing.Size(49, 24);
+            this.radioButton11.Size = new System.Drawing.Size(40, 19);
             this.radioButton11.TabIndex = 2;
             this.radioButton11.TabStop = true;
             this.radioButton11.Text = "1:1";
@@ -188,10 +195,9 @@
             // radioButtonFit
             // 
             this.radioButtonFit.AutoSize = true;
-            this.radioButtonFit.Location = new System.Drawing.Point(18, 63);
-            this.radioButtonFit.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.radioButtonFit.Location = new System.Drawing.Point(16, 47);
             this.radioButtonFit.Name = "radioButtonFit";
-            this.radioButtonFit.Size = new System.Drawing.Size(46, 24);
+            this.radioButtonFit.Size = new System.Drawing.Size(38, 19);
             this.radioButtonFit.TabIndex = 3;
             this.radioButtonFit.TabStop = true;
             this.radioButtonFit.Text = "Fit";
@@ -201,18 +207,17 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(18, 5);
+            this.label1.Location = new System.Drawing.Point(16, 4);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 20);
+            this.label1.Size = new System.Drawing.Size(32, 15);
             this.label1.TabIndex = 4;
             this.label1.Text = "View";
             // 
             // butFlow
             // 
-            this.butFlow.Location = new System.Drawing.Point(25, 23);
-            this.butFlow.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butFlow.Location = new System.Drawing.Point(22, 17);
             this.butFlow.Name = "butFlow";
-            this.butFlow.Size = new System.Drawing.Size(97, 31);
+            this.butFlow.Size = new System.Drawing.Size(85, 23);
             this.butFlow.TabIndex = 9;
             this.butFlow.Text = "Stop stream";
             this.butFlow.UseVisualStyleBackColor = true;
@@ -221,9 +226,9 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(25, 116);
+            this.label2.Location = new System.Drawing.Point(22, 87);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(34, 20);
+            this.label2.Size = new System.Drawing.Size(27, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "Left";
             // 
@@ -235,8 +240,7 @@
             0,
             0,
             131072});
-            this.numUDLeft.Location = new System.Drawing.Point(25, 140);
-            this.numUDLeft.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.numUDLeft.Location = new System.Drawing.Point(22, 105);
             this.numUDLeft.Maximum = new decimal(new int[] {
             95,
             0,
@@ -248,7 +252,7 @@
             0,
             65536});
             this.numUDLeft.Name = "numUDLeft";
-            this.numUDLeft.Size = new System.Drawing.Size(86, 27);
+            this.numUDLeft.Size = new System.Drawing.Size(75, 23);
             this.numUDLeft.TabIndex = 5;
             this.numUDLeft.Value = new decimal(new int[] {
             57,
@@ -259,10 +263,9 @@
             // 
             // butOpenFile
             // 
-            this.butOpenFile.Location = new System.Drawing.Point(25, 73);
-            this.butOpenFile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butOpenFile.Location = new System.Drawing.Point(22, 55);
             this.butOpenFile.Name = "butOpenFile";
-            this.butOpenFile.Size = new System.Drawing.Size(97, 31);
+            this.butOpenFile.Size = new System.Drawing.Size(85, 23);
             this.butOpenFile.TabIndex = 0;
             this.butOpenFile.Text = "Open file";
             this.butOpenFile.UseVisualStyleBackColor = true;
@@ -271,27 +274,26 @@
             // panelGraph
             // 
             this.panelGraph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelGraph.Location = new System.Drawing.Point(193, 4);
-            this.panelGraph.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panelGraph.Location = new System.Drawing.Point(170, 3);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(836, 386);
+            this.panelGraph.Size = new System.Drawing.Size(733, 290);
             this.panelGraph.TabIndex = 1;
             // 
             // trackBarAmp
             // 
             this.trackBarAmp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBarAmp.Location = new System.Drawing.Point(1035, 4);
-            this.trackBarAmp.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.trackBarAmp.Location = new System.Drawing.Point(909, 3);
             this.trackBarAmp.Minimum = -10;
             this.trackBarAmp.Name = "trackBarAmp";
             this.trackBarAmp.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBarAmp.Size = new System.Drawing.Size(57, 386);
+            this.trackBarAmp.Size = new System.Drawing.Size(46, 290);
             this.trackBarAmp.TabIndex = 4;
             this.trackBarAmp.ValueChanged += new System.EventHandler(this.trackBarAmp_ValueChanged);
             // 
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labNumOfWaves);
             this.panelBottom.Controls.Add(this.labY2);
             this.panelBottom.Controls.Add(this.labY1);
             this.panelBottom.Controls.Add(this.labY0);
@@ -305,45 +307,44 @@
             this.panelBottom.Controls.Add(this.labCompressionRatio);
             this.panelBottom.Controls.Add(this.labelX);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(193, 433);
-            this.panelBottom.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panelBottom.Location = new System.Drawing.Point(170, 325);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(836, 235);
+            this.panelBottom.Size = new System.Drawing.Size(733, 176);
             this.panelBottom.TabIndex = 3;
             // 
             // labY2
             // 
             this.labY2.AutoSize = true;
-            this.labY2.Location = new System.Drawing.Point(568, 115);
+            this.labY2.Location = new System.Drawing.Point(566, 133);
             this.labY2.Name = "labY2";
-            this.labY2.Size = new System.Drawing.Size(64, 20);
+            this.labY2.Size = new System.Drawing.Size(51, 15);
             this.labY2.TabIndex = 14;
             this.labY2.Text = "DCArray";
             // 
             // labY1
             // 
             this.labY1.AutoSize = true;
-            this.labY1.Location = new System.Drawing.Point(555, 88);
+            this.labY1.Location = new System.Drawing.Point(555, 113);
             this.labY1.Name = "labY1";
-            this.labY1.Size = new System.Drawing.Size(79, 20);
+            this.labY1.Size = new System.Drawing.Size(62, 15);
             this.labY1.TabIndex = 13;
             this.labY1.Text = "DerivArray";
             // 
             // labY0
             // 
             this.labY0.AutoSize = true;
-            this.labY0.Location = new System.Drawing.Point(507, 64);
+            this.labY0.Location = new System.Drawing.Point(513, 95);
             this.labY0.Name = "labY0";
-            this.labY0.Size = new System.Drawing.Size(130, 20);
+            this.labY0.Size = new System.Drawing.Size(110, 15);
             this.labY0.TabIndex = 12;
-            this.labY0.Text = "PressureViewArray";
+            this.labY0.Text = "PressureViewArray :";
             // 
             // labMaxSize
             // 
             this.labMaxSize.AutoSize = true;
-            this.labMaxSize.Location = new System.Drawing.Point(15, 183);
+            this.labMaxSize.Location = new System.Drawing.Point(13, 137);
             this.labMaxSize.Name = "labMaxSize";
-            this.labMaxSize.Size = new System.Drawing.Size(50, 20);
+            this.labMaxSize.Size = new System.Drawing.Size(38, 15);
             this.labMaxSize.TabIndex = 11;
             this.labMaxSize.Text = "label4";
             // 
@@ -351,9 +352,9 @@
             // 
             this.labPulse.AutoSize = true;
             this.labPulse.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labPulse.Location = new System.Drawing.Point(216, 167);
+            this.labPulse.Location = new System.Drawing.Point(189, 125);
             this.labPulse.Name = "labPulse";
-            this.labPulse.Size = new System.Drawing.Size(99, 37);
+            this.labPulse.Size = new System.Drawing.Size(80, 30);
             this.labPulse.TabIndex = 10;
             this.labPulse.Text = "Pulse : ";
             // 
@@ -361,9 +362,9 @@
             // 
             this.labDia.AutoSize = true;
             this.labDia.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labDia.Location = new System.Drawing.Point(237, 127);
+            this.labDia.Location = new System.Drawing.Point(207, 95);
             this.labDia.Name = "labDia";
-            this.labDia.Size = new System.Drawing.Size(70, 37);
+            this.labDia.Size = new System.Drawing.Size(55, 30);
             this.labDia.TabIndex = 9;
             this.labDia.Text = "Dia :";
             // 
@@ -371,9 +372,9 @@
             // 
             this.labSys.AutoSize = true;
             this.labSys.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labSys.Location = new System.Drawing.Point(237, 88);
+            this.labSys.Location = new System.Drawing.Point(207, 66);
             this.labSys.Name = "labSys";
-            this.labSys.Size = new System.Drawing.Size(74, 37);
+            this.labSys.Size = new System.Drawing.Size(61, 30);
             this.labSys.TabIndex = 8;
             this.labSys.Text = "Sys : ";
             // 
@@ -381,9 +382,9 @@
             // 
             this.labMeanPressure.AutoSize = true;
             this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labMeanPressure.Location = new System.Drawing.Point(209, 48);
+            this.labMeanPressure.Location = new System.Drawing.Point(183, 36);
             this.labMeanPressure.Name = "labMeanPressure";
-            this.labMeanPressure.Size = new System.Drawing.Size(104, 37);
+            this.labMeanPressure.Size = new System.Drawing.Size(85, 30);
             this.labMeanPressure.TabIndex = 7;
             this.labMeanPressure.Text = "Mean : ";
             // 
@@ -392,36 +393,36 @@
             this.labCurrentPressure.AutoSize = true;
             this.labCurrentPressure.CausesValidation = false;
             this.labCurrentPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labCurrentPressure.Location = new System.Drawing.Point(190, 8);
+            this.labCurrentPressure.Location = new System.Drawing.Point(166, 6);
             this.labCurrentPressure.Name = "labCurrentPressure";
-            this.labCurrentPressure.Size = new System.Drawing.Size(125, 37);
+            this.labCurrentPressure.Size = new System.Drawing.Size(103, 30);
             this.labCurrentPressure.TabIndex = 5;
             this.labCurrentPressure.Text = "Current : ";
             // 
             // labPort
             // 
             this.labPort.AutoSize = true;
-            this.labPort.Location = new System.Drawing.Point(15, 115);
+            this.labPort.Location = new System.Drawing.Point(13, 86);
             this.labPort.Name = "labPort";
-            this.labPort.Size = new System.Drawing.Size(46, 20);
+            this.labPort.Size = new System.Drawing.Size(38, 15);
             this.labPort.TabIndex = 4;
             this.labPort.Text = "Port : ";
             // 
             // labCompressionRatio
             // 
             this.labCompressionRatio.AutoSize = true;
-            this.labCompressionRatio.Location = new System.Drawing.Point(15, 33);
+            this.labCompressionRatio.Location = new System.Drawing.Point(13, 25);
             this.labCompressionRatio.Name = "labCompressionRatio";
-            this.labCompressionRatio.Size = new System.Drawing.Size(114, 20);
+            this.labCompressionRatio.Size = new System.Drawing.Size(92, 15);
             this.labCompressionRatio.TabIndex = 3;
             this.labCompressionRatio.Text = "Compression : 1";
             // 
             // labelX
             // 
             this.labelX.AutoSize = true;
-            this.labelX.Location = new System.Drawing.Point(608, 44);
+            this.labelX.Location = new System.Drawing.Point(602, 80);
             this.labelX.Name = "labelX";
-            this.labelX.Size = new System.Drawing.Size(45, 20);
+            this.labelX.Size = new System.Drawing.Size(35, 15);
             this.labelX.TabIndex = 2;
             this.labelX.Text = "X : 0  ";
             // 
@@ -430,10 +431,9 @@
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.hScrollBar1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(193, 398);
-            this.panel2.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panel2.Location = new System.Drawing.Point(170, 299);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(836, 27);
+            this.panel2.Size = new System.Drawing.Size(733, 20);
             this.panel2.TabIndex = 5;
             // 
             // hScrollBar1
@@ -441,7 +441,7 @@
             this.hScrollBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hScrollBar1.Location = new System.Drawing.Point(0, 0);
             this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(834, 25);
+            this.hScrollBar1.Size = new System.Drawing.Size(731, 18);
             this.hScrollBar1.TabIndex = 0;
             this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
@@ -454,28 +454,25 @@
             this.panel3.Controls.Add(this.butStopRecord);
             this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 433);
-            this.panel3.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.panel3.Location = new System.Drawing.Point(3, 325);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(184, 235);
+            this.panel3.Size = new System.Drawing.Size(161, 176);
             this.panel3.TabIndex = 6;
             // 
             // progressBarRecord
             // 
-            this.progressBarRecord.Location = new System.Drawing.Point(25, 92);
-            this.progressBarRecord.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.progressBarRecord.Location = new System.Drawing.Point(22, 69);
             this.progressBarRecord.Name = "progressBarRecord";
-            this.progressBarRecord.Size = new System.Drawing.Size(97, 31);
+            this.progressBarRecord.Size = new System.Drawing.Size(85, 23);
             this.progressBarRecord.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBarRecord.TabIndex = 4;
             this.progressBarRecord.Visible = false;
             // 
             // butSaveFile
             // 
-            this.butSaveFile.Location = new System.Drawing.Point(25, 151);
-            this.butSaveFile.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butSaveFile.Location = new System.Drawing.Point(22, 113);
             this.butSaveFile.Name = "butSaveFile";
-            this.butSaveFile.Size = new System.Drawing.Size(97, 31);
+            this.butSaveFile.Size = new System.Drawing.Size(85, 23);
             this.butSaveFile.TabIndex = 3;
             this.butSaveFile.Text = "Save file";
             this.butSaveFile.UseVisualStyleBackColor = true;
@@ -484,18 +481,17 @@
             // labRecordSize
             // 
             this.labRecordSize.AutoSize = true;
-            this.labRecordSize.Location = new System.Drawing.Point(27, 127);
+            this.labRecordSize.Location = new System.Drawing.Point(24, 95);
             this.labRecordSize.Name = "labRecordSize";
-            this.labRecordSize.Size = new System.Drawing.Size(92, 20);
+            this.labRecordSize.Size = new System.Drawing.Size(72, 15);
             this.labRecordSize.TabIndex = 2;
             this.labRecordSize.Text = "Record size :";
             // 
             // butStopRecord
             // 
-            this.butStopRecord.Location = new System.Drawing.Point(25, 47);
-            this.butStopRecord.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butStopRecord.Location = new System.Drawing.Point(22, 35);
             this.butStopRecord.Name = "butStopRecord";
-            this.butStopRecord.Size = new System.Drawing.Size(97, 31);
+            this.butStopRecord.Size = new System.Drawing.Size(85, 23);
             this.butStopRecord.TabIndex = 1;
             this.butStopRecord.Text = "Stop record";
             this.butStopRecord.UseVisualStyleBackColor = true;
@@ -503,10 +499,9 @@
             // 
             // butStartRecord
             // 
-            this.butStartRecord.Location = new System.Drawing.Point(25, 8);
-            this.butStartRecord.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.butStartRecord.Location = new System.Drawing.Point(22, 6);
             this.butStartRecord.Name = "butStartRecord";
-            this.butStartRecord.Size = new System.Drawing.Size(97, 31);
+            this.butStartRecord.Size = new System.Drawing.Size(85, 23);
             this.butStartRecord.TabIndex = 0;
             this.butStartRecord.Text = "Start record";
             this.butStartRecord.UseVisualStyleBackColor = true;
@@ -540,23 +535,21 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // butRefresh
+            // labNumOfWaves
             // 
-            this.butRefresh.Location = new System.Drawing.Point(25, 241);
-            this.butRefresh.Name = "butRefresh";
-            this.butRefresh.Size = new System.Drawing.Size(94, 29);
-            this.butRefresh.TabIndex = 13;
-            this.butRefresh.Text = "Refresh";
-            this.butRefresh.UseVisualStyleBackColor = true;
-            this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
+            this.labNumOfWaves.AutoSize = true;
+            this.labNumOfWaves.Location = new System.Drawing.Point(366, 11);
+            this.labNumOfWaves.Name = "labNumOfWaves";
+            this.labNumOfWaves.Size = new System.Drawing.Size(99, 15);
+            this.labNumOfWaves.TabIndex = 15;
+            this.labNumOfWaves.Text = "Waves detected : ";
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1095, 672);
+            this.ClientSize = new System.Drawing.Size(958, 504);
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
@@ -622,5 +615,6 @@
         private Label label3;
         private NumericUpDown numUDRight;
         private Button butRefresh;
+        private Label labNumOfWaves;
     }
 }
