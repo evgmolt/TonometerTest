@@ -126,7 +126,7 @@
             // 
             // butRefresh
             // 
-            this.butRefresh.Location = new System.Drawing.Point(22, 181);
+            this.butRefresh.Location = new System.Drawing.Point(22, 179);
             this.butRefresh.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.butRefresh.Name = "butRefresh";
             this.butRefresh.Size = new System.Drawing.Size(82, 22);
@@ -138,7 +138,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(22, 128);
+            this.label3.Location = new System.Drawing.Point(22, 133);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(35, 15);
             this.label3.TabIndex = 12;
@@ -152,7 +152,7 @@
             0,
             0,
             131072});
-            this.numUDRight.Location = new System.Drawing.Point(22, 146);
+            this.numUDRight.Location = new System.Drawing.Point(22, 151);
             this.numUDRight.Maximum = new decimal(new int[] {
             90,
             0,
@@ -218,7 +218,7 @@
             // 
             // butFlow
             // 
-            this.butFlow.Location = new System.Drawing.Point(22, 32);
+            this.butFlow.Location = new System.Drawing.Point(22, 37);
             this.butFlow.Name = "butFlow";
             this.butFlow.Size = new System.Drawing.Size(85, 23);
             this.butFlow.TabIndex = 9;
@@ -229,7 +229,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(22, 87);
+            this.label2.Location = new System.Drawing.Point(22, 92);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(27, 15);
             this.label2.TabIndex = 6;
@@ -243,7 +243,7 @@
             0,
             0,
             131072});
-            this.numUDLeft.Location = new System.Drawing.Point(22, 105);
+            this.numUDLeft.Location = new System.Drawing.Point(22, 110);
             this.numUDLeft.Maximum = new decimal(new int[] {
             95,
             0,
@@ -266,7 +266,7 @@
             // 
             // butOpenFile
             // 
-            this.butOpenFile.Location = new System.Drawing.Point(22, 61);
+            this.butOpenFile.Location = new System.Drawing.Point(22, 66);
             this.butOpenFile.Name = "butOpenFile";
             this.butOpenFile.Size = new System.Drawing.Size(85, 23);
             this.butOpenFile.TabIndex = 0;
@@ -559,12 +559,13 @@
             // 
             // butBCISetup
             // 
-            this.butBCISetup.Location = new System.Drawing.Point(22, 3);
+            this.butBCISetup.Location = new System.Drawing.Point(22, 8);
             this.butBCISetup.Name = "butBCISetup";
             this.butBCISetup.Size = new System.Drawing.Size(85, 23);
             this.butBCISetup.TabIndex = 17;
-            this.butBCISetup.Text = "button1";
+            this.butBCISetup.Text = "BCI setup";
             this.butBCISetup.UseVisualStyleBackColor = true;
+            this.butBCISetup.Click += new System.EventHandler(this.butBCISetup_Click);
             // 
             // Form1
             // 

@@ -507,5 +507,14 @@
             var pen0 = new Pen(Color.Black, 1);
             e.Graphics.DrawRectangle(pen0, R0);
         }
+
+        private void butBCISetup_Click(object sender, EventArgs e)
+        {
+            int numOfRegs = 24;
+            for (int i = 0; i < numOfRegs; i++)
+            {
+//                USBPort.WriteByte()
+            }
+        }
     }
 }

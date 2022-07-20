@@ -10,8 +10,11 @@ namespace TTestApp
     {
         private const int BytesInCommand = 14;
         private const int numHeader = 4;
+        private const int numADCNum = 7;
+        private const int numRegNum = 8;
+        private const int numRegValue = 9;
 
-        public static int[] CommandPattern = { 0x77, 0x66, 0x55, 0xAA, 0, 0, 0, 3, 1, 1, 0, 0, 0, 0 };
+        public static int[] CommandSetReg  = { 0x77, 0x66, 0x55, 0xAA, 0x41, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
         public static int[] CommandADC     = { 0x77, 0x66, 0x55, 0xAA, 0x42, 0, 0, 3, 1, 1, 0, 0, 0, 0 }; //Включение АЦП 1 и 2, 250 Гц
         private static byte[] DefaultsRegsValues = { 0xFF, 0x96, 0xC0, 0x60, 0x00, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00 };
 
