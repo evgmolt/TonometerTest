@@ -36,7 +36,7 @@ namespace TTestApp
             int[] resultArray = new int[inputArray.Length + expandBy * 2];
             int intervalForSearch = 50;
             int meanInterval = 0;
-            for (int i = 1; i < inputArray.Length; i++)
+            for (int i = 1; i < inputArray.Length; i++)//Внимание! Цикл с 1!
             {
                 meanInterval += inputArray[i] - inputArray[i - 1];
             }

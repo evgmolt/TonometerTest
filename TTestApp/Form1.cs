@@ -7,6 +7,7 @@
         ByteDecomposerBCI decomposer;
         Painter painter;
         WaveDetector WD;
+        HRV hrv;
         BufferedPanel bufPanel;
         TTestConfig Cfg;
         StreamWriter textWriter;
@@ -241,6 +242,10 @@
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
+
+            hrv = new HRV(ArrayOfWaveIndexes);
+            BCICommands.CountCheckSum(ref BCICommands.CommandADC);
+            panelHisto.Refresh();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -493,6 +498,14 @@
         {
             PrepareData();
             bufPanel.Refresh();
+        }
+
+        private void panelHisto_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.Clear(Color.White);
+            var R0 = new Rectangle(0, 0, panelHisto.Width, panelHisto.Height);
+            var pen0 = new Pen(Color.Black, 1);
+            e.Graphics.DrawRectangle(pen0, R0);
         }
     }
 }

@@ -45,6 +45,8 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.panelHisto = new System.Windows.Forms.Panel();
+            this.labNumOfWaves = new System.Windows.Forms.Label();
             this.labY2 = new System.Windows.Forms.Label();
             this.labY1 = new System.Windows.Forms.Label();
             this.labY0 = new System.Windows.Forms.Label();
@@ -70,7 +72,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labNumOfWaves = new System.Windows.Forms.Label();
+            this.butBCISetup = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -99,14 +101,15 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 182F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 178F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 504);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.butBCISetup);
             this.panel1.Controls.Add(this.butRefresh);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.numUDRight);
@@ -118,7 +121,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(161, 290);
+            this.panel1.Size = new System.Drawing.Size(161, 295);
             this.panel1.TabIndex = 0;
             // 
             // butRefresh
@@ -215,7 +218,7 @@
             // 
             // butFlow
             // 
-            this.butFlow.Location = new System.Drawing.Point(22, 17);
+            this.butFlow.Location = new System.Drawing.Point(22, 32);
             this.butFlow.Name = "butFlow";
             this.butFlow.Size = new System.Drawing.Size(85, 23);
             this.butFlow.TabIndex = 9;
@@ -263,7 +266,7 @@
             // 
             // butOpenFile
             // 
-            this.butOpenFile.Location = new System.Drawing.Point(22, 55);
+            this.butOpenFile.Location = new System.Drawing.Point(22, 61);
             this.butOpenFile.Name = "butOpenFile";
             this.butOpenFile.Size = new System.Drawing.Size(85, 23);
             this.butOpenFile.TabIndex = 0;
@@ -276,7 +279,7 @@
             this.panelGraph.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGraph.Location = new System.Drawing.Point(170, 3);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(733, 290);
+            this.panelGraph.Size = new System.Drawing.Size(733, 295);
             this.panelGraph.TabIndex = 1;
             // 
             // trackBarAmp
@@ -286,13 +289,14 @@
             this.trackBarAmp.Minimum = -10;
             this.trackBarAmp.Name = "trackBarAmp";
             this.trackBarAmp.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBarAmp.Size = new System.Drawing.Size(46, 290);
+            this.trackBarAmp.Size = new System.Drawing.Size(46, 295);
             this.trackBarAmp.TabIndex = 4;
             this.trackBarAmp.ValueChanged += new System.EventHandler(this.trackBarAmp_ValueChanged);
             // 
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.panelHisto);
             this.panelBottom.Controls.Add(this.labNumOfWaves);
             this.panelBottom.Controls.Add(this.labY2);
             this.panelBottom.Controls.Add(this.labY1);
@@ -307,15 +311,33 @@
             this.panelBottom.Controls.Add(this.labCompressionRatio);
             this.panelBottom.Controls.Add(this.labelX);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(170, 325);
+            this.panelBottom.Location = new System.Drawing.Point(170, 329);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(733, 176);
+            this.panelBottom.Size = new System.Drawing.Size(733, 172);
             this.panelBottom.TabIndex = 3;
+            // 
+            // panelHisto
+            // 
+            this.panelHisto.Dock = System.Windows.Forms.DockStyle.Right;
+            this.panelHisto.Location = new System.Drawing.Point(460, 0);
+            this.panelHisto.Name = "panelHisto";
+            this.panelHisto.Size = new System.Drawing.Size(271, 170);
+            this.panelHisto.TabIndex = 16;
+            this.panelHisto.Paint += new System.Windows.Forms.PaintEventHandler(this.panelHisto_Paint);
+            // 
+            // labNumOfWaves
+            // 
+            this.labNumOfWaves.AutoSize = true;
+            this.labNumOfWaves.Location = new System.Drawing.Point(285, 10);
+            this.labNumOfWaves.Name = "labNumOfWaves";
+            this.labNumOfWaves.Size = new System.Drawing.Size(99, 15);
+            this.labNumOfWaves.TabIndex = 15;
+            this.labNumOfWaves.Text = "Waves detected : ";
             // 
             // labY2
             // 
             this.labY2.AutoSize = true;
-            this.labY2.Location = new System.Drawing.Point(566, 133);
+            this.labY2.Location = new System.Drawing.Point(327, 104);
             this.labY2.Name = "labY2";
             this.labY2.Size = new System.Drawing.Size(51, 15);
             this.labY2.TabIndex = 14;
@@ -324,7 +346,7 @@
             // labY1
             // 
             this.labY1.AutoSize = true;
-            this.labY1.Location = new System.Drawing.Point(555, 113);
+            this.labY1.Location = new System.Drawing.Point(316, 84);
             this.labY1.Name = "labY1";
             this.labY1.Size = new System.Drawing.Size(62, 15);
             this.labY1.TabIndex = 13;
@@ -333,7 +355,7 @@
             // labY0
             // 
             this.labY0.AutoSize = true;
-            this.labY0.Location = new System.Drawing.Point(513, 95);
+            this.labY0.Location = new System.Drawing.Point(274, 66);
             this.labY0.Name = "labY0";
             this.labY0.Size = new System.Drawing.Size(110, 15);
             this.labY0.TabIndex = 12;
@@ -420,7 +442,7 @@
             // labelX
             // 
             this.labelX.AutoSize = true;
-            this.labelX.Location = new System.Drawing.Point(602, 80);
+            this.labelX.Location = new System.Drawing.Point(363, 51);
             this.labelX.Name = "labelX";
             this.labelX.Size = new System.Drawing.Size(35, 15);
             this.labelX.TabIndex = 2;
@@ -431,9 +453,9 @@
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.hScrollBar1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(170, 299);
+            this.panel2.Location = new System.Drawing.Point(170, 304);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(733, 20);
+            this.panel2.Size = new System.Drawing.Size(733, 19);
             this.panel2.TabIndex = 5;
             // 
             // hScrollBar1
@@ -441,7 +463,7 @@
             this.hScrollBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hScrollBar1.Location = new System.Drawing.Point(0, 0);
             this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(731, 18);
+            this.hScrollBar1.Size = new System.Drawing.Size(731, 17);
             this.hScrollBar1.TabIndex = 0;
             this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
@@ -454,9 +476,9 @@
             this.panel3.Controls.Add(this.butStopRecord);
             this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 325);
+            this.panel3.Location = new System.Drawing.Point(3, 329);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(161, 176);
+            this.panel3.Size = new System.Drawing.Size(161, 172);
             this.panel3.TabIndex = 6;
             // 
             // progressBarRecord
@@ -535,14 +557,14 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // labNumOfWaves
+            // butBCISetup
             // 
-            this.labNumOfWaves.AutoSize = true;
-            this.labNumOfWaves.Location = new System.Drawing.Point(366, 11);
-            this.labNumOfWaves.Name = "labNumOfWaves";
-            this.labNumOfWaves.Size = new System.Drawing.Size(99, 15);
-            this.labNumOfWaves.TabIndex = 15;
-            this.labNumOfWaves.Text = "Waves detected : ";
+            this.butBCISetup.Location = new System.Drawing.Point(22, 3);
+            this.butBCISetup.Name = "butBCISetup";
+            this.butBCISetup.Size = new System.Drawing.Size(85, 23);
+            this.butBCISetup.TabIndex = 17;
+            this.butBCISetup.Text = "button1";
+            this.butBCISetup.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -616,5 +638,7 @@
         private NumericUpDown numUDRight;
         private Button butRefresh;
         private Label labNumOfWaves;
+        private Panel panelHisto;
+        private Button butBCISetup;
     }
 }
