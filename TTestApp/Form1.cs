@@ -244,7 +244,7 @@
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
 
             hrv = new HRV(ArrayOfWaveIndexes);
-            BCICommands.CountCheckSum(ref BCICommands.CommandADC);
+            BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
             panelHisto.Refresh();
         }
 
@@ -510,10 +510,15 @@
 
         private void butBCISetup_Click(object sender, EventArgs e)
         {
-            int numOfRegs = 24;
-            for (int i = 0; i < numOfRegs; i++)
+            var registersSetArray = BCICommands.GetSetRegArray();
+            for (int i = 0; i < registersSetArray.Length; i++)
             {
-//                USBPort.WriteByte()
+                USBPort.WriteByte(registersSetArray[i]);
+            }
+            BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
+            for (int i = 0; i < BCICommands.CommandSetADC.Length; i++)
+            {
+                USBPort.WriteByte(BCICommands.CommandSetADC[i]);
             }
         }
     }
