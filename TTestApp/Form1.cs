@@ -1,4 +1,6 @@
-﻿namespace TTestApp
+﻿using HRV;
+
+namespace TTestApp
 {
     public partial class Form1 : Form, IMessageHandler
     {
@@ -7,7 +9,7 @@
         ByteDecomposerBCI decomposer;
         Painter painter;
         WaveDetector WD;
-        HRV hrv;
+        Histogram histo;
         BufferedPanel bufPanel;
         TTestConfig Cfg;
         StreamWriter textWriter;
@@ -244,7 +246,7 @@
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
 
-            hrv = new HRV(ArrayOfWaveIndexes);
+            histo = new Histogram(ArrayOfWaveIndexes, ByteDecomposerBCI.SamplingFrequency);
             BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
             histoPanel.Refresh();
         }
@@ -504,26 +506,25 @@
 
         private void panelHisto_Paint(object sender, PaintEventArgs e)
         {
-            if (hrv is null)
+            if (histo is null)
             {
                 return;
             }
             int barWidth = 2;
-            int YScaleCoeff = histoPanel.Height / hrv.ModaAmplitude - 2;
+            int YScaleCoeff = histoPanel.Height / histo.ModaAmplitude - 2;
             e.Graphics.Clear(Color.White);
             var R0 = new Rectangle(0, 0, histoPanel.Width, histoPanel.Height);
             var pen0 = new Pen(Color.Black, 1);
             e.Graphics.DrawRectangle(pen0, R0);
-            //var R = new Rectangle(10, 50, 15, 100);
-            //e.Graphics.DrawRectangle(pen0, R);
+            Brush brush0 = new SolidBrush(Color.Black);
             for (int i = 0; i < histoPanel.Width / barWidth; i++)
             {
                 int x1 = i * barWidth;
-                int y1 = histoPanel.Height - hrv.HistoBuffer[i] * YScaleCoeff;
+                int y1 = histoPanel.Height - histo.HistoBuffer[i] * YScaleCoeff;
                 int w = barWidth;
                 int h = histoPanel.Height;
                 var R1 = new Rectangle(x1, y1, w, h);
-                e.Graphics.DrawRectangle(pen0, R1);
+                e.Graphics.FillRectangle(brush0, R1);
             }
         }
 
