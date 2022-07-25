@@ -11,7 +11,13 @@ namespace TTestApp
         private const int _histoBufferSize = 1000;
         private const int _histoBarWidth = 10;
         private readonly int[] _NNArray;//Массив интервалов в мс
-        public int[] _HistoBuffer = new int[_histoBufferSize];
+        private int _moda;
+        private int _modaAmplitude;
+        private int _rangeOfNN;
+        public int[] HistoBuffer = new int[_histoBufferSize];
+        public int Moda { get { return _moda; } }
+        public int ModaAmplitude { get { return _modaAmplitude; } }
+        public int RangeOfNN { get { return _rangeOfNN; } } 
 
         public HRV(int[] arrayOfIndexes)
         {
@@ -29,7 +35,27 @@ namespace TTestApp
             for (int i = 0; i < _NNArray.Length; i++)
             {
                 int histoIndex = _NNArray[i] / _histoBarWidth;
-                _HistoBuffer[histoIndex]++;
+                HistoBuffer[histoIndex]++;
+            }
+            _modaAmplitude = HistoBuffer.Max();
+            _moda = Array.IndexOf(HistoBuffer, _modaAmplitude);
+            int histoLeft = 0;
+            for (int i = 0; i < HistoBuffer.Length; i++)
+            {
+                if (HistoBuffer[i] != 0)
+                {
+                    histoLeft = i;
+                    break;
+                }
+            }
+            int histoRight = HistoBuffer.Length - 1;
+            for (int i = HistoBuffer.Length - 1; i >= 0; i--)
+            {
+                if (HistoBuffer[i] != 0)
+                {
+                    histoRight = i;
+                    break;
+                }
             }
         }
     }

@@ -148,6 +148,7 @@
             }
             PrepareData();
             bufPanel.Refresh();
+            histoPanel.Refresh();
         }
 
         private void PrepareData()
@@ -245,7 +246,7 @@
 
             hrv = new HRV(ArrayOfWaveIndexes);
             BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
-            panelHisto.Refresh();
+            histoPanel.Refresh();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -498,14 +499,32 @@
         {
             PrepareData();
             bufPanel.Refresh();
+            histoPanel.Refresh();
         }
 
         private void panelHisto_Paint(object sender, PaintEventArgs e)
         {
+            if (hrv is null)
+            {
+                return;
+            }
+            int barWidth = 2;
+            int YScaleCoeff = histoPanel.Height / hrv.ModaAmplitude - 2;
             e.Graphics.Clear(Color.White);
-            var R0 = new Rectangle(0, 0, panelHisto.Width, panelHisto.Height);
+            var R0 = new Rectangle(0, 0, histoPanel.Width, histoPanel.Height);
             var pen0 = new Pen(Color.Black, 1);
             e.Graphics.DrawRectangle(pen0, R0);
+            //var R = new Rectangle(10, 50, 15, 100);
+            //e.Graphics.DrawRectangle(pen0, R);
+            for (int i = 0; i < histoPanel.Width / barWidth; i++)
+            {
+                int x1 = i * barWidth;
+                int y1 = histoPanel.Height - hrv.HistoBuffer[i] * YScaleCoeff;
+                int w = barWidth;
+                int h = histoPanel.Height;
+                var R1 = new Rectangle(x1, y1, w, h);
+                e.Graphics.DrawRectangle(pen0, R1);
+            }
         }
 
         private void butBCISetup_Click(object sender, EventArgs e)

@@ -14,9 +14,8 @@ namespace TTestApp
         private const int numRegNum = 8;
         private const int numRegValue = 9;
 
-        public static byte[] CommandSetReg = { 0x77, 0x66, 0x55, 0xAA, 0x40, 0, 0, 0, 1, 12, 0, 0, 0, 0 };
-//        public static byte[] CommandSetReg  = { 0x77, 0x66, 0x55, 0xAA, 0x41, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-        public static byte[] CommandSetADC = { 0x77, 0x66, 0x55, 0xAA, 0x42, 0, 0, 3, 1, 0, 0, 0, 0, 0 }; //Включение АЦП 1 и 2, 250 Гц
+        public static byte[] CommandSetReg  = { 0x77, 0x66, 0x55, 0xAA, 0x41, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+        public static byte[] CommandSetADC =  { 0x77, 0x66, 0x55, 0xAA, 0x42, 0, 0, 3, 1, 1, 0, 0, 0, 0 }; //Включение АЦП 1 и 2, 250 Гц
         private static byte[] RegsValues = { 0x00, 0xB6, 0xC0, 0xE0, 0x00, 0x60, 0x61, 0x61, 
                                              0x61, 0x61, 0x61, 0x61, 0x61, 0x00, 0x00, 0x00, 
                                              0x00, 0x00, 0x00, 0x00, 0x0F, 0x00, 0x00, 0x00 };
