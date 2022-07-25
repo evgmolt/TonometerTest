@@ -1,4 +1,6 @@
-﻿namespace TTestApp
+﻿using HRV;
+
+namespace TTestApp
 {
     public partial class Form1 : Form, IMessageHandler
     {
@@ -7,7 +9,7 @@
         ByteDecomposerBCI decomposer;
         Painter painter;
         WaveDetector WD;
-        HRV hrv;
+        Histogram histo;
         BufferedPanel bufPanel;
         TTestConfig Cfg;
         StreamWriter textWriter;
@@ -148,6 +150,7 @@
             }
             PrepareData();
             bufPanel.Refresh();
+            histoPanel.Refresh();
         }
 
         private void PrepareData()
@@ -243,9 +246,9 @@
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
 
-            hrv = new HRV(ArrayOfWaveIndexes);
-            BCICommands.CountCheckSum(ref BCICommands.CommandADC);
-            panelHisto.Refresh();
+            histo = new Histogram(ArrayOfWaveIndexes, ByteDecomposerBCI.SamplingFrequency);
+            BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
+            histoPanel.Refresh();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -498,14 +501,45 @@
         {
             PrepareData();
             bufPanel.Refresh();
+            histoPanel.Refresh();
         }
 
         private void panelHisto_Paint(object sender, PaintEventArgs e)
         {
+            if (histo is null)
+            {
+                return;
+            }
+            int barWidth = 2;
+            int YScaleCoeff = histoPanel.Height / histo.ModaAmplitude - 2;
             e.Graphics.Clear(Color.White);
-            var R0 = new Rectangle(0, 0, panelHisto.Width, panelHisto.Height);
+            var R0 = new Rectangle(0, 0, histoPanel.Width, histoPanel.Height);
             var pen0 = new Pen(Color.Black, 1);
             e.Graphics.DrawRectangle(pen0, R0);
+            Brush brush0 = new SolidBrush(Color.Black);
+            for (int i = 0; i < histoPanel.Width / barWidth; i++)
+            {
+                int x1 = i * barWidth;
+                int y1 = histoPanel.Height - histo.HistoBuffer[i] * YScaleCoeff;
+                int w = barWidth;
+                int h = histoPanel.Height;
+                var R1 = new Rectangle(x1, y1, w, h);
+                e.Graphics.FillRectangle(brush0, R1);
+            }
+        }
+
+        private void butBCISetup_Click(object sender, EventArgs e)
+        {
+            var registersSetArray = BCICommands.GetSetRegArray();
+            for (int i = 0; i < registersSetArray.Length; i++)
+            {
+                USBPort.WriteByte(registersSetArray[i]);
+            }
+            BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
+            for (int i = 0; i < BCICommands.CommandSetADC.Length; i++)
+            {
+                USBPort.WriteByte(BCICommands.CommandSetADC[i]);
+            }
         }
     }
 }

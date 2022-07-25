@@ -14,4 +14,8 @@
     <PackageReference Include="System.Management" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HRV\HRV.csproj" />
+  </ItemGroup>
+
 </Project>
