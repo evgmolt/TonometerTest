@@ -510,8 +510,9 @@ namespace TTestApp
             {
                 return;
             }
-            int barWidth = 2;
+            int barWidth = 5;
             int YScaleCoeff = histoPanel.Height / histo.ModaAmplitude - 2;
+            YScaleCoeff = 13;
             e.Graphics.Clear(Color.White);
             var R0 = new Rectangle(0, 0, histoPanel.Width, histoPanel.Height);
             var pen0 = new Pen(Color.Black, 1);
@@ -526,6 +527,8 @@ namespace TTestApp
                 var R1 = new Rectangle(x1, y1, w, h);
                 e.Graphics.FillRectangle(brush0, R1);
             }
+            pen0.Dispose();
+            brush0.Dispose();
         }
 
         private void butBCISetup_Click(object sender, EventArgs e)

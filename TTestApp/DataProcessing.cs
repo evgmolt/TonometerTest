@@ -180,13 +180,8 @@ namespace TTestApp
 
         public static int GetRange(double[] Data)
         {
-            int min = 10000000;
-            int max = 0;
-            foreach (int elem in Data)
-            {
-                min = Math.Min(min, elem);
-                max = Math.Max(max, elem);
-            }
+            int max = (int)Data.Max();
+            int min = (int)Data.Min();
             return (max - min);
         }
 

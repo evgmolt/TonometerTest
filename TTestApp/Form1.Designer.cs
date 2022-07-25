@@ -46,7 +46,6 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.histoPanel = new System.Windows.Forms.Panel();
             this.labNumOfWaves = new System.Windows.Forms.Label();
             this.labY2 = new System.Windows.Forms.Label();
             this.labY1 = new System.Windows.Forms.Label();
@@ -68,6 +67,8 @@
             this.labRecordSize = new System.Windows.Forms.Label();
             this.butStopRecord = new System.Windows.Forms.Button();
             this.butStartRecord = new System.Windows.Forms.Button();
+            this.panel4 = new System.Windows.Forms.Panel();
+            this.histoPanel = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
@@ -82,6 +83,7 @@
             this.panelBottom.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -93,17 +95,19 @@
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.panelGraph, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.trackBarAmp, 2, 0);
-            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panelBottom, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.panel2, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.panel4, 1, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 178F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(958, 504);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 130F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 180F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1302, 615);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel1
@@ -121,7 +125,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(161, 295);
+            this.panel1.Size = new System.Drawing.Size(224, 267);
             this.panel1.TabIndex = 0;
             // 
             // butBCISetup
@@ -287,26 +291,25 @@
             // panelGraph
             // 
             this.panelGraph.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelGraph.Location = new System.Drawing.Point(170, 3);
+            this.panelGraph.Location = new System.Drawing.Point(233, 3);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(733, 295);
+            this.panelGraph.Size = new System.Drawing.Size(1014, 267);
             this.panelGraph.TabIndex = 1;
             // 
             // trackBarAmp
             // 
             this.trackBarAmp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.trackBarAmp.Location = new System.Drawing.Point(909, 3);
+            this.trackBarAmp.Location = new System.Drawing.Point(1253, 3);
             this.trackBarAmp.Minimum = -10;
             this.trackBarAmp.Name = "trackBarAmp";
             this.trackBarAmp.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBarAmp.Size = new System.Drawing.Size(46, 295);
+            this.trackBarAmp.Size = new System.Drawing.Size(46, 267);
             this.trackBarAmp.TabIndex = 4;
             this.trackBarAmp.ValueChanged += new System.EventHandler(this.trackBarAmp_ValueChanged);
             // 
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelBottom.Controls.Add(this.histoPanel);
             this.panelBottom.Controls.Add(this.labNumOfWaves);
             this.panelBottom.Controls.Add(this.labY2);
             this.panelBottom.Controls.Add(this.labY1);
@@ -321,19 +324,10 @@
             this.panelBottom.Controls.Add(this.labCompressionRatio);
             this.panelBottom.Controls.Add(this.labelX);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(170, 329);
+            this.panelBottom.Location = new System.Drawing.Point(233, 438);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(733, 172);
+            this.panelBottom.Size = new System.Drawing.Size(1014, 174);
             this.panelBottom.TabIndex = 3;
-            // 
-            // histoPanel
-            // 
-            this.histoPanel.Dock = System.Windows.Forms.DockStyle.Right;
-            this.histoPanel.Location = new System.Drawing.Point(460, 0);
-            this.histoPanel.Name = "histoPanel";
-            this.histoPanel.Size = new System.Drawing.Size(271, 170);
-            this.histoPanel.TabIndex = 16;
-            this.histoPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.panelHisto_Paint);
             // 
             // labNumOfWaves
             // 
@@ -463,9 +457,9 @@
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.hScrollBar1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(170, 304);
+            this.panel2.Location = new System.Drawing.Point(233, 276);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(733, 19);
+            this.panel2.Size = new System.Drawing.Size(1014, 26);
             this.panel2.TabIndex = 5;
             // 
             // hScrollBar1
@@ -473,7 +467,7 @@
             this.hScrollBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hScrollBar1.Location = new System.Drawing.Point(0, 0);
             this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(731, 17);
+            this.hScrollBar1.Size = new System.Drawing.Size(1012, 24);
             this.hScrollBar1.TabIndex = 0;
             this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
@@ -486,9 +480,9 @@
             this.panel3.Controls.Add(this.butStopRecord);
             this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 329);
+            this.panel3.Location = new System.Drawing.Point(3, 438);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(161, 172);
+            this.panel3.Size = new System.Drawing.Size(224, 174);
             this.panel3.TabIndex = 6;
             // 
             // progressBarRecord
@@ -539,6 +533,25 @@
             this.butStartRecord.UseVisualStyleBackColor = true;
             this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
             // 
+            // panel4
+            // 
+            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel4.Controls.Add(this.histoPanel);
+            this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel4.Location = new System.Drawing.Point(233, 308);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(1014, 124);
+            this.panel4.TabIndex = 7;
+            // 
+            // histoPanel
+            // 
+            this.histoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.histoPanel.Location = new System.Drawing.Point(0, 0);
+            this.histoPanel.Name = "histoPanel";
+            this.histoPanel.Size = new System.Drawing.Size(1012, 122);
+            this.histoPanel.TabIndex = 17;
+            this.histoPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.panelHisto_Paint);
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.DefaultExt = "txt";
@@ -571,9 +584,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(958, 504);
+            this.ClientSize = new System.Drawing.Size(1302, 615);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Resize += new System.EventHandler(this.Form1_Resize);
@@ -591,6 +605,7 @@
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            this.panel4.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -639,7 +654,8 @@
         private NumericUpDown numUDRight;
         private Button butRefresh;
         private Label labNumOfWaves;
-        private Panel histoPanel;
         private Button butBCISetup;
+        private Panel panel4;
+        private Panel histoPanel;
     }
 }
