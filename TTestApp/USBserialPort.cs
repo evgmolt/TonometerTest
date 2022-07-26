@@ -24,6 +24,7 @@ namespace TTestApp
         private readonly int _baudRate;
 
         public event Action<Exception> ConnectionFailure;
+        public event Action ConnectionOk;
         public event Action<Message> WindowsMessage;
 
         private void ReadPort(object state)
@@ -153,6 +154,7 @@ namespace TTestApp
                     ReadEnabled = true;
                     ReadTimer.Change(0, _USBTimerInterval);
                     CurrentPort = i;
+                    ConnectionOk?.Invoke();
                     break;
                 }
                 catch (Exception e)

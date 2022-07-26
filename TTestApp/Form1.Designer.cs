@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.butBCISetup = new System.Windows.Forms.Button();
             this.butRefresh = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.numUDRight = new System.Windows.Forms.NumericUpDown();
@@ -113,7 +112,6 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.butBCISetup);
             this.panel1.Controls.Add(this.butRefresh);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.numUDRight);
@@ -127,16 +125,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(224, 267);
             this.panel1.TabIndex = 0;
-            // 
-            // butBCISetup
-            // 
-            this.butBCISetup.Location = new System.Drawing.Point(22, 8);
-            this.butBCISetup.Name = "butBCISetup";
-            this.butBCISetup.Size = new System.Drawing.Size(85, 23);
-            this.butBCISetup.TabIndex = 17;
-            this.butBCISetup.Text = "BCI setup";
-            this.butBCISetup.UseVisualStyleBackColor = true;
-            this.butBCISetup.Click += new System.EventHandler(this.butBCISetup_Click);
             // 
             // butRefresh
             // 
@@ -654,7 +642,6 @@
         private NumericUpDown numUDRight;
         private Button butRefresh;
         private Label labNumOfWaves;
-        private Button butBCISetup;
         private Panel panel4;
         private Panel histoPanel;
     }

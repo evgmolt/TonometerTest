@@ -23,6 +23,7 @@ namespace TTestApp
         double ScaleY = 1;
         List<int[]> VisirList;
         bool Compression = false;
+        bool Connected = false;
 
         public event Action<Message> WindowsMessage;
 
@@ -53,6 +54,7 @@ namespace TTestApp
             VisirList = new List<int[]>();
             USBPort = new USBserialPort(this, 460800);
             USBPort.ConnectionFailure += onConnectionFailure;
+            USBPort.ConnectionOk += onConnectionOk;
             USBPort.Connect();
             DataProcessing.CompressionChanged += onCompressionChanged;
             InitArraysForFlow();
@@ -70,6 +72,11 @@ namespace TTestApp
             decomposer = new ByteDecomposerBCI(DataA);
             decomposer.DecomposeLineEvent += NewLineReceived;
             painter = new Painter(bufPanel, decomposer);
+        }
+
+        private void onConnectionOk()
+        {
+            BCISetup();
         }
 
         private void onConnectionFailure(Exception obj)
@@ -531,7 +538,7 @@ namespace TTestApp
             brush0.Dispose();
         }
 
-        private void butBCISetup_Click(object sender, EventArgs e)
+        private void BCISetup()
         {
             BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
             USBPort.WriteBuf(BCICommands.CommandSetADC);
