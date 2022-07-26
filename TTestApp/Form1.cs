@@ -533,16 +533,22 @@ namespace TTestApp
 
         private void butBCISetup_Click(object sender, EventArgs e)
         {
-            var registersSetArray = BCICommands.GetSetRegArray();
-            for (int i = 0; i < registersSetArray.Length; i++)
-            {
-                USBPort.WriteByte(registersSetArray[i]);
-            }
             BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
-            for (int i = 0; i < BCICommands.CommandSetADC.Length; i++)
-            {
-                USBPort.WriteByte(BCICommands.CommandSetADC[i]);
-            }
+            USBPort.WriteBuf(BCICommands.CommandSetADC);
+            var registersSetArray = BCICommands.GetSetRegArray();
+            USBPort.WriteBuf(registersSetArray);
+
+            Thread.Sleep(100);
+            BCICommands.CommandSetReg[BCICommands.numRegNum] = 3;
+            BCICommands.CommandSetReg[BCICommands.numRegValue] = 0xE0;
+            BCICommands.CountCheckSum(ref BCICommands.CommandSetReg);
+            USBPort.WriteBuf(BCICommands.CommandSetReg);
+            Thread.Sleep(100);
+
+            BCICommands.CommandSetReg[BCICommands.numRegNum] = 5;
+            BCICommands.CommandSetReg[BCICommands.numRegValue] = 0x60;
+            BCICommands.CountCheckSum(ref BCICommands.CommandSetReg);
+            USBPort.WriteBuf(BCICommands.CommandSetReg);
         }
     }
 }

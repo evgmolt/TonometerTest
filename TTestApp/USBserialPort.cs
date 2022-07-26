@@ -60,10 +60,25 @@ namespace TTestApp
             ReadTimer = new System.Threading.Timer(ReadPort, null, 0, Timeout.Infinite);
         }
 
+        public bool WriteBuf(byte[] buf)
+        {
+            try
+            {
+                if (PortHandle != null)
+                {
+                    PortHandle.Write(buf, 0, buf.Length);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool WriteByte(byte b)
         {
             byte[] buf = { b }; // new byte[1];
-//            buf[0] = b;
             try
             {
                 if (PortHandle != null)

@@ -9,9 +9,11 @@
         private int _moda;
         private int _modaAmplitude;
         private int _rangeOfNN;
+        private int _stressIndex;
         private readonly int _SDNN;
         private readonly int _RMSSD;
         private readonly int _averNN;
+        private readonly int _CV;
         public int[] HistoBuffer = new int[_histoBufferSize];
         public int Moda { get { return _moda; } }                   //ms
         public int ModaAmplitude { get { return _modaAmplitude; } }
@@ -19,6 +21,8 @@
         public int SDNN { get { return _SDNN; } }
         public int RMSSD { get { return _RMSSD; } }
         public int AverNN { get { return _averNN; } }
+        public int CV { get { return _CV; } }
+        public int StressIndex { get { return _stressIndex; } }
 
         public Histogram(int[] arrayOfIndexes, int samplingFrequency)
         {
@@ -33,6 +37,9 @@
             var diffSeqNN = _NNArray.Zip(_NNArray.Skip(1), (first, second) => second - first);
             var diffSeqSqrNN = diffSeqNN.Select(x => x * x);
             _RMSSD = (int)Math.Sqrt(diffSeqSqrNN.Sum() / diffSeqSqrNN.Count());
+            //Вычисление CV
+            _CV = _SDNN * 100 / _averNN;
+
             BuildHisto();
         }
 
@@ -58,6 +65,7 @@
             }
             return result.ToArray();
         }
+
         private void BuildHisto()
         {
             for (int i = 0; i < _NNArray.Length; i++)
@@ -86,6 +94,8 @@
                 }
             }
             _rangeOfNN = (histoRight - histoLeft + 1) * _histoBarWidth;
+            _stressIndex = 1000000 * (_modaAmplitude * 100 / _NNArray.Length) / (2 * _moda * _rangeOfNN);//Мода  в секундах у Баевского.
+            //Числитель - число интервалов, соответствующих значению моды, в % к объему выборки.
         }
     }
 }
