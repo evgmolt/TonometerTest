@@ -2,7 +2,7 @@
 {
     public class Histogram
     {
-        private const int _histoBufferSize = 1000;
+        private const int _histoBufferSize = 500;
         private const int _histoBarWidth = 10;
         private readonly int[] _NNArray;//Массив интервалов в мс
         private readonly int _samplingFrequency;
@@ -48,6 +48,7 @@
             int msInSecond = 1000;
             const int LoLimit = 50;   // 240 уд / мин 
             const int HiLimit = 400 ; // 30  уд / мин 
+            const int divisor25percent = 4;
             List<int> result = new();   
             int prevInterval = arrayOfIndexes[1] - arrayOfIndexes[0];
             for (int i = 0; i < arrayOfIndexes.Length - 1; i++)
@@ -57,7 +58,7 @@
                 {
                     continue;
                 }
-                if (newInterval < prevInterval + prevInterval / 4 && newInterval > prevInterval - prevInterval / 4)
+                if (newInterval < prevInterval + prevInterval / divisor25percent && newInterval > prevInterval - prevInterval / divisor25percent)
                 {
                     result.Add(newInterval * msInSecond / _samplingFrequency);
                 }
@@ -75,26 +76,16 @@
             }
             _modaAmplitude = HistoBuffer.Max();
             _moda = _histoBarWidth * Array.IndexOf(HistoBuffer, _modaAmplitude);
-            int histoLeft = 0;
-            for (int i = 0; i < HistoBuffer.Length; i++)
-            {
-                if (HistoBuffer[i] != 0)
-                {
-                    histoLeft = i;
-                    break;
-                }
-            }
-            int histoRight = HistoBuffer.Length - 1;
-            for (int i = HistoBuffer.Length - 1; i >= 0; i--)
-            {
-                if (HistoBuffer[i] != 0)
-                {
-                    histoRight = i;
-                    break;
-                }
-            }
+
+            int first = HistoBuffer.FirstOrDefault(x => x > 0);
+            int histoLeft = Array.IndexOf(HistoBuffer, first);
+
+            var reverseArr = HistoBuffer.Reverse().ToArray();
+            first = reverseArr.FirstOrDefault(x => x > 0);
+            int histoRight = HistoBuffer.Length - Array.IndexOf(reverseArr, first) - 1;
+            
             _rangeOfNN = (histoRight - histoLeft + 1) * _histoBarWidth;
-            _stressIndex = 1000000 * (_modaAmplitude * 100 / _NNArray.Length) / (2 * _moda * _rangeOfNN);//Мода  в секундах у Баевского.
+            _stressIndex = 1000000 * (_modaAmplitude * 100 / _NNArray.Length) / (2 * _moda * _rangeOfNN);//Мода в секундах у Баевского.
             //Числитель - число интервалов, соответствующих значению моды, в % к объему выборки.
         }
     }
