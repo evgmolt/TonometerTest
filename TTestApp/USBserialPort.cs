@@ -110,7 +110,7 @@ namespace TTestApp
             {
                 portName = "";
             }
-            List<string> list = new List<string>();
+            List<string> list = new();
             if (collection != null)
             {
                 foreach (var device in collection)
@@ -164,7 +164,7 @@ namespace TTestApp
             }
         }
 
-        private string[] GetPortsNames()
+        private static string[] GetPortsNames()
         {
             const string ArduinoSerialString = "Serial";
             const string ArduinoSerialString0 = "Serial0";

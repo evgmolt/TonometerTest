@@ -14,6 +14,7 @@
         private readonly int _RMSSD;
         private readonly int _averNN;
         private readonly int _CV;
+
         public int[] HistoBuffer = new int[_histoBufferSize];
         public int Moda { get { return _moda; } }                   //ms
         public int ModaAmplitude { get { return _modaAmplitude; } }
@@ -30,13 +31,16 @@
             
             _NNArray = GetRhythmogram(arrayOfIndexes);
             _averNN = (int)_NNArray.Average();
+
             //Вычисление SDNN
             var diffSqrArray = _NNArray.Select(x => (x - _averNN) * (x - _averNN)).ToArray();
             _SDNN = (int)Math.Sqrt(diffSqrArray.Sum() / diffSqrArray.Length);
+
             //Вычисление RMSSD
             var diffSeqNN = _NNArray.Zip(_NNArray.Skip(1), (first, second) => second - first);
             var diffSeqSqrNN = diffSeqNN.Select(x => x * x);
             _RMSSD = (int)Math.Sqrt(diffSeqSqrNN.Sum() / diffSeqSqrNN.Count());
+
             //Вычисление CV
             _CV = _SDNN * 100 / _averNN;
 
@@ -46,10 +50,10 @@
         private int[] GetRhythmogram(int[] arrayOfIndexes)
         {
             int msInSecond = 1000;
-            const int LoLimit = 50;   // 240 уд / мин 
-            const int HiLimit = 400 ; // 30  уд / мин 
+            const int LoLimit = 50;   // (sampleFrequency * 60) / 300 уд / мин 
+            const int HiLimit = 500;  // (sampleFrequency * 60) / 30  уд / мин 
             const int divisor25percent = 4;
-            List<int> result = new();   
+            List<int> result = new();
             int prevInterval = arrayOfIndexes[1] - arrayOfIndexes[0];
             for (int i = 0; i < arrayOfIndexes.Length - 1; i++)
             {
@@ -74,6 +78,7 @@
                 int histoIndex = _NNArray[i] / _histoBarWidth;
                 HistoBuffer[histoIndex]++;
             }
+
             _modaAmplitude = HistoBuffer.Max();
             _moda = _histoBarWidth * Array.IndexOf(HistoBuffer, _modaAmplitude);
 
