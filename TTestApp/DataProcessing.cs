@@ -21,10 +21,14 @@ namespace TTestApp
         {
             int secondPerMin = 60;
             double mean = 0;
+
             for (int i = 1; i < indexesArray.Length; i++) //Внимание! Цикл с 1!
             {
                 mean += indexesArray[i] - indexesArray[i - 1];
             }
+            //Аналог цикла выше
+            mean = indexesArray.Zip(indexesArray.Skip(1), (first, second) => second - first).Sum();
+
             mean /= indexesArray.Length - 1;
             mean /= ByteDecomposerBCI.SamplingFrequency;
             mean = secondPerMin / mean;
