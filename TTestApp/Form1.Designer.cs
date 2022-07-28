@@ -73,6 +73,8 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.panelHRV = new System.Windows.Forms.Panel();
+            this.labSDNN = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -83,6 +85,7 @@
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
+            this.panelHRV.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -298,6 +301,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.panelHRV);
             this.panelBottom.Controls.Add(this.labNumOfWaves);
             this.panelBottom.Controls.Add(this.labY2);
             this.panelBottom.Controls.Add(this.labY1);
@@ -568,6 +572,24 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
+            // panelHRV
+            // 
+            this.panelHRV.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelHRV.Controls.Add(this.labSDNN);
+            this.panelHRV.Location = new System.Drawing.Point(689, 19);
+            this.panelHRV.Name = "panelHRV";
+            this.panelHRV.Size = new System.Drawing.Size(200, 100);
+            this.panelHRV.TabIndex = 16;
+            // 
+            // labSDNN
+            // 
+            this.labSDNN.AutoSize = true;
+            this.labSDNN.Location = new System.Drawing.Point(3, 5);
+            this.labSDNN.Name = "labSDNN";
+            this.labSDNN.Size = new System.Drawing.Size(48, 15);
+            this.labSDNN.TabIndex = 0;
+            this.labSDNN.Text = "SDNN : ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -594,6 +616,8 @@
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
+            this.panelHRV.ResumeLayout(false);
+            this.panelHRV.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -644,5 +668,7 @@
         private Label labNumOfWaves;
         private Panel panel4;
         private Panel histoPanel;
+        private Panel panelHRV;
+        private Label labSDNN;
     }
 }

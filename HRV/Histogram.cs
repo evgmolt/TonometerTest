@@ -50,8 +50,8 @@
         private int[] GetRhythmogram(int[] arrayOfIndexes)
         {
             int msInSecond = 1000;
-            const int LoLimit = 50;   // (sampleFrequency * 60) / 300 уд / мин 
-            const int HiLimit = 500;  // (sampleFrequency * 60) / 30  уд / мин 
+            const int LoLimit = 50;   // = (sampleFrequency * 60) / 300 уд / мин 
+            const int HiLimit = 500;  // = (sampleFrequency * 60) / 30  уд / мин 
             const int divisor25percent = 4;
             List<int> result = new();
             int prevInterval = arrayOfIndexes[1] - arrayOfIndexes[0];
@@ -90,7 +90,7 @@
             int histoRight = HistoBuffer.Length - Array.IndexOf(reverseArr, first) - 1;
             
             _rangeOfNN = (histoRight - histoLeft + 1) * _histoBarWidth;
-            _stressIndex = 1000000 * (_modaAmplitude * 100 / _NNArray.Length) / (2 * _moda * _rangeOfNN);//Мода в секундах у Баевского.
+            _stressIndex = 1000000 * (_modaAmplitude * 100 / _NNArray.Length) / (2 * _moda * _rangeOfNN);//Мода в секундах у Баевского, поэтому 1000000.
             //Числитель - число интервалов, соответствующих значению моды, в % к объему выборки.
         }
     }

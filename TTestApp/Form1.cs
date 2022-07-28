@@ -254,7 +254,7 @@ namespace TTestApp
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
 
             histo = new Histogram(ArrayOfWaveIndexes, ByteDecomposerBCI.SamplingFrequency);
-            BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
+            labSDNN.Text = histo.SDNN.ToString();
             histoPanel.Refresh();
         }
 
