@@ -24,6 +24,7 @@
         public int AverNN { get { return _averNN; } }
         public int CV { get { return _CV; } }
         public int StressIndex { get { return _stressIndex; } }
+        public int[] NNArray { get { return _NNArray; } }
 
         public Histogram(int[] arrayOfIndexes, int samplingFrequency)
         {

@@ -254,7 +254,8 @@ namespace TTestApp
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
 
             histo = new Histogram(ArrayOfWaveIndexes, ByteDecomposerBCI.SamplingFrequency);
-            labSDNN.Text = histo.SDNN.ToString();
+            labSDNN.Text = "SDNN : " + histo.SDNN.ToString();
+            labAMo.Text = "Moda amp : " + histo.ModaAmplitude.ToString();
             histoPanel.Refresh();
         }
 
@@ -536,6 +537,19 @@ namespace TTestApp
             }
             pen0.Dispose();
             brush0.Dispose();
+
+            using (Brush brush1 = new SolidBrush(Color.Red))
+            {
+                for (int i = 0; i < histo.NNArray.Length; i++)
+                {
+                int x1 = i * barWidth;
+                    int y1 = histoPanel.Height - histo.NNArray[i] / 10;// * YScaleCoeff;
+                int w = barWidth;
+                int h = histoPanel.Height;
+                var R1 = new Rectangle(x1, y1, w, h);
+                e.Graphics.FillRectangle(brush1, R1);
+                }
+            }
         }
 
         private void BCISetup()
