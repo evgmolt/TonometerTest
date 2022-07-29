@@ -46,6 +46,7 @@
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.panelHRV = new System.Windows.Forms.Panel();
+            this.labAMo = new System.Windows.Forms.Label();
             this.labSDNN = new System.Windows.Forms.Label();
             this.labNumOfWaves = new System.Windows.Forms.Label();
             this.labY2 = new System.Windows.Forms.Label();
@@ -75,7 +76,6 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labAMo = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -341,8 +341,17 @@
             this.panelHRV.Location = new System.Drawing.Point(787, 25);
             this.panelHRV.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.panelHRV.Name = "panelHRV";
-            this.panelHRV.Size = new System.Drawing.Size(228, 133);
+            this.panelHRV.Size = new System.Drawing.Size(310, 179);
             this.panelHRV.TabIndex = 16;
+            // 
+            // labAMo
+            // 
+            this.labAMo.AutoSize = true;
+            this.labAMo.Location = new System.Drawing.Point(3, 36);
+            this.labAMo.Name = "labAMo";
+            this.labAMo.Size = new System.Drawing.Size(93, 20);
+            this.labAMo.TabIndex = 1;
+            this.labAMo.Text = "Mode amp : ";
             // 
             // labSDNN
             // 
@@ -611,15 +620,6 @@
             // 
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            // 
-            // labAMo
-            // 
-            this.labAMo.AutoSize = true;
-            this.labAMo.Location = new System.Drawing.Point(3, 36);
-            this.labAMo.Name = "labAMo";
-            this.labAMo.Size = new System.Drawing.Size(93, 20);
-            this.labAMo.TabIndex = 1;
-            this.labAMo.Text = "Mode amp : ";
             // 
             // Form1
             // 
