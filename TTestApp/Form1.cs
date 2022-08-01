@@ -52,7 +52,7 @@ namespace TTestApp
             bufPanel.Paint += bufferedPanel_Paint;
             WD = new WaveDetector();
             VisirList = new List<int[]>();
-            USBPort = new USBserialPort(this, 460800);
+            USBPort = new USBserialPort(this, ByteDecomposerBCI.BaudRate);
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.ConnectionOk += onConnectionOk;
             USBPort.Connect();
@@ -456,12 +456,9 @@ namespace TTestApp
 
         private void timerRead_Tick_1(object sender, EventArgs e)
         {
-            if (USBPort == null) return;
-            if (USBPort.PortHandle == null) return;
-            if (!USBPort.PortHandle.IsOpen) return;
-            if (decomposer != null)
+            if (USBPort?.PortHandle?.IsOpen == true)
             {
-                decomposer.Decompos(USBPort, null, textWriter);
+                decomposer?.Decompos(USBPort, null, textWriter);
             }
         }
 
@@ -487,7 +484,7 @@ namespace TTestApp
             progressBarRecord.Visible = false;
             decomposer.DecomposeLineEvent -= NewLineReceived;
             decomposer.RecordStarted = false;
-            if (textWriter != null) textWriter.Dispose();
+            textWriter?.Dispose();
             ViewMode = true;
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;

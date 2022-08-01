@@ -19,6 +19,7 @@ namespace TTestApp
 
         public const int DataArrSize = 0x100000;
         public const int SamplingFrequency = 250;
+        public const int BaudRate = 460800;
         public const int BytesInBlock = 65;
         private const byte _marker0 = 0xAA;
         private const byte _marker1 = 0x55;
