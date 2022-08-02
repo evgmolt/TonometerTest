@@ -27,20 +27,18 @@ namespace TTestApp
 
         public static TTestConfig GetConfig()
         {
-            TTestConfig tTestConfig;
             JsonSerializer serializer = new();
             try
             {
                 using (StreamReader sr = new(_configFileName))
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
-                    tTestConfig = (TTestConfig)serializer.Deserialize(reader, typeof(TTestConfig));
-                    return tTestConfig;
+                    return (TTestConfig)serializer.Deserialize(reader, typeof(TTestConfig));
                 }
             }
             catch (Exception)
             {
-                tTestConfig = new TTestConfig();
+                TTestConfig tTestConfig = new();
                 SaveConfig(tTestConfig);
                 return tTestConfig;
             }

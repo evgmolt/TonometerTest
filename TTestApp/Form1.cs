@@ -23,7 +23,6 @@ namespace TTestApp
         double ScaleY = 1;
         List<int[]> VisirList;
         bool Compression = false;
-        bool Connected = false;
 
         public event Action<Message> WindowsMessage;
 
@@ -68,7 +67,7 @@ namespace TTestApp
         private void InitArraysForFlow()
         {
 
-            DataA = new DataArrays(ByteDecomposer.DataArrSize);
+            DataA = new DataArrays(ByteDecomposerBCI.DataArrSize);
             decomposer = new ByteDecomposerBCI(DataA);
             decomposer.DecomposeLineEvent += NewLineReceived;
             painter = new Painter(bufPanel, decomposer);
@@ -141,7 +140,7 @@ namespace TTestApp
         {
             string[] lines = File.ReadAllLines(fileName);
             CurrentFileSize = lines.Length;
-            labRecordSize.Text = "Record size : " + (CurrentFileSize / ByteDecomposer.SamplingFrequency).ToString() + " s";
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / ByteDecomposerBCI.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
             if (CurrentFileSize == 0)
@@ -371,7 +370,7 @@ namespace TTestApp
             int compressionMult = Compression ? DataProcessing.CompressionRatio : 1;
 
             int index = e.X * compressionMult + ViewShift;
-            double sec = index / ByteDecomposer.SamplingFrequency;
+            double sec = index / ByteDecomposerBCI.SamplingFrequency;
             labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
             labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
@@ -408,7 +407,7 @@ namespace TTestApp
             }
             if (decomposer.RecordStarted)
             {
-                labRecordSize.Text = "Record size : " + (decomposer.LineCounter / ByteDecomposer.SamplingFrequency).ToString() + " c";
+                labRecordSize.Text = "Record size : " + (decomposer.LineCounter / ByteDecomposerBCI.SamplingFrequency).ToString() + " c";
             }
         }
 
@@ -539,12 +538,12 @@ namespace TTestApp
             {
                 for (int i = 0; i < histo.NNArray.Length; i++)
                 {
-                int x1 = i * barWidth;
+                    int x1 = i * barWidth;
                     int y1 = histoPanel.Height - histo.NNArray[i] / 10;// * YScaleCoeff;
-                int w = barWidth;
-                int h = histoPanel.Height;
-                var R1 = new Rectangle(x1, y1, w, h);
-                e.Graphics.FillRectangle(brush1, R1);
+                    int w = barWidth;
+                    int h = histoPanel.Height;
+                    var R1 = new Rectangle(x1, y1, w, h);
+                    e.Graphics.FillRectangle(brush1, R1);
                 }
             }
         }
