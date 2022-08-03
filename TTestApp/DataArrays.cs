@@ -2,7 +2,7 @@
 {
     internal class DataArrays
     {
-        public int Size;
+        private readonly int _size;
         public double[] RealTimeArray;
         public double[] DCArray;
         public double[] PressureArray;
@@ -11,27 +11,18 @@
         public double[] CompressedArray;
         public double[] DerivArray;
         public double[] DebugArray;
-        private double[] corrPattern;
-        public int CorrPatternLength;
 
+        public int Size { get { return _size; } }
         public DataArrays(int size)
         {
-            Size = size;
-            RealTimeArray = new double[Size];
-            DCArray = new double[Size];
-            PressureArray = new double[Size];
-            PressureViewArray = new double[Size];
-            CorrelationArray = new double[Size];
-            DerivArray = new double[Size];  
-            DebugArray = new double[Size];
-
-            //string[] lines = File.ReadAllLines("patt250.txt");
-            //corrPattern = new double[lines.Length];
-            //CorrPatternLength = lines.Length;
-            //for (int i = 0; i < lines.Length; i++)
-            //{
-            //    corrPattern[i] = Convert.ToDouble(lines[i]);
-            //}
+            _size = size;
+            RealTimeArray = new double[_size];
+            DCArray = new double[_size];
+            PressureArray = new double[_size];
+            PressureViewArray = new double[_size];
+            CorrelationArray = new double[_size];
+            DerivArray = new double[_size];  
+            DebugArray = new double[_size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -78,12 +69,6 @@
             {
                 DerivArray[i] = DataProcessing.GetDerivative(PressureArray, i);
             }
-
-            //DataProcessing.Corr(PressureViewArray, CorrelationArray, corrPattern);
-            //for (int i = 0; i < CorrelationArray.Length; i++)
-            //{
-            //    CorrelationArray[i] = CorrelationArray[i] * 10000;
-            //}
 
             CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }

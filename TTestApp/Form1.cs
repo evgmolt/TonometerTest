@@ -546,6 +546,7 @@ namespace TTestApp
                     e.Graphics.FillRectangle(brush1, R1);
                 }
             }
+ //           e.Graphics.Dispose();
         }
 
         private void BCISetup()
