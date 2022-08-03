@@ -8,10 +8,10 @@ namespace TTestApp
 
         public abstract int SamplingFrequency { get; }
         public abstract int BaudRate { get; }
-        public abstract int BytesInBlock { get; }
+        public abstract int BytesInBlock { get; } // Размер посылки
         public abstract int MaxNoDataCounter { get; }
 
-        protected const byte _marker1 = 25;
+        protected const byte _marker1 = 25; // Если маркер - 1 байт, используется этот. Если больше, то объявлять свои в наследнике
 
         protected DataArrays _data;
 
@@ -28,9 +28,9 @@ namespace TTestApp
         protected int _noDataCounter;
 
         protected int _byteNum;
-
+        
+        //Очереди для усреднения скользящим окном
         protected Queue<int> QueueForDC;
-
         protected Queue<int> QueueForAC;
 
         public ByteDecomposer(DataArrays data, int sizeQforDC, int sizeQforAC)

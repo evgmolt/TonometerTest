@@ -290,10 +290,9 @@ namespace TTestApp
 
         private void UpdateScrollBar(int size)
         {
-            int space = 14;
             hScrollBar1.Maximum = size;
-            hScrollBar1.LargeChange = panelGraph.Width - space - 50;
-            hScrollBar1.SmallChange = panelGraph.Width - space / 10;
+            hScrollBar1.LargeChange = panelGraph.Width - 50;
+            hScrollBar1.SmallChange = panelGraph.Width / 10;
             hScrollBar1.AutoSize = true;
             hScrollBar1.Value = 0;
             hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;

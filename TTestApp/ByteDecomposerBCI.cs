@@ -18,6 +18,9 @@ namespace TTestApp
         private const byte _markerBCI3 = 0x77;
         private const byte _markerBCI4 = 0xA3;
 
+        //Размер очередей для усреднения скользящим окном
+        //AC - для сигнала
+        //DC - для получения постоянной составляющей
         private const int _queueForACSize = 20;
         private const int _queueforDCSize = 60;
         public ByteDecomposerBCI(DataArrays data) : base(data, _queueforDCSize, _queueForACSize)
