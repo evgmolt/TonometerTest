@@ -6,7 +6,7 @@ namespace TTestApp
     {
         USBserialPort USBPort;
         DataArrays? DataA;
-        ByteDecomposerBCI decomposer;
+        ByteDecomposer decomposer;
         Painter painter;
         WaveDetector WD;
         Histogram histo;
@@ -17,7 +17,6 @@ namespace TTestApp
         int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
         int MaxValue = 100000;
-//        int MaxValue = 1000;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -49,14 +48,13 @@ namespace TTestApp
             panelGraph.Controls.Add(bufPanel);
             bufPanel.Dock = DockStyle.Fill;
             bufPanel.Paint += bufferedPanel_Paint;
-            WD = new WaveDetector();
             VisirList = new List<int[]>();
-            USBPort = new USBserialPort(this, ByteDecomposerBCI.BaudRate);
+            DataProcessing.CompressionChanged += onCompressionChanged;
+            InitArraysForFlow();
+            USBPort = new USBserialPort(this, decomposer.BaudRate);
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.ConnectionOk += onConnectionOk;
             USBPort.Connect();
-            DataProcessing.CompressionChanged += onCompressionChanged;
-            InitArraysForFlow();
         }
 
         private void onCompressionChanged(object? sender, EventArgs e)
@@ -67,7 +65,7 @@ namespace TTestApp
         private void InitArraysForFlow()
         {
 
-            DataA = new DataArrays(ByteDecomposerBCI.DataArrSize);
+            DataA = new DataArrays(ByteDecomposer.DataArrSize);
             decomposer = new ByteDecomposerBCI(DataA);
             decomposer.DecomposeLineEvent += NewLineReceived;
             painter = new Painter(bufPanel, decomposer);
@@ -140,7 +138,7 @@ namespace TTestApp
         {
             string[] lines = File.ReadAllLines(fileName);
             CurrentFileSize = lines.Length;
-            labRecordSize.Text = "Record size : " + (CurrentFileSize / ByteDecomposerBCI.SamplingFrequency).ToString() + " s";
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
             if (CurrentFileSize == 0)
@@ -166,6 +164,7 @@ namespace TTestApp
             DataA.CountViewArrays(bufPanel);
 
             //Детектор
+            WD = new WaveDetector(decomposer.SamplingFrequency);
             WD.Reset();
             for (int i = 0; i < DataA.DerivArray.Length; i++)
             {
@@ -197,7 +196,7 @@ namespace TTestApp
             int skipSize = (XMaxIndex - ArrayForPulseLen / 2) > 0 ? XMaxIndex - ArrayForPulseLen / 2 : 0;
             int takeSize = (ArrayForPulseLen < ArrayOfWaveIndexes.Length - skipSize) ? ArrayForPulseLen : ArrayOfWaveIndexes.Length - skipSize;
             int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(skipSize).Take(ArrayForPulseLen).ToArray();
-            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse).ToString();
+            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, decomposer.SamplingFrequency).ToString();
             labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
 
             double P1 = 0;
@@ -252,7 +251,7 @@ namespace TTestApp
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
 
-            histo = new Histogram(ArrayOfWaveIndexes, ByteDecomposerBCI.SamplingFrequency);
+            histo = new Histogram(ArrayOfWaveIndexes, decomposer.SamplingFrequency);
             labSDNN.Text = "SDNN : " + histo.SDNN.ToString();
             labAMo.Text = "Moda amp : " + histo.ModaAmplitude.ToString();
             histoPanel.Refresh();
@@ -370,7 +369,7 @@ namespace TTestApp
             int compressionMult = Compression ? DataProcessing.CompressionRatio : 1;
 
             int index = e.X * compressionMult + ViewShift;
-            double sec = index / ByteDecomposerBCI.SamplingFrequency;
+            double sec = index / decomposer.SamplingFrequency;
             labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
             labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
@@ -407,7 +406,7 @@ namespace TTestApp
             }
             if (decomposer.RecordStarted)
             {
-                labRecordSize.Text = "Record size : " + (decomposer.LineCounter / ByteDecomposerBCI.SamplingFrequency).ToString() + " c";
+                labRecordSize.Text = "Record size : " + (decomposer.LineCounter / decomposer.SamplingFrequency).ToString() + " c";
             }
         }
 
@@ -430,6 +429,7 @@ namespace TTestApp
             butSaveFile.Enabled = ViewMode && decomposer.LineCounter != 0;
             butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
             panelView.Enabled = ViewMode;
+//            labDeviceIsOff.Visible = !decomposer.DeviceTurnedOn;
 
             if (USBPort == null)
             {
@@ -546,7 +546,6 @@ namespace TTestApp
                     e.Graphics.FillRectangle(brush1, R1);
                 }
             }
- //           e.Graphics.Dispose();
         }
 
         private void BCISetup()

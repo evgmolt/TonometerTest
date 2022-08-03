@@ -1,73 +1,26 @@
 ﻿namespace TTestApp
 {
-    internal class ByteDecomposerADS1115
+    internal class ByteDecomposerADS1115 : ByteDecomposer
     {
-        public const int DataArrSize = 0x100000;
-        public const int SamplingFrequency = 200;
-        public const int BytesInBlock = 3;
-        private const byte _marker1 = 25;
+        public override int SamplingFrequency => 200; 
+        public override int BaudRate => 115200; 
+        public override int BytesInBlock => 3;
+        public override int MaxNoDataCounter => 10;
 
-        private DataArrays _data;
+        private const int _queueForDCSize = 60;
+        private const int _queueForACSize = 20;
 
-        public event EventHandler DecomposeLineEvent;
-        public event EventHandler ConnectionBreakdown;
-
-        public uint MainIndex = 0;
-        public int LineCounter = 0;
-
-        public bool RecordStarted;
-        public bool DeviceTurnedOn;
-
-        private int _pressureTmp;
-
-        private const int _maxNoDataCounter = 10;
-        private int _noDataCounter;
-
-        private int _byteNum;
-
-        private const int averSize = 60;
-        Queue<int> averQ = new Queue<int>(averSize);
-
-        private const int averViewSize = 20;
-        Queue<int> averViewQ = new Queue<int>(averViewSize);
-
-        public ByteDecomposerADS1115(DataArrays data)
+        public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
-            _data = data;
-            RecordStarted = false;
-            DeviceTurnedOn = true;
-            MainIndex = 0;
-            _noDataCounter = 0;
-            _byteNum = 0;
         }
 
-        protected virtual void OnDecomposeLineEvent()
-        {
-            DecomposeLineEvent?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnConnectionBreakdown()
-        {
-            ConnectionBreakdown?.Invoke(this, EventArgs.Empty);
-        }
-
-        public int Decompos(USBserialPort usbport)
-        {
-            return Decompos(usbport, null, null);
-        }
-
-        public int Decompos(USBserialPort usbport, Stream saveFileStream)
-        {
-            return Decompos(usbport, saveFileStream, null);
-        }
-
-        public int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
+        public override int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
         {
             int bytes = usbport.BytesRead;
             if (bytes == 0)
             {
                 _noDataCounter++;
-                if (_noDataCounter > _maxNoDataCounter)
+                if (_noDataCounter > MaxNoDataCounter)
                 {
                     DeviceTurnedOn = false;
                 }
@@ -103,22 +56,22 @@
                         _pressureTmp += 0x100 * (int)usbport.PortBuf[i];
                         _byteNum = 3;
 
-                        averQ.Enqueue(_pressureTmp);
-                        if (averQ.Count > averSize)
+                        QueueForDC.Enqueue(_pressureTmp);
+                        if (QueueForDC.Count > _queueForDCSize)
                         {
-                            averQ.Dequeue();
+                            QueueForDC.Dequeue();
                         }
 
                         _data.RealTimeArray[MainIndex] = _pressureTmp;
-                        _data.DCArray[MainIndex] = (int)averQ.Average();
+                        _data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
-                        averViewQ.Enqueue(100 + _pressureTmp - (int)averQ.Average());
-                        if (averViewQ.Count > averViewSize)
+                        QueueForAC.Enqueue(100 + _pressureTmp - (int)QueueForDC.Average());
+                        if (QueueForAC.Count > _queueForACSize)
                         {
-                            averViewQ.Dequeue();
+                            QueueForAC.Dequeue();
                         }
 
-                        _data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
+                        _data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
 
                         _byteNum = 0;
 
@@ -136,6 +89,5 @@
             usbport.BytesRead = 0;
             return bytes;
         }
-
     }
 }

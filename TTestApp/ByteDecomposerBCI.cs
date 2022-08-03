@@ -2,87 +2,35 @@
 
 namespace TTestApp
 {
-    //Для инициализации платы BCI:
-    //Нажать "Соединить"
-    //Выбрать АЦП№1 и №2
-    //Поставить галочку АЦП (вкл/выкл)
-    //Нажать "Уст. парам. для выбранного канала
-    class ByteDecomposerBCI
+    sealed class ByteDecomposerBCI : ByteDecomposer
     {
-        public int Count = 0;
+        public override int SamplingFrequency => 250;
 
-        public const int DataArrSize = 0x100000;
-        public const int SamplingFrequency = 250;
-        public const int BaudRate = 460800;
-        public const int BytesInBlock = 65;
-        private const byte _marker0 = 0xAA;
-        private const byte _marker1 = 0x55;
-        private const byte _marker2 = 0x66;
-        private const byte _marker3 = 0x77;
-        private const byte _marker4 = 0xA3;
+        public override int BaudRate => 460800;
 
+        public override int BytesInBlock => 65;
 
-        private DataArrays _data;
+        public override int MaxNoDataCounter => 100;
 
-        public event EventHandler DecomposeLineEvent;
-        public event EventHandler ConnectionBreakdown;
+        private const byte _markerBCI0 = 0xAA;
+        private const byte _markerBCI1 = 0x55;
+        private const byte _markerBCI2 = 0x66;
+        private const byte _markerBCI3 = 0x77;
+        private const byte _markerBCI4 = 0xA3;
 
-        public uint MainIndex = 0;
-        public int LineCounter = 0;
-
-        public bool RecordStarted;
-        public bool DeviceTurnedOn;
-
-        private int _pressureTmp;
-
-        private const int _maxNoDataCounter = 10;
-        private int _noDataCounter;
-
-        private int _byteNum;
-
-        private const int averSize = 250;
-        Queue<int> averQ = new Queue<int>(averSize);
-
-        private const int averViewSize = 40;
-        Queue<int> averViewQ = new Queue<int>(averViewSize);
-
-        public ByteDecomposerBCI(DataArrays data)
+        private const int _queueForACSize = 20;
+        private const int _queueforDCSize = 60;
+        public ByteDecomposerBCI(DataArrays data) : base(data, _queueforDCSize, _queueForACSize)
         {
-            _data = data;
-            RecordStarted = false;
-            DeviceTurnedOn = true;
-            MainIndex = 0;
-            _noDataCounter = 0;
-            _byteNum = 0;
         }
 
-        protected virtual void OnDecomposeLineEvent()
-        {
-            DecomposeLineEvent?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnConnectionBreakdown()
-        {
-            ConnectionBreakdown?.Invoke(this, EventArgs.Empty);
-        }
-
-        public int Decompos(USBserialPort usbport)
-        {
-            return Decompos(usbport, null, null);
-        }
-
-        public int Decompos(USBserialPort usbport, Stream saveFileStream)
-        {
-            return Decompos(usbport, saveFileStream, null);
-        }
-
-        public int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
+        public override int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
         {
             int bytes = usbport.BytesRead;
             if (bytes == 0)
             {
                 _noDataCounter++;
-                if (_noDataCounter > _maxNoDataCounter)
+                if (_noDataCounter > MaxNoDataCounter)
                 {
                     DeviceTurnedOn = false;
                 }
@@ -106,13 +54,13 @@ namespace TTestApp
                 switch (_byteNum)
                 {
                     case 0:// Marker
-                        if (usbport.PortBuf[i] == _marker0)
+                        if (usbport.PortBuf[i] == _markerBCI0)
                         {
                             _byteNum = 1;
                         }
                         break;
                     case 1:
-                        if (usbport.PortBuf[i] == _marker1)
+                        if (usbport.PortBuf[i] == _markerBCI1)
                         {
                             _byteNum = 2;
                         }
@@ -122,7 +70,7 @@ namespace TTestApp
                         }
                         break;
                     case 2:
-                        if (usbport.PortBuf[i] == _marker2)
+                        if (usbport.PortBuf[i] == _markerBCI2)
                         {
                             _byteNum = 3;
                         }
@@ -132,7 +80,7 @@ namespace TTestApp
                         }
                         break;
                     case 3:
-                        if (usbport.PortBuf[i] == _marker3)
+                        if (usbport.PortBuf[i] == _markerBCI3)
                         {
                             _byteNum = 4;
                         }
@@ -142,7 +90,7 @@ namespace TTestApp
                         }
                         break;
                     case 4:
-                        if (usbport.PortBuf[i] == _marker4)
+                        if (usbport.PortBuf[i] == _markerBCI4)
                         {
                             _byteNum = 5;
                         }
@@ -192,24 +140,24 @@ namespace TTestApp
 //                        _pressureTmp -= 1400000;
 
                         _data.RealTimeArray[MainIndex] = _pressureTmp;
-                        if (averQ.Count > 0)
+                        if (QueueForDC.Count > 0)
                         {
-                            _data.DCArray[MainIndex] = (int)averQ.Average();
+                            _data.DCArray[MainIndex] = (int)QueueForDC.Average();
                         }
 
-                        averQ.Enqueue(_pressureTmp);
-                        if (averQ.Count > averSize)
+                        QueueForDC.Enqueue(_pressureTmp);
+                        if (QueueForDC.Count > _queueforDCSize)
                         {
-                            averQ.Dequeue();
+                            QueueForDC.Dequeue();
                         }
 
-                        averViewQ.Enqueue(_pressureTmp - (int)averQ.Average());
-                        if (averViewQ.Count > averViewSize)
+                        QueueForAC.Enqueue(_pressureTmp - (int)QueueForDC.Average());
+                        if (QueueForAC.Count > _queueForACSize)
                         {
-                            averViewQ.Dequeue();
+                            QueueForAC.Dequeue();
                         }
 
-                        _data.PressureViewArray[MainIndex] = (int)averViewQ.Average();
+                        _data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
 
                         _byteNum = 0;
 

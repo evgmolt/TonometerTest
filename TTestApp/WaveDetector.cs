@@ -21,12 +21,14 @@
         private const int MaxNumOfIntForAver = 10;
         public List<int> FiltredPoints;
         public int MeanPressureInd = 0;
+        private readonly int _samplingFreq;
 
-        public WaveDetector()
+        public WaveDetector(int samplingFreq)
         {
             NNPointArr = new Point[NNArrSize];
             NNArray = new int[NNArrSize];
             FiltredPoints = new List<int>();
+            _samplingFreq = samplingFreq;
         }
 
         public void Reset()
@@ -55,7 +57,7 @@
             }
             sum /= NumOfIntForAver;
             double d = sum;
-            d /= ByteDecomposer.SamplingFrequency; 
+            d /= _samplingFreq; 
             d = 60 / d;
             return (int)Math.Round(d);
         }

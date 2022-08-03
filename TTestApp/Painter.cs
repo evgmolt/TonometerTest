@@ -3,11 +3,11 @@
     internal class Painter
     {
         private readonly Control _control;
-        private readonly ByteDecomposerBCI _decomposer;
+        private readonly ByteDecomposer _decomposer;
         private readonly Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Aqua };
         private readonly Color[] visirsColors = { Color.LightGray, Color.Brown, Color.Chocolate };
 
-        public Painter(Control control, ByteDecomposerBCI decomposer)
+        public Painter(Control control, ByteDecomposer decomposer)
         {
             _control = control;
             _decomposer = decomposer;
@@ -84,13 +84,13 @@
                 }
                 int index = 1;
                 int timeTickSize = 10;
-                while (index * ByteDecomposer.SamplingFrequency < _control.Width)
+                while (index * _decomposer.SamplingFrequency < _control.Width)
                 {
                     e.Graphics.DrawLine(
                         pen0,
-                        index * ByteDecomposer.SamplingFrequency,
+                        index * _decomposer.SamplingFrequency,
                         _control.Height,
-                        index * ByteDecomposer.SamplingFrequency,
+                        index * _decomposer.SamplingFrequency,
                         _control.Height - timeTickSize);
                     index++;
                 }

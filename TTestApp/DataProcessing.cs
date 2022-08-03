@@ -11,7 +11,7 @@
             File.WriteAllLines(fname, stringsArr);
         }
 
-        public static int GetPulseFromIndexesArray(int[] indexesArray)
+        public static int GetPulseFromIndexesArray(int[] indexesArray, int SamplingFreq)
         {
             int secondPerMin = 60;
             double mean = 0;
@@ -24,7 +24,7 @@
             mean = indexesArray.Zip(indexesArray.Skip(1), (first, second) => second - first).Sum();
 
             mean /= indexesArray.Length - 1;
-            mean /= ByteDecomposerBCI.SamplingFrequency;
+            mean /= SamplingFreq;
             mean = secondPerMin / mean;
             return (int)mean;
         }
