@@ -8,7 +8,7 @@ namespace TTestApp
 
         public override int BaudRate => 460800;
 
-        public override int BytesInBlock => 65;
+        public override int BytesInPacket => 65;
 
         public override int MaxNoDataCounter => 100;
 
@@ -32,8 +32,8 @@ namespace TTestApp
             int bytes = usbport.BytesRead;
             if (bytes == 0)
             {
-                _noDataCounter++;
-                if (_noDataCounter > MaxNoDataCounter)
+                noDataCounter++;
+                if (noDataCounter > MaxNoDataCounter)
                 {
                     DeviceTurnedOn = false;
                 }
@@ -54,128 +54,128 @@ namespace TTestApp
             }
             for (int i = 0; i < bytes; i++)
             {
-                switch (_byteNum)
+                switch (byteNum)
                 {
-                    case 0:// Marker
+                    case 0:// MarkerBCI
                         if (usbport.PortBuf[i] == _markerBCI0)
                         {
-                            _byteNum = 1;
+                            byteNum = 1;
                         }
                         break;
                     case 1:
                         if (usbport.PortBuf[i] == _markerBCI1)
                         {
-                            _byteNum = 2;
+                            byteNum = 2;
                         }
                         else
                         {
-                            _byteNum = 0;
+                            byteNum = 0;
                         }
                         break;
                     case 2:
                         if (usbport.PortBuf[i] == _markerBCI2)
                         {
-                            _byteNum = 3;
+                            byteNum = 3;
                         }
                         else
                         {
-                            _byteNum = 0;
+                            byteNum = 0;
                         }
                         break;
                     case 3:
                         if (usbport.PortBuf[i] == _markerBCI3)
                         {
-                            _byteNum = 4;
+                            byteNum = 4;
                         }
                         else
                         {
-                            _byteNum = 0;
+                            byteNum = 0;
                         }
                         break;
                     case 4:
                         if (usbport.PortBuf[i] == _markerBCI4)
                         {
-                            _byteNum = 5;
+                            byteNum = 5;
                         }
                         else
                         {
-                            _byteNum = 0;
+                            byteNum = 0;
                         }
                         break;
                     case 5:
-                        _byteNum = 6; //Циклический номер
+                        byteNum = 6; //Циклический номер
                         break;
                     case 6:
-                        _byteNum = 7; //Циклический номер
+                        byteNum = 7; //Циклический номер
                         break;
                     case 7:
-                        _byteNum = 8; //Циклический номер
+                        byteNum = 8; //Циклический номер
                         break;
                     case 8:
-                        _byteNum = 9; //Циклический номер
+                        byteNum = 9; //Циклический номер
                         break;
                     case 9:
-                        _byteNum = 10; //Таймштамп
+                        byteNum = 10; //Таймштамп
                         break;
                     case 10:
-                        _byteNum = 11; //Таймштамп
+                        byteNum = 11; //Таймштамп
                         break;
                     case 11:
-                        _byteNum = 12; //Таймштамп
+                        byteNum = 12; //Таймштамп
                         break;
                     case 12:
-                        _byteNum = 13; //Таймштамп
+                        byteNum = 13; //Таймштамп
                         break;
                     case 13:
-                        _valueTmp = 0x10000 * (int)usbport.PortBuf[i];
-                        _byteNum = 14;
+                        tmpValue = 0x10000 * (int)usbport.PortBuf[i];
+                        byteNum = 14;
                         break;
                     case 14:
-                        _valueTmp += 0x100 * (int)usbport.PortBuf[i];
-                        _byteNum = 15;
+                        tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        byteNum = 15;
                         break;
                     case 15:// 
-                        _valueTmp += (int)usbport.PortBuf[i];
-                        if ((_valueTmp & 0x800000) != 0)
-                            _valueTmp -= 0x1000000;
-                        _byteNum = 16;
+                        tmpValue += (int)usbport.PortBuf[i];
+                        if ((tmpValue & 0x800000) != 0)
+                            tmpValue -= 0x1000000;
+                        byteNum = 16;
 
-                        _data.RealTimeArray[MainIndex] = _valueTmp;
+                        data.RealTimeArray[MainIndex] = tmpValue;
                         if (QueueForDC.Count > 0)
                         {
-                            _data.DCArray[MainIndex] = (int)QueueForDC.Average();
+                            data.DCArray[MainIndex] = (int)QueueForDC.Average();
                         }
 
-                        QueueForDC.Enqueue(_valueTmp);
+                        QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueforDCSize)
                         {
                             QueueForDC.Dequeue();
                         }
 
-                        QueueForAC.Enqueue(_valueTmp - (int)QueueForDC.Average());
+                        QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
                         {
                             QueueForAC.Dequeue();
                         }
 
-                        _data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
 
-                        _byteNum = 0;
+                        byteNum = 0;
 
                         if (RecordStarted)
                         {
-                            txtFileStream.WriteLine(_data.GetDataString(MainIndex));
+                            txtFileStream.WriteLine(data.GetDataString(MainIndex));
                         }
                         OnDecomposeLineEvent();
-                        LineCounter++;
+                        PacketCounter++;
                         MainIndex++;
                         MainIndex &= (DataArrSize - 1);
                         break;
                     default:
-                        _byteNum++;
-                        if (_byteNum == BytesInBlock - 1)
+                        byteNum++;
+                        if (byteNum == BytesInPacket - 1)
                         {
-                            _byteNum = 0;
+                            byteNum = 0;
                         }
                         break;
                 }

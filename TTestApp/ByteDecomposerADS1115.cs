@@ -4,7 +4,7 @@
     {
         public override int SamplingFrequency => 200; 
         public override int BaudRate => 115200; 
-        public override int BytesInBlock => 3;
+        public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
 
         private const int _queueForDCSize = 60;
@@ -19,8 +19,8 @@
             int bytes = usbport.BytesRead;
             if (bytes == 0)
             {
-                _noDataCounter++;
-                if (_noDataCounter > MaxNoDataCounter)
+                noDataCounter++;
+                if (noDataCounter > MaxNoDataCounter)
                 {
                     DeviceTurnedOn = false;
                 }
@@ -40,47 +40,47 @@
             }
             for (int i = 0; i < bytes; i++)
             {
-                switch (_byteNum)
+                switch (byteNum)
                 {
                     case 0:// Marker
-                        if (usbport.PortBuf[i] == _marker1)
+                        if (usbport.PortBuf[i] == marker1)
                         {
-                            _byteNum = 1;
+                            byteNum = 1;
                         }
                         break;
                     case 1:// pressure1_0
-                        _valueTmp = (int)usbport.PortBuf[i];
-                        _byteNum = 2;
+                        tmpValue = (int)usbport.PortBuf[i];
+                        byteNum = 2;
                         break;
                     case 2:// E1_1
-                        _valueTmp += 0x100 * (int)usbport.PortBuf[i];
-                        _byteNum = 3;
+                        tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        byteNum = 3;
 
-                        QueueForDC.Enqueue(_valueTmp);
+                        QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueForDCSize)
                         {
                             QueueForDC.Dequeue();
                         }
 
-                        _data.RealTimeArray[MainIndex] = _valueTmp;
-                        _data.DCArray[MainIndex] = (int)QueueForDC.Average();
+                        data.RealTimeArray[MainIndex] = tmpValue;
+                        data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
-                        QueueForAC.Enqueue(100 + _valueTmp - (int)QueueForDC.Average());
+                        QueueForAC.Enqueue(100 + tmpValue - (int)QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
                         {
                             QueueForAC.Dequeue();
                         }
 
-                        _data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
 
-                        _byteNum = 0;
+                        byteNum = 0;
 
                         if (RecordStarted)
                         {
-                            txtFileStream.WriteLine(_data.GetDataString(MainIndex));
+                            txtFileStream.WriteLine(data.GetDataString(MainIndex));
                         }
                         OnDecomposeLineEvent();
-                        LineCounter++;
+                        PacketCounter++;
                         MainIndex++;
                         MainIndex &= (DataArrSize - 1);
                         break;

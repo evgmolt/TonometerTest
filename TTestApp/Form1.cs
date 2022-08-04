@@ -67,7 +67,7 @@ namespace TTestApp
 
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
             decomposer = new ByteDecomposerBCI(DataA);
-            decomposer.DecomposeLineEvent += NewLineReceived;
+            decomposer.onDecomposePacketEvent += NewLineReceived;
             painter = new Painter(bufPanel, decomposer);
         }
 
@@ -385,7 +385,7 @@ namespace TTestApp
         private void butStartRecord_Click(object sender, EventArgs e)
         {
             textWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
-            decomposer.LineCounter = 0;
+            decomposer.PacketCounter = 0;
             decomposer.RecordStarted = true;
             progressBarRecord.Visible = true;
             labMeanPressure.Text = "Mean : ";
@@ -396,7 +396,6 @@ namespace TTestApp
 
         private void NewLineReceived(object? sender, EventArgs e)
         {
-
             if (decomposer.MainIndex > 0)
             {
                 labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.DCArray[decomposer.MainIndex - 1]).ToString();
@@ -405,7 +404,7 @@ namespace TTestApp
             }
             if (decomposer.RecordStarted)
             {
-                labRecordSize.Text = "Record size : " + (decomposer.LineCounter / decomposer.SamplingFrequency).ToString() + " c";
+                labRecordSize.Text = "Record size : " + (decomposer.PacketCounter / decomposer.SamplingFrequency).ToString() + " c";
             }
         }
 
@@ -425,7 +424,7 @@ namespace TTestApp
             }
             butStartRecord.Enabled = !ViewMode && !decomposer.RecordStarted!;
             butStopRecord.Enabled = decomposer.RecordStarted;
-            butSaveFile.Enabled = ViewMode && decomposer.LineCounter != 0;
+            butSaveFile.Enabled = ViewMode && decomposer.PacketCounter != 0;
             butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
             panelView.Enabled = ViewMode;
 //            labDeviceIsOff.Visible = !decomposer.DeviceTurnedOn;
@@ -452,7 +451,7 @@ namespace TTestApp
             }
         }
 
-        private void timerRead_Tick_1(object sender, EventArgs e)
+        private void timerRead_Tick(object sender, EventArgs e)
         {
             if (USBPort?.PortHandle?.IsOpen == true)
             {
@@ -480,7 +479,7 @@ namespace TTestApp
         private void butStopRecord_Click(object sender, EventArgs e)
         {
             progressBarRecord.Visible = false;
-            decomposer.DecomposeLineEvent -= NewLineReceived;
+            decomposer.onDecomposePacketEvent -= NewLineReceived;
             decomposer.RecordStarted = false;
             textWriter?.Dispose();
             ViewMode = true;

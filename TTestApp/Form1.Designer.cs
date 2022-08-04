@@ -596,7 +596,7 @@
             // 
             this.timerRead.Enabled = true;
             this.timerRead.Interval = 50;
-            this.timerRead.Tick += new System.EventHandler(this.timerRead_Tick_1);
+            this.timerRead.Tick += new System.EventHandler(this.timerRead_Tick);
             // 
             // timerStatus
             // 
