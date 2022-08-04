@@ -11,7 +11,7 @@ namespace TTestApp
         public abstract int BytesInBlock { get; } // Размер посылки
         public abstract int MaxNoDataCounter { get; }
 
-        protected const byte _marker1 = 25; // Если маркер - 1 байт, используется этот. Если больше, то объявлять свои в наследнике
+        protected const byte _marker1 = 0x19; // Если маркер - 1 байт, используется этот. Если больше, то объявлять свои в наследнике
 
         protected DataArrays _data;
 
@@ -23,7 +23,7 @@ namespace TTestApp
         public bool RecordStarted;
         public bool DeviceTurnedOn;
 
-        protected int _pressureTmp;
+        protected int _valueTmp;
 
         protected int _noDataCounter;
 
@@ -50,6 +50,6 @@ namespace TTestApp
             DecomposeLineEvent?.Invoke(this, EventArgs.Empty);
         }
 
-        public abstract int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream);
+        public abstract int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream);//Возвращает число прочитанных и обработанных байт
     }
 }

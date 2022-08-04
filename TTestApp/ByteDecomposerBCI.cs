@@ -127,34 +127,32 @@ namespace TTestApp
                         _byteNum = 13; //Таймштамп
                         break;
                     case 13:
-                        _pressureTmp = 0x10000 * (int)usbport.PortBuf[i];
+                        _valueTmp = 0x10000 * (int)usbport.PortBuf[i];
                         _byteNum = 14;
                         break;
                     case 14:
-                        _pressureTmp += 0x100 * (int)usbport.PortBuf[i];
+                        _valueTmp += 0x100 * (int)usbport.PortBuf[i];
                         _byteNum = 15;
                         break;
                     case 15:// 
-                        _pressureTmp += (int)usbport.PortBuf[i];
-                        if ((_pressureTmp & 0x800000) != 0)
-                            _pressureTmp -= 0x1000000;
+                        _valueTmp += (int)usbport.PortBuf[i];
+                        if ((_valueTmp & 0x800000) != 0)
+                            _valueTmp -= 0x1000000;
                         _byteNum = 16;
 
-//                        _pressureTmp -= 1400000;
-
-                        _data.RealTimeArray[MainIndex] = _pressureTmp;
+                        _data.RealTimeArray[MainIndex] = _valueTmp;
                         if (QueueForDC.Count > 0)
                         {
                             _data.DCArray[MainIndex] = (int)QueueForDC.Average();
                         }
 
-                        QueueForDC.Enqueue(_pressureTmp);
+                        QueueForDC.Enqueue(_valueTmp);
                         if (QueueForDC.Count > _queueforDCSize)
                         {
                             QueueForDC.Dequeue();
                         }
 
-                        QueueForAC.Enqueue(_pressureTmp - (int)QueueForDC.Average());
+                        QueueForAC.Enqueue(_valueTmp - (int)QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
                         {
                             QueueForAC.Dequeue();

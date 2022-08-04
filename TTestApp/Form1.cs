@@ -1,4 +1,5 @@
 ﻿using HRV;
+using TTestApp.Commands;
 
 namespace TTestApp
 {
@@ -8,7 +9,6 @@ namespace TTestApp
         DataArrays? DataA;
         ByteDecomposer decomposer;
         Painter painter;
-        WaveDetector WD;
         Histogram histo;
         BufferedPanel bufPanel;
         TTestConfig Cfg;
@@ -164,7 +164,7 @@ namespace TTestApp
             DataA.CountViewArrays(bufPanel);
 
             //Детектор
-            WD = new WaveDetector(decomposer.SamplingFrequency);
+            WaveDetector WD = new(decomposer.SamplingFrequency);
             WD.Reset();
             for (int i = 0; i < DataA.DerivArray.Length; i++)
             {
@@ -549,22 +549,22 @@ namespace TTestApp
 
         private void BCISetup()
         {
-            BCICommands.CountCheckSum(ref BCICommands.CommandSetADC);
-            USBPort.WriteBuf(BCICommands.CommandSetADC);
-            var registersSetArray = BCICommands.GetSetRegArray();
+            CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetADC);
+            USBPort.WriteBuf(CommandsBCI.CommandSetADC);
+            var registersSetArray = CommandsBCI.GetSetRegArray();
             USBPort.WriteBuf(registersSetArray);
 
             Thread.Sleep(100);
-            BCICommands.CommandSetReg[BCICommands.numRegNum] = 3;
-            BCICommands.CommandSetReg[BCICommands.numRegValue] = 0xE0;
-            BCICommands.CountCheckSum(ref BCICommands.CommandSetReg);
-            USBPort.WriteBuf(BCICommands.CommandSetReg);
+            CommandsBCI.CommandSetReg[CommandsBCI.numRegNum] = 3;
+            CommandsBCI.CommandSetReg[CommandsBCI.numRegValue] = 0xE0;
+            CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetReg);
+            USBPort.WriteBuf(CommandsBCI.CommandSetReg);
             Thread.Sleep(100);
 
-            BCICommands.CommandSetReg[BCICommands.numRegNum] = 5;
-            BCICommands.CommandSetReg[BCICommands.numRegValue] = 0x60;
-            BCICommands.CountCheckSum(ref BCICommands.CommandSetReg);
-            USBPort.WriteBuf(BCICommands.CommandSetReg);
+            CommandsBCI.CommandSetReg[CommandsBCI.numRegNum] = 5;
+            CommandsBCI.CommandSetReg[CommandsBCI.numRegValue] = 0x60;
+            CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetReg);
+            USBPort.WriteBuf(CommandsBCI.CommandSetReg);
         }
     }
 }

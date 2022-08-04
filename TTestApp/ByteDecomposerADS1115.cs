@@ -49,23 +49,23 @@
                         }
                         break;
                     case 1:// pressure1_0
-                        _pressureTmp = (int)usbport.PortBuf[i];
+                        _valueTmp = (int)usbport.PortBuf[i];
                         _byteNum = 2;
                         break;
                     case 2:// E1_1
-                        _pressureTmp += 0x100 * (int)usbport.PortBuf[i];
+                        _valueTmp += 0x100 * (int)usbport.PortBuf[i];
                         _byteNum = 3;
 
-                        QueueForDC.Enqueue(_pressureTmp);
+                        QueueForDC.Enqueue(_valueTmp);
                         if (QueueForDC.Count > _queueForDCSize)
                         {
                             QueueForDC.Dequeue();
                         }
 
-                        _data.RealTimeArray[MainIndex] = _pressureTmp;
+                        _data.RealTimeArray[MainIndex] = _valueTmp;
                         _data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
-                        QueueForAC.Enqueue(100 + _pressureTmp - (int)QueueForDC.Average());
+                        QueueForAC.Enqueue(100 + _valueTmp - (int)QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
                         {
                             QueueForAC.Dequeue();
