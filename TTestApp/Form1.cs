@@ -583,6 +583,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
             PressureMeasurmentInProgress = true;
             butStartRecord_Click(sender, e);
+            labMeasInProgress.Visible = true;
         }
 
         private void butPressureMeasAbort_Click(object sender, EventArgs e)
@@ -591,6 +592,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdSF3.Valve2Open);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
             PressureMeasurmentInProgress = false;
+            labMeasInProgress.Visible = false;
         }
     }
 }

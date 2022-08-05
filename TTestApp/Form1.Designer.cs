@@ -73,6 +73,7 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.histoPanel = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.labMeasInProgress = new System.Windows.Forms.Label();
             this.butPressureMeasAbort = new System.Windows.Forms.Button();
             this.butPressureMeasStart = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -615,6 +616,7 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.labMeasInProgress);
             this.panel5.Controls.Add(this.butPressureMeasAbort);
             this.panel5.Controls.Add(this.butPressureMeasStart);
             this.panel5.Controls.Add(this.label4);
@@ -624,9 +626,21 @@
             this.panel5.Size = new System.Drawing.Size(256, 129);
             this.panel5.TabIndex = 8;
             // 
+            // labMeasInProgress
+            // 
+            this.labMeasInProgress.AutoSize = true;
+            this.labMeasInProgress.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labMeasInProgress.ForeColor = System.Drawing.Color.Red;
+            this.labMeasInProgress.Location = new System.Drawing.Point(28, 98);
+            this.labMeasInProgress.Name = "labMeasInProgress";
+            this.labMeasInProgress.Size = new System.Drawing.Size(188, 20);
+            this.labMeasInProgress.TabIndex = 3;
+            this.labMeasInProgress.Text = "Measurement in progress";
+            this.labMeasInProgress.Visible = false;
+            // 
             // butPressureMeasAbort
             // 
-            this.butPressureMeasAbort.Location = new System.Drawing.Point(26, 77);
+            this.butPressureMeasAbort.Location = new System.Drawing.Point(26, 66);
             this.butPressureMeasAbort.Name = "butPressureMeasAbort";
             this.butPressureMeasAbort.Size = new System.Drawing.Size(97, 29);
             this.butPressureMeasAbort.TabIndex = 2;
@@ -636,7 +650,7 @@
             // 
             // butPressureMeasStart
             // 
-            this.butPressureMeasStart.Location = new System.Drawing.Point(26, 42);
+            this.butPressureMeasStart.Location = new System.Drawing.Point(26, 31);
             this.butPressureMeasStart.Name = "butPressureMeasStart";
             this.butPressureMeasStart.Size = new System.Drawing.Size(97, 29);
             this.butPressureMeasStart.TabIndex = 1;
@@ -770,5 +784,7 @@
         private Button butPressureMeasAbort;
         private Button butPressureMeasStart;
         private Label label4;
+        private Label label;
+        private Label labMeasInProgress;
     }
 }
