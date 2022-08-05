@@ -22,6 +22,8 @@ namespace TTestApp
         double ScaleY = 1;
         List<int[]> VisirList;
         bool Compression = false;
+        bool PressureMeasurmentInProgress;
+        int MaxPressure = 160;
 
         public event Action<Message> WindowsMessage;
 
@@ -396,15 +398,23 @@ namespace TTestApp
 
         private void NewLineReceived(object? sender, EventArgs e)
         {
+            double CurrentPressure = DataA.DCArray[decomposer.MainIndex - 1];
             if (decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " + ValueToMmhG(DataA.DCArray[decomposer.MainIndex - 1]).ToString();
+                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
 //                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
                     DataA.DCArray[decomposer.MainIndex - 1].ToString();
             }
             if (decomposer.RecordStarted)
             {
                 labRecordSize.Text = "Record size : " + (decomposer.PacketCounter / decomposer.SamplingFrequency).ToString() + " c";
+            }
+            if (PressureMeasurmentInProgress)
+            {
+                if (CurrentPressure > MaxPressure)
+                {
+                    butStopRecord_Click(sender, e);
+                }
             }
         }
 
@@ -564,6 +574,23 @@ namespace TTestApp
             CommandsBCI.CommandSetReg[CommandsBCI.numRegValue] = 0x60;
             CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetReg);
             USBPort.WriteBuf(CommandsBCI.CommandSetReg);
+        }
+
+        private void butPressureMeasStart_Click(object sender, EventArgs e)
+        {
+            USBPort.WriteByte((byte)CmdSF3.Valve1Close);
+            USBPort.WriteByte((byte)CmdSF3.Valve2Close);
+            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
+            PressureMeasurmentInProgress = true;
+            butStartRecord_Click(sender, e);
+        }
+
+        private void butPressureMeasAbort_Click(object sender, EventArgs e)
+        {
+            USBPort.WriteByte((byte)CmdSF3.Valve1Open);
+            USBPort.WriteByte((byte)CmdSF3.Valve2Open);
+            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
+            PressureMeasurmentInProgress = false;
         }
     }
 }

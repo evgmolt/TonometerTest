@@ -73,14 +73,14 @@
             this.panel4 = new System.Windows.Forms.Panel();
             this.histoPanel = new System.Windows.Forms.Panel();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.butPressureMeasAbort = new System.Windows.Forms.Button();
+            this.butPressureMeasStart = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.label4 = new System.Windows.Forms.Label();
-            this.butPressureMeasStart = new System.Windows.Forms.Button();
-            this.butPressureMeasAbort = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -624,6 +624,35 @@
             this.panel5.Size = new System.Drawing.Size(256, 129);
             this.panel5.TabIndex = 8;
             // 
+            // butPressureMeasAbort
+            // 
+            this.butPressureMeasAbort.Location = new System.Drawing.Point(26, 77);
+            this.butPressureMeasAbort.Name = "butPressureMeasAbort";
+            this.butPressureMeasAbort.Size = new System.Drawing.Size(97, 29);
+            this.butPressureMeasAbort.TabIndex = 2;
+            this.butPressureMeasAbort.Text = "Abort";
+            this.butPressureMeasAbort.UseVisualStyleBackColor = true;
+            this.butPressureMeasAbort.Click += new System.EventHandler(this.butPressureMeasAbort_Click);
+            // 
+            // butPressureMeasStart
+            // 
+            this.butPressureMeasStart.Location = new System.Drawing.Point(26, 42);
+            this.butPressureMeasStart.Name = "butPressureMeasStart";
+            this.butPressureMeasStart.Size = new System.Drawing.Size(97, 29);
+            this.butPressureMeasStart.TabIndex = 1;
+            this.butPressureMeasStart.Text = "Start";
+            this.butPressureMeasStart.UseVisualStyleBackColor = true;
+            this.butPressureMeasStart.Click += new System.EventHandler(this.butPressureMeasStart_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(26, 8);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(157, 20);
+            this.label4.TabIndex = 0;
+            this.label4.Text = "Pressure measurement";
+            // 
             // openFileDialog1
             // 
             this.openFileDialog1.DefaultExt = "txt";
@@ -651,33 +680,6 @@
             // 
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(26, 8);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(157, 20);
-            this.label4.TabIndex = 0;
-            this.label4.Text = "Pressure measurement";
-            // 
-            // butPressureMeasStart
-            // 
-            this.butPressureMeasStart.Location = new System.Drawing.Point(26, 42);
-            this.butPressureMeasStart.Name = "butPressureMeasStart";
-            this.butPressureMeasStart.Size = new System.Drawing.Size(97, 29);
-            this.butPressureMeasStart.TabIndex = 1;
-            this.butPressureMeasStart.Text = "Start";
-            this.butPressureMeasStart.UseVisualStyleBackColor = true;
-            // 
-            // butPressureMeasAbort
-            // 
-            this.butPressureMeasAbort.Location = new System.Drawing.Point(26, 77);
-            this.butPressureMeasAbort.Name = "butPressureMeasAbort";
-            this.butPressureMeasAbort.Size = new System.Drawing.Size(97, 29);
-            this.butPressureMeasAbort.TabIndex = 2;
-            this.butPressureMeasAbort.Text = "Abort";
-            this.butPressureMeasAbort.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
