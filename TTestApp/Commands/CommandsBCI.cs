@@ -46,5 +46,25 @@
             }
             return listResult.ToArray();
         }
+
+        public static void BCISetup(USBserialPort usbPort)
+        {
+            CountCheckSum(ref CommandSetADC);
+            usbPort.WriteBuf(CommandSetADC);
+            var registersSetArray = GetSetRegArray();
+            usbPort.WriteBuf(registersSetArray);
+
+            Thread.Sleep(100);
+            CommandSetReg[numRegNum] = 3;
+            CommandSetReg[numRegValue] = 0xE0;
+            CountCheckSum(ref CommandSetReg);
+            usbPort.WriteBuf(CommandSetReg);
+            Thread.Sleep(100);
+
+            CommandSetReg[numRegNum] = 5;
+            CommandSetReg[numRegValue] = 0x60;
+            CountCheckSum(ref CommandSetReg);
+            usbPort.WriteBuf(CommandSetReg);
+        }
     }
 }

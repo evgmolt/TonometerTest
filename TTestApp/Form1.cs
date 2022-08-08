@@ -76,7 +76,7 @@ namespace TTestApp
 
         private void onConnectionOk()
         {
-            BCISetup();
+            CommandsBCI.BCISetup(USBPort);
         }
 
         private void onConnectionFailure(Exception obj)
@@ -548,25 +548,6 @@ namespace TTestApp
             }
         }
 
-        private void BCISetup()
-        {
-            CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetADC);
-            USBPort.WriteBuf(CommandsBCI.CommandSetADC);
-            var registersSetArray = CommandsBCI.GetSetRegArray();
-            USBPort.WriteBuf(registersSetArray);
-
-            Thread.Sleep(100);
-            CommandsBCI.CommandSetReg[CommandsBCI.numRegNum] = 3;
-            CommandsBCI.CommandSetReg[CommandsBCI.numRegValue] = 0xE0;
-            CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetReg);
-            USBPort.WriteBuf(CommandsBCI.CommandSetReg);
-            Thread.Sleep(100);
-
-            CommandsBCI.CommandSetReg[CommandsBCI.numRegNum] = 5;
-            CommandsBCI.CommandSetReg[CommandsBCI.numRegValue] = 0x60;
-            CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetReg);
-            USBPort.WriteBuf(CommandsBCI.CommandSetReg);
-        }
         private void NewLineReceived(object? sender, EventArgs e)
         {
             double CurrentPressure = DataA.DCArray[(decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1)];
