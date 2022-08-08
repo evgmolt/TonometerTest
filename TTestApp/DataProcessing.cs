@@ -195,7 +195,7 @@
             return result;
         }
 
-        public static double GetDerivative(double[] DataArr, int Ind)
+        public static double GetDerivative(double[] DataArr, uint Ind)
         {
             int DiffShift = 13;
             const int Width = 4;

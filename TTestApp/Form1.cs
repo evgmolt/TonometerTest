@@ -276,7 +276,6 @@ namespace TTestApp
             {
                 if (radioButton11.Checked) //1:1
                 {
-//                    ArrayList.Add(DataA.DCArray);
                     ArrayList.Add(DataA.PressureViewArray);
                     ArrayList.Add(DataA.DerivArray);
                     ArrayList.Add(DataA.DebugArray);
@@ -289,8 +288,9 @@ namespace TTestApp
             else
             {
                 ArrayList.Add(DataA.PressureViewArray);
-//                ArrayList.Add(DataA.RealTimeArray);
-//                ArrayList.Add(DataA.DCArray);
+                ArrayList.Add(DataA.DerivArray);
+                //                ArrayList.Add(DataA.RealTimeArray);
+                //                ArrayList.Add(DataA.DCArray);
             }
             painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();
@@ -550,12 +550,14 @@ namespace TTestApp
 
         private void NewLineReceived(object? sender, EventArgs e)
         {
-            double CurrentPressure = DataA.DCArray[(decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1)];
+            uint currentIndex = (decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
+            double CurrentPressure = DataA.DCArray[currentIndex];
+            DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (decomposer.MainIndex > 0)
             {
                 labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
                 //                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
-                DataA.DCArray[decomposer.MainIndex - 1].ToString();
+                DataA.DCArray[currentIndex].ToString();
             }
             if (decomposer.RecordStarted)
             {

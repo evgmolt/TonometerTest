@@ -65,7 +65,7 @@
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
-            for (int i = 0; i < PressureViewArray.Length; i++)
+            for (uint i = 0; i < PressureViewArray.Length; i++)
             {
                 DerivArray[i] = DataProcessing.GetDerivative(PressureArray, i);
             }
