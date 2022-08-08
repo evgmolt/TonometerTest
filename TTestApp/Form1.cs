@@ -25,6 +25,9 @@ namespace TTestApp
         int PressureMeasurmentStatus = (int)PMStatus.Ready;
 
         int MaxPressure = 160;
+        int MinPressure = 30;
+
+        SF3Status sF3Status;
 
         public event Action<Message> WindowsMessage;
 
@@ -58,6 +61,7 @@ namespace TTestApp
             USBPort.ConnectionFailure += onConnectionFailure;
             USBPort.ConnectionOk += onConnectionOk;
             USBPort.Connect();
+            sF3Status = new SF3Status();
         }
 
         private void onCompressionChanged(object? sender, EventArgs e)
@@ -413,6 +417,16 @@ namespace TTestApp
 
         private void timerStatus_Tick(object sender, EventArgs e)
         {
+            labValve1.Text = sF3Status.Valve1IsClosed ? "Valve 1 : closed" : "Valve 1 : opened";
+            labValve2.Text = sF3Status.Valve2IsClosed ? "Valve 2 : closed" : "Valve 2 : opened";
+            labPump.Text = sF3Status.PumpIsOn ? "Pump : On" : "Pump : Off";
+            butValve1Close.Enabled = !sF3Status.Valve1IsClosed;
+            butValve1Open.Enabled = sF3Status.Valve1IsClosed;
+            butValve2Close.Enabled = !sF3Status.Valve2IsClosed;
+            butValve2Open.Enabled = sF3Status.Valve2IsClosed;
+            butPumpOn.Enabled = !sF3Status.PumpIsOn;
+            butPumpOff.Enabled = sF3Status.PumpIsOn;
+
             if (decomposer is null)
             {
                 return;
@@ -563,22 +577,39 @@ namespace TTestApp
             {
                 labRecordSize.Text = "Record size : " + (decomposer.PacketCounter / decomposer.SamplingFrequency).ToString() + " c";
             }
-            //switch (PressureMeasurmentStatus)
-            //{
-            //    case (int)PMStatus.Pumping:
-            //        if (CurrentPressure > MaxPressure)
-            //        {
-            //            USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
-            //            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
-            //            butStartRecord_Click(sender, e);
-            //        }
-            //        break;
-            //    case ()
-            //}
+            switch (PressureMeasurmentStatus)
+            {
+                case (int)PMStatus.Calibration:
+                    PressureMeasurmentStatus = (int)PMStatus.Pumping;
+                    break;
+                case (int)PMStatus.Pumping:
+                    if (CurrentPressure > MaxPressure)
+                    {
+                        decomposer.PacketCounter = 0;
+                        decomposer.MainIndex = 0;
+                        USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
+                        USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
+
+                        PressureMeasurmentStatus = (int)PMStatus.Measurement;
+                    }
+                    break;
+                case (int)PMStatus.Measurement:
+                    if (CurrentPressure < MinPressure)
+                    {
+                        PressureMeasurmentStatus = (int)PMStatus.Ready;
+                        PrepareData();
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void butPressureMeasStart_Click(object sender, EventArgs e)
         {
+            sF3Status.Valve1IsClosed = true;
+            sF3Status.Valve2IsClosed = true;
+            sF3Status.PumpIsOn = true;
             USBPort.WriteByte((byte)CmdSF3.Valve1Close);
             USBPort.WriteByte((byte)CmdSF3.Valve2Close);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
@@ -588,11 +619,44 @@ namespace TTestApp
 
         private void butPressureMeasAbort_Click(object sender, EventArgs e)
         {
+            sF3Status.Valve1IsClosed = false;
+            sF3Status.Valve2IsClosed = false;
+            sF3Status.PumpIsOn = false;
             USBPort.WriteByte((byte)CmdSF3.Valve1Open);
             USBPort.WriteByte((byte)CmdSF3.Valve2Open);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
-//            PressureMeasurmentInProgress = false;
+            PressureMeasurmentStatus = (int)PMStatus.Ready;
             labMeasInProgress.Visible = false;
+        }
+
+        private void butValve1Open_Click(object sender, EventArgs e)
+        {
+            sF3Status.Valve1IsClosed = false;
+        }
+
+        private void butValve1Close_Click(object sender, EventArgs e)
+        {
+            sF3Status.Valve1IsClosed = true;
+        }
+
+        private void butValve2Open_Click(object sender, EventArgs e)
+        {
+            sF3Status.Valve2IsClosed = false;
+        }
+
+        private void butValve2Close_Click(object sender, EventArgs e)
+        {
+            sF3Status.Valve2IsClosed = true;
+        }
+
+        private void butPumpOn_Click(object sender, EventArgs e)
+        {
+            sF3Status.PumpIsOn = true;
+        }
+
+        private void butPumpOff_Click(object sender, EventArgs e)
+        {
+            sF3Status.PumpIsOn = false;
         }
     }
 }
