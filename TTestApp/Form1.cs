@@ -22,7 +22,8 @@ namespace TTestApp
         double ScaleY = 1;
         List<int[]> VisirList;
         bool Compression = false;
-        bool PressureMeasurmentInProgress;
+        int PressureMeasurmentStatus = (int)PMStatus.Ready;
+
         int MaxPressure = 160;
 
         public event Action<Message> WindowsMessage;
@@ -159,6 +160,7 @@ namespace TTestApp
             histoPanel.Refresh();
         }
 
+
         private void PrepareData()
         {
             int DCArrayWindow = 100;
@@ -174,6 +176,10 @@ namespace TTestApp
             }
 
             var ArrayOfWaveIndexes = WD.FiltredPoints.ToArray();
+            if (ArrayOfWaveIndexes.Length == 0)
+            {
+                return;
+            }
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
 
@@ -388,34 +394,13 @@ namespace TTestApp
         {
             textWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
             decomposer.PacketCounter = 0;
+            decomposer.MainIndex = 0;
             decomposer.RecordStarted = true;
             progressBarRecord.Visible = true;
             labMeanPressure.Text = "Mean : ";
             labSys.Text = "Sys : ";
             labDia.Text = "Dia : ";
             labPulse.Text = "Pulse : ";
-        }
-
-        private void NewLineReceived(object? sender, EventArgs e)
-        {
-            double CurrentPressure = DataA.DCArray[decomposer.MainIndex - 1];
-            if (decomposer.MainIndex > 0)
-            {
-                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
-//                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
-                    DataA.DCArray[decomposer.MainIndex - 1].ToString();
-            }
-            if (decomposer.RecordStarted)
-            {
-                labRecordSize.Text = "Record size : " + (decomposer.PacketCounter / decomposer.SamplingFrequency).ToString() + " c";
-            }
-            if (PressureMeasurmentInProgress)
-            {
-                if (CurrentPressure > MaxPressure)
-                {
-                    butStopRecord_Click(sender, e);
-                }
-            }
         }
 
         private int ValueToMmhG(double value)
@@ -496,7 +481,14 @@ namespace TTestApp
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;
 
-            ReadFile(Cfg.DataDir + TmpDataFile);
+            CurrentFileSize = decomposer.PacketCounter;
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / decomposer.SamplingFrequency).ToString() + " s";
+            UpdateScrollBar(CurrentFileSize);
+
+            PrepareData();
+            bufPanel.Refresh();
+            histoPanel.Refresh();
+//            ReadFile(Cfg.DataDir + TmpDataFile);
         }
 
         private void numUDLeft_ValueChanged(object sender, EventArgs e)
@@ -575,14 +567,39 @@ namespace TTestApp
             CommandsBCI.CountCheckSum(ref CommandsBCI.CommandSetReg);
             USBPort.WriteBuf(CommandsBCI.CommandSetReg);
         }
+        private void NewLineReceived(object? sender, EventArgs e)
+        {
+            double CurrentPressure = DataA.DCArray[(decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1)];
+            if (decomposer.MainIndex > 0)
+            {
+                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
+                //                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
+                DataA.DCArray[decomposer.MainIndex - 1].ToString();
+            }
+            if (decomposer.RecordStarted)
+            {
+                labRecordSize.Text = "Record size : " + (decomposer.PacketCounter / decomposer.SamplingFrequency).ToString() + " c";
+            }
+            //switch (PressureMeasurmentStatus)
+            //{
+            //    case (int)PMStatus.Pumping:
+            //        if (CurrentPressure > MaxPressure)
+            //        {
+            //            USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
+            //            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
+            //            butStartRecord_Click(sender, e);
+            //        }
+            //        break;
+            //    case ()
+            //}
+        }
 
         private void butPressureMeasStart_Click(object sender, EventArgs e)
         {
             USBPort.WriteByte((byte)CmdSF3.Valve1Close);
             USBPort.WriteByte((byte)CmdSF3.Valve2Close);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
-            PressureMeasurmentInProgress = true;
-            butStartRecord_Click(sender, e);
+            PressureMeasurmentStatus = (int)PMStatus.Pumping;
             labMeasInProgress.Visible = true;
         }
 
@@ -591,7 +608,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdSF3.Valve1Open);
             USBPort.WriteByte((byte)CmdSF3.Valve2Open);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
-            PressureMeasurmentInProgress = false;
+//            PressureMeasurmentInProgress = false;
             labMeasInProgress.Visible = false;
         }
     }
