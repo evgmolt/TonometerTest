@@ -7,8 +7,8 @@
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
 
+        private const int _queueForACSize = 6;
         private const int _queueForDCSize = 60;
-        private const int _queueForACSize = 20;
 
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {

@@ -44,7 +44,7 @@
 
         public void CountViewArrays(Control panel)
         {
-            int SmoothWindowSize = 40;
+            int SmoothWindowSize = 60;
             int MedianWindowSize = 6;
             for (int i = 0; i < RealTimeArray.Length; i++)
             {

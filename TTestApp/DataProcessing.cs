@@ -183,18 +183,6 @@
             return (max - min);
         }
 
-        //Вычисление производной
-        public static double[] Diff(double[] Data)
-        {
-            int DiffShift = 13;
-            double[] result = new double[Data.Length];
-            for(int i = DiffShift; i < Data.Length - 1; i++)
-            {
-                result[i] = (Data[i] - Data[i - DiffShift]);
-            }
-            return result;
-        }
-
         public static double GetDerivative(double[] DataArr, uint Ind)
         {
             int DiffShift = 13;

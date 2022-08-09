@@ -91,6 +91,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.butValve1PWM = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -597,6 +598,7 @@
             // 
             // histoPanel
             // 
+            this.histoPanel.Controls.Add(this.butValve1PWM);
             this.histoPanel.Controls.Add(this.butPumpOff);
             this.histoPanel.Controls.Add(this.butPumpOn);
             this.histoPanel.Controls.Add(this.labPump);
@@ -615,7 +617,7 @@
             // 
             // butPumpOff
             // 
-            this.butPumpOff.Location = new System.Drawing.Point(510, 13);
+            this.butPumpOff.Location = new System.Drawing.Point(643, 13);
             this.butPumpOff.Name = "butPumpOff";
             this.butPumpOff.Size = new System.Drawing.Size(75, 23);
             this.butPumpOff.TabIndex = 8;
@@ -625,7 +627,7 @@
             // 
             // butPumpOn
             // 
-            this.butPumpOn.Location = new System.Drawing.Point(429, 13);
+            this.butPumpOn.Location = new System.Drawing.Point(562, 13);
             this.butPumpOn.Name = "butPumpOn";
             this.butPumpOn.Size = new System.Drawing.Size(75, 23);
             this.butPumpOn.TabIndex = 7;
@@ -636,7 +638,7 @@
             // labPump
             // 
             this.labPump.AutoSize = true;
-            this.labPump.Location = new System.Drawing.Point(327, 17);
+            this.labPump.Location = new System.Drawing.Point(460, 17);
             this.labPump.Name = "labPump";
             this.labPump.Size = new System.Drawing.Size(48, 15);
             this.labPump.TabIndex = 6;
@@ -784,6 +786,16 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
+            // butValve1PWM
+            // 
+            this.butValve1PWM.Location = new System.Drawing.Point(280, 13);
+            this.butValve1PWM.Name = "butValve1PWM";
+            this.butValve1PWM.Size = new System.Drawing.Size(75, 23);
+            this.butValve1PWM.TabIndex = 9;
+            this.butValve1PWM.Text = "PWM";
+            this.butValve1PWM.UseVisualStyleBackColor = true;
+            this.butValve1PWM.Click += new System.EventHandler(this.butValve1PWM_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -885,5 +897,6 @@
         private Button butPumpOff;
         private Button butPumpOn;
         private Label labPump;
+        private Button butValve1PWM;
     }
 }

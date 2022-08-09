@@ -580,9 +580,11 @@ namespace TTestApp
             switch (PressureMeasurmentStatus)
             {
                 case (int)PMStatus.Calibration:
+                    //Вызов метода калибровки
                     PressureMeasurmentStatus = (int)PMStatus.Pumping;
                     break;
                 case (int)PMStatus.Pumping:
+                    //Вызов метода оценки пульсаций (см. алгоритм)
                     if (CurrentPressure > MaxPressure)
                     {
                         decomposer.PacketCounter = 0;
@@ -613,7 +615,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdSF3.Valve1Close);
             USBPort.WriteByte((byte)CmdSF3.Valve2Close);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
-            PressureMeasurmentStatus = (int)PMStatus.Pumping;
+            PressureMeasurmentStatus = (int)PMStatus.Calibration;
             labMeasInProgress.Visible = true;
         }
 
@@ -632,31 +634,43 @@ namespace TTestApp
         private void butValve1Open_Click(object sender, EventArgs e)
         {
             sF3Status.Valve1IsClosed = false;
+            USBPort.WriteByte((byte)CmdSF3.Valve1Open);
         }
 
         private void butValve1Close_Click(object sender, EventArgs e)
         {
             sF3Status.Valve1IsClosed = true;
+            USBPort.WriteByte((byte)CmdSF3.Valve1Close);
         }
 
         private void butValve2Open_Click(object sender, EventArgs e)
         {
             sF3Status.Valve2IsClosed = false;
+            USBPort.WriteByte((byte)CmdSF3.Valve2Open);
         }
 
         private void butValve2Close_Click(object sender, EventArgs e)
         {
             sF3Status.Valve2IsClosed = true;
+            USBPort.WriteByte((byte)CmdSF3.Valve2Close);
         }
 
         private void butPumpOn_Click(object sender, EventArgs e)
         {
             sF3Status.PumpIsOn = true;
+            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
         }
 
         private void butPumpOff_Click(object sender, EventArgs e)
         {
             sF3Status.PumpIsOn = false;
+            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
+        }
+
+        private void butValve1PWM_Click(object sender, EventArgs e)
+        {
+            sF3Status.Valve1PWM = true;
+            USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
         }
     }
 }
