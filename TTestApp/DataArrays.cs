@@ -3,7 +3,10 @@
     internal class DataArrays
     {
         private readonly int _size;
-        public double[] RealTimeArray;
+        public double[] RealTimeArray0;
+        public double[] RealTimeArray1;
+        public double[] RealTimeArray2;
+        public double[] RealTimeArray3;
         public double[] DCArray;
         public double[] PressureArray;
         public double[] PressureViewArray;
@@ -16,7 +19,10 @@
         public DataArrays(int size)
         {
             _size = size;
-            RealTimeArray = new double[_size];
+            RealTimeArray0 = new double[_size];
+            RealTimeArray1 = new double[_size];
+            RealTimeArray2 = new double[_size];
+            RealTimeArray3 = new double[_size];
             DCArray = new double[_size];
             PressureArray = new double[_size];
             PressureViewArray = new double[_size];
@@ -32,7 +38,7 @@
             {
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    a.RealTimeArray[i] = Convert.ToInt32(lines[i]);
+                    a.RealTimeArray0[i] = Convert.ToInt32(lines[i]);
                 }
                 return a;
             }
@@ -46,9 +52,9 @@
         {
             int SmoothWindowSize = 60;
             int MedianWindowSize = 6;
-            for (int i = 0; i < RealTimeArray.Length; i++)
+            for (int i = 0; i < RealTimeArray0.Length; i++)
             {
-                PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray, i);
+                PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray0, i);
             }
             double max = DCArray.Max<double>();
             int maxInd = DCArray.ToList().IndexOf(max);
@@ -70,12 +76,12 @@
                 DerivArray[i] = DataProcessing.GetDerivative(PressureArray, i);
             }
 
-            CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
+            CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray0);
         }
 
         public String GetDataString(uint index)
         {
-            return RealTimeArray[index].ToString();
+            return RealTimeArray0[index].ToString();
         }
     }
 }

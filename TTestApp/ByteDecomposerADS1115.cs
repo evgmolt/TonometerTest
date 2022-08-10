@@ -4,7 +4,7 @@
     {
         public override int SamplingFrequency => 200; 
         public override int BaudRate => 115200; 
-        public override int BytesInPacket => 3;
+        public override int BytesInPacket => 9;
         public override int MaxNoDataCounter => 10;
 
         private const int _queueForACSize = 6;
@@ -54,24 +54,34 @@
                         break;
                     case 2:// E1_1
                         tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        data.RealTimeArray0[MainIndex] = tmpValue;
                         byteNum = 3;
-
-                        QueueForDC.Enqueue(tmpValue);
-                        if (QueueForDC.Count > _queueForDCSize)
-                        {
-                            QueueForDC.Dequeue();
-                        }
-
-                        data.RealTimeArray[MainIndex] = tmpValue;
-                        data.DCArray[MainIndex] = (int)QueueForDC.Average();
-
-                        QueueForAC.Enqueue(100 + tmpValue - (int)QueueForDC.Average());
-                        if (QueueForAC.Count > _queueForACSize)
-                        {
-                            QueueForAC.Dequeue();
-                        }
-
-                        data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        break;
+                    case 3:
+                        tmpValue = (int)usbport.PortBuf[i];
+                        byteNum = 4;
+                        break;
+                    case 4:
+                        tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        data.RealTimeArray1[MainIndex] = tmpValue;
+                        byteNum = 5;
+                        break;
+                    case 5:
+                        tmpValue = (int)usbport.PortBuf[i];
+                        byteNum = 6;
+                        break;
+                    case 6:
+                        tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        data.RealTimeArray2[MainIndex] = tmpValue;
+                        byteNum = 7;
+                        break;
+                    case 7:
+                        tmpValue = (int)usbport.PortBuf[i];
+                        byteNum = 8;
+                        break;
+                    case 8:
+                        tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        data.RealTimeArray3[MainIndex] = tmpValue;
 
                         byteNum = 0;
 
