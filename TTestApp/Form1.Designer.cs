@@ -46,9 +46,6 @@
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
             this.labDeviceIsOff = new System.Windows.Forms.Label();
-            this.panelHRV = new System.Windows.Forms.Panel();
-            this.labAMo = new System.Windows.Forms.Label();
-            this.labSDNN = new System.Windows.Forms.Label();
             this.labNumOfWaves = new System.Windows.Forms.Label();
             this.labY2 = new System.Windows.Forms.Label();
             this.labY1 = new System.Windows.Forms.Label();
@@ -71,7 +68,8 @@
             this.butStopRecord = new System.Windows.Forms.Button();
             this.butStartRecord = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
-            this.histoPanel = new System.Windows.Forms.Panel();
+            this.controlPanel = new System.Windows.Forms.Panel();
+            this.butValve1PWM = new System.Windows.Forms.Button();
             this.butPumpOff = new System.Windows.Forms.Button();
             this.butPumpOn = new System.Windows.Forms.Button();
             this.labPump = new System.Windows.Forms.Label();
@@ -91,7 +89,6 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.butValve1PWM = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -99,11 +96,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.numUDLeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).BeginInit();
             this.panelBottom.SuspendLayout();
-            this.panelHRV.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
-            this.histoPanel.SuspendLayout();
+            this.controlPanel.SuspendLayout();
             this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -322,7 +318,6 @@
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelBottom.Controls.Add(this.labDeviceIsOff);
-            this.panelBottom.Controls.Add(this.panelHRV);
             this.panelBottom.Controls.Add(this.labNumOfWaves);
             this.panelBottom.Controls.Add(this.labY2);
             this.panelBottom.Controls.Add(this.labY1);
@@ -352,34 +347,6 @@
             this.labDeviceIsOff.TabIndex = 17;
             this.labDeviceIsOff.Text = "Device turned off";
             this.labDeviceIsOff.Visible = false;
-            // 
-            // panelHRV
-            // 
-            this.panelHRV.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelHRV.Controls.Add(this.labAMo);
-            this.panelHRV.Controls.Add(this.labSDNN);
-            this.panelHRV.Location = new System.Drawing.Point(689, 19);
-            this.panelHRV.Name = "panelHRV";
-            this.panelHRV.Size = new System.Drawing.Size(272, 135);
-            this.panelHRV.TabIndex = 16;
-            // 
-            // labAMo
-            // 
-            this.labAMo.AutoSize = true;
-            this.labAMo.Location = new System.Drawing.Point(3, 27);
-            this.labAMo.Name = "labAMo";
-            this.labAMo.Size = new System.Drawing.Size(74, 15);
-            this.labAMo.TabIndex = 1;
-            this.labAMo.Text = "Mode amp : ";
-            // 
-            // labSDNN
-            // 
-            this.labSDNN.AutoSize = true;
-            this.labSDNN.Location = new System.Drawing.Point(3, 5);
-            this.labSDNN.Name = "labSDNN";
-            this.labSDNN.Size = new System.Drawing.Size(48, 15);
-            this.labSDNN.TabIndex = 0;
-            this.labSDNN.Text = "SDNN : ";
             // 
             // labNumOfWaves
             // 
@@ -589,31 +556,40 @@
             // panel4
             // 
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel4.Controls.Add(this.histoPanel);
+            this.panel4.Controls.Add(this.controlPanel);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(233, 308);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(1014, 95);
             this.panel4.TabIndex = 7;
             // 
-            // histoPanel
+            // controlPanel
             // 
-            this.histoPanel.Controls.Add(this.butValve1PWM);
-            this.histoPanel.Controls.Add(this.butPumpOff);
-            this.histoPanel.Controls.Add(this.butPumpOn);
-            this.histoPanel.Controls.Add(this.labPump);
-            this.histoPanel.Controls.Add(this.butValve2Close);
-            this.histoPanel.Controls.Add(this.butValve2Open);
-            this.histoPanel.Controls.Add(this.butValve1Close);
-            this.histoPanel.Controls.Add(this.butValve1Open);
-            this.histoPanel.Controls.Add(this.labValve2);
-            this.histoPanel.Controls.Add(this.labValve1);
-            this.histoPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.histoPanel.Location = new System.Drawing.Point(0, 0);
-            this.histoPanel.Name = "histoPanel";
-            this.histoPanel.Size = new System.Drawing.Size(1012, 93);
-            this.histoPanel.TabIndex = 17;
-            this.histoPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.panelHisto_Paint);
+            this.controlPanel.Controls.Add(this.butValve1PWM);
+            this.controlPanel.Controls.Add(this.butPumpOff);
+            this.controlPanel.Controls.Add(this.butPumpOn);
+            this.controlPanel.Controls.Add(this.labPump);
+            this.controlPanel.Controls.Add(this.butValve2Close);
+            this.controlPanel.Controls.Add(this.butValve2Open);
+            this.controlPanel.Controls.Add(this.butValve1Close);
+            this.controlPanel.Controls.Add(this.butValve1Open);
+            this.controlPanel.Controls.Add(this.labValve2);
+            this.controlPanel.Controls.Add(this.labValve1);
+            this.controlPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.controlPanel.Location = new System.Drawing.Point(0, 0);
+            this.controlPanel.Name = "controlPanel";
+            this.controlPanel.Size = new System.Drawing.Size(1012, 93);
+            this.controlPanel.TabIndex = 17;
+            // 
+            // butValve1PWM
+            // 
+            this.butValve1PWM.Location = new System.Drawing.Point(280, 13);
+            this.butValve1PWM.Name = "butValve1PWM";
+            this.butValve1PWM.Size = new System.Drawing.Size(75, 23);
+            this.butValve1PWM.TabIndex = 9;
+            this.butValve1PWM.Text = "PWM";
+            this.butValve1PWM.UseVisualStyleBackColor = true;
+            this.butValve1PWM.Click += new System.EventHandler(this.butValve1PWM_Click);
             // 
             // butPumpOff
             // 
@@ -786,16 +762,6 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // butValve1PWM
-            // 
-            this.butValve1PWM.Location = new System.Drawing.Point(280, 13);
-            this.butValve1PWM.Name = "butValve1PWM";
-            this.butValve1PWM.Size = new System.Drawing.Size(75, 23);
-            this.butValve1PWM.TabIndex = 9;
-            this.butValve1PWM.Text = "PWM";
-            this.butValve1PWM.UseVisualStyleBackColor = true;
-            this.butValve1PWM.Click += new System.EventHandler(this.butValve1PWM_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -818,14 +784,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).EndInit();
             this.panelBottom.ResumeLayout(false);
             this.panelBottom.PerformLayout();
-            this.panelHRV.ResumeLayout(false);
-            this.panelHRV.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.panel4.ResumeLayout(false);
-            this.histoPanel.ResumeLayout(false);
-            this.histoPanel.PerformLayout();
+            this.controlPanel.ResumeLayout(false);
+            this.controlPanel.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.ResumeLayout(false);
@@ -877,10 +841,6 @@
         private Button butRefresh;
         private Label labNumOfWaves;
         private Panel panel4;
-        private Panel histoPanel;
-        private Panel panelHRV;
-        private Label labSDNN;
-        private Label labAMo;
         private Label labDeviceIsOff;
         private Panel panel5;
         private Button butPressureMeasAbort;
@@ -888,15 +848,16 @@
         private Label label4;
         private Label label;
         private Label labMeasInProgress;
+        private Panel controlPanel;
+        private Button butValve1PWM;
+        private Button butPumpOff;
+        private Button butPumpOn;
+        private Label labPump;
         private Button butValve2Close;
         private Button butValve2Open;
         private Button butValve1Close;
         private Button butValve1Open;
         private Label labValve2;
         private Label labValve1;
-        private Button butPumpOff;
-        private Button butPumpOn;
-        private Label labPump;
-        private Button butValve1PWM;
     }
 }

@@ -9,7 +9,6 @@ namespace TTestApp
         DataArrays? DataA;
         ByteDecomposer decomposer;
         Painter painter;
-        Histogram histo;
         BufferedPanel bufPanel;
         TTestConfig Cfg;
         StreamWriter textWriter;
@@ -22,7 +21,7 @@ namespace TTestApp
         double ScaleY = 1;
         List<int[]> VisirList;
         bool Compression = false;
-        int PressureMeasurmentStatus = (int)PMStatus.Ready;
+        int PressureMeasurementStatus = (int)PMStatus.Ready;
 
         int MaxPressure = 160;
         int MinPressure = 30;
@@ -74,7 +73,7 @@ namespace TTestApp
 
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
             decomposer = new ByteDecomposerBCI(DataA);
-            decomposer.onDecomposePacketEvent += NewLineReceived;
+            decomposer.onDecomposePacketEvent += OnPacketReceived;
             painter = new Painter(bufPanel, decomposer);
         }
 
@@ -161,7 +160,6 @@ namespace TTestApp
             }
             PrepareData();
             bufPanel.Refresh();
-            histoPanel.Refresh();
         }
 
 
@@ -262,11 +260,8 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
-
-            histo = new Histogram(ArrayOfWaveIndexes, decomposer.SamplingFrequency);
-            labSDNN.Text = "SDNN : " + histo.SDNN.ToString();
-            labAMo.Text = "Moda amp : " + histo.ModaAmplitude.ToString();
-            histoPanel.Refresh();
+            FormHRV formHRV = new FormHRV(ArrayOfWaveIndexes, decomposer.SamplingFrequency);
+            formHRV.ShowDialog();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -488,7 +483,7 @@ namespace TTestApp
         private void butStopRecord_Click(object sender, EventArgs e)
         {
             progressBarRecord.Visible = false;
-            decomposer.onDecomposePacketEvent -= NewLineReceived;
+            decomposer.onDecomposePacketEvent -= OnPacketReceived;
             decomposer.RecordStarted = false;
             textWriter?.Dispose();
             ViewMode = true;
@@ -501,7 +496,7 @@ namespace TTestApp
 
             PrepareData();
             bufPanel.Refresh();
-            histoPanel.Refresh();
+            controlPanel.Refresh();
 //            ReadFile(Cfg.DataDir + TmpDataFile);
         }
 
@@ -519,50 +514,10 @@ namespace TTestApp
         {
             PrepareData();
             bufPanel.Refresh();
-            histoPanel.Refresh();
+            controlPanel.Refresh();
         }
 
-        private void panelHisto_Paint(object sender, PaintEventArgs e)
-        {
-            if (histo is null)
-            {
-                return;
-            }
-            int barWidth = 5;
-            int YScaleCoeff = histoPanel.Height / histo.ModaAmplitude - 2;
-            YScaleCoeff = 13;
-            e.Graphics.Clear(Color.White);
-            var R0 = new Rectangle(0, 0, histoPanel.Width, histoPanel.Height);
-            var pen0 = new Pen(Color.Black, 1);
-            e.Graphics.DrawRectangle(pen0, R0);
-            Brush brush0 = new SolidBrush(Color.Black);
-            for (int i = 0; i < histoPanel.Width / barWidth; i++)
-            {
-                int x1 = i * barWidth;
-                int y1 = histoPanel.Height - histo.HistoBuffer[i] * YScaleCoeff;
-                int w = barWidth;
-                int h = histoPanel.Height;
-                var R1 = new Rectangle(x1, y1, w, h);
-                e.Graphics.FillRectangle(brush0, R1);
-            }
-            pen0.Dispose();
-            brush0.Dispose();
-
-            using (Brush brush1 = new SolidBrush(Color.Red))
-            {
-                for (int i = 0; i < histo.NNArray.Length; i++)
-                {
-                    int x1 = i * barWidth;
-                    int y1 = histoPanel.Height - histo.NNArray[i] / 10;// * YScaleCoeff;
-                    int w = barWidth;
-                    int h = histoPanel.Height;
-                    var R1 = new Rectangle(x1, y1, w, h);
-                    e.Graphics.FillRectangle(brush1, R1);
-                }
-            }
-        }
-
-        private void NewLineReceived(object? sender, EventArgs e)
+        private void OnPacketReceived(object? sender, EventArgs e)
         {
             uint currentIndex = (decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             double CurrentPressure = DataA.DCArray[currentIndex];
@@ -570,18 +525,17 @@ namespace TTestApp
             if (decomposer.MainIndex > 0)
             {
                 labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
-                //                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " +
-                DataA.DCArray[currentIndex].ToString();
+//                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " + DataA.DCArray[currentIndex].ToString();
             }
             if (decomposer.RecordStarted)
             {
                 labRecordSize.Text = "Record size : " + (decomposer.PacketCounter / decomposer.SamplingFrequency).ToString() + " c";
             }
-            switch (PressureMeasurmentStatus)
+            switch (PressureMeasurementStatus)
             {
                 case (int)PMStatus.Calibration:
                     //Вызов метода калибровки
-                    PressureMeasurmentStatus = (int)PMStatus.Pumping;
+                    PressureMeasurementStatus = (int)PMStatus.Pumping;
                     break;
                 case (int)PMStatus.Pumping:
                     //Вызов метода оценки пульсаций (см. алгоритм)
@@ -592,13 +546,13 @@ namespace TTestApp
                         USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
                         USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
 
-                        PressureMeasurmentStatus = (int)PMStatus.Measurement;
+                        PressureMeasurementStatus = (int)PMStatus.Measurement;
                     }
                     break;
                 case (int)PMStatus.Measurement:
                     if (CurrentPressure < MinPressure)
                     {
-                        PressureMeasurmentStatus = (int)PMStatus.Ready;
+                        PressureMeasurementStatus = (int)PMStatus.Ready;
                         PrepareData();
                     }
                     break;
@@ -615,7 +569,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdSF3.Valve1Close);
             USBPort.WriteByte((byte)CmdSF3.Valve2Close);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
-            PressureMeasurmentStatus = (int)PMStatus.Calibration;
+            PressureMeasurementStatus = (int)PMStatus.Calibration;
             labMeasInProgress.Visible = true;
         }
 
@@ -627,7 +581,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdSF3.Valve1Open);
             USBPort.WriteByte((byte)CmdSF3.Valve2Open);
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
-            PressureMeasurmentStatus = (int)PMStatus.Ready;
+            PressureMeasurementStatus = (int)PMStatus.Ready;
             labMeasInProgress.Visible = false;
         }
 

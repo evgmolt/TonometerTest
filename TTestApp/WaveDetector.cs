@@ -2,7 +2,7 @@
 {
     class WaveDetector
     {
-        private int InsideC;
+        private int CurrentInterval;
         public double DetectLevel = 500;
         private const double MinDetectLevel = 500;
         private const int DiffShift = 13;
@@ -20,7 +20,6 @@
         private const int MinNumOfIntForAver = 3;
         private const int MaxNumOfIntForAver = 10;
         public List<int> FiltredPoints;
-        public int MeanPressureInd = 0;
         private readonly int _samplingFreq;
 
         public WaveDetector(int samplingFreq)
@@ -36,7 +35,6 @@
             NNPointIndex = 0;
             NNIndex = 0;
             FiltredPoints.Clear();
-            MeanPressureInd = 0;
             DetectLevel = MinDetectLevel;
         }
 
@@ -69,12 +67,12 @@
                 NumOfIntForAver = 0;
                 return 0;
             }
-            InsideC++;
-            if (InsideC == NoWaveInterval1)
+            CurrentInterval++;
+            if (CurrentInterval == NoWaveInterval1)
             {
                 DetectLevel = DetectLevel / 2;
             }
-            if (InsideC > NoWaveInterval2)
+            if (CurrentInterval > NoWaveInterval2)
             {
                 DetectLevel = DetectLevel / 2;
                 NumOfIntForAver = 0;
@@ -82,13 +80,12 @@
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
             if (Ind < DiffShift) return DetectLevel;
             double CurrentValue = DataArr[Ind];
-            if (InsideC < LockInterval) return DetectLevel;
+            if (CurrentInterval < LockInterval) return DetectLevel;
             if (CurrentValue > DetectLevel)
             {
                 if (CurrentValue > MaxD)
                 {
                     MaxD = CurrentValue;
-                    MeanPressureInd = Ind;
                 }
                 if (MaxD > CurrentValue)
                 {
@@ -107,7 +104,7 @@
                         NumOfIntForAver = Math.Min(NumOfIntForAver, MaxNumOfIntForAver);
                         FiltredPoints.Add(Ind);
                     }
-                    InsideC = 0;
+                    CurrentInterval = 0;
                     NNPointIndex++;
                     DetectLevel = MaxD / 2;
                     MaxD = 0;
