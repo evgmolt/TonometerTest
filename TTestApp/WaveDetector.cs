@@ -6,9 +6,9 @@
         public double DetectLevel = 500;
         private const double MinDetectLevel = 500;
         private const int DiffShift = 13;
-        private const int LockInterval = 60;
-        private int NoWaveInterval1 = 600;
-        private int NoWaveInterval2 = 800;
+        private int LockInterval = 60;
+        private const int NoWaveInterval1 = 600;
+        private const int NoWaveInterval2 = 1000;
         public double MaxD;
         private const int NNArrSize = 10000;
         private Point[] NNPointArr;
@@ -16,18 +16,18 @@
         private int PrevInterval;
         private int[] NNArray;
         private int NNIndex;
-        private int NumOfIntForAver;
-        private const int MinNumOfIntForAver = 3;
-        private const int MaxNumOfIntForAver = 10;
+        private int NumOfIntervalsForAver;
+        private const int MinNumOfIntervalsForAver = 3;
+        private const int MaxNumOfIntervalsForAver = 10;
         public List<int> FiltredPoints;
-        private readonly int _samplingFreq;
+        private readonly int _samplingFrequency;
 
-        public WaveDetector(int samplingFreq)
+        public WaveDetector(int samplingFrequency)
         {
             NNPointArr = new Point[NNArrSize];
             NNArray = new int[NNArrSize];
             FiltredPoints = new List<int>();
-            _samplingFreq = samplingFreq;
+            _samplingFrequency = samplingFrequency;
         }
 
         public void Reset()
@@ -44,18 +44,18 @@
             {
                 return 0;
             }
-            if (NNIndex < NumOfIntForAver)
+            if (NNIndex < NumOfIntervalsForAver)
             {
-                NumOfIntForAver = NNIndex;
+                NumOfIntervalsForAver = NNIndex;
             }
             int sum = 0;
-            for (int i = 0; i<NumOfIntForAver; i++)
+            for (int i = 0; i<NumOfIntervalsForAver; i++)
             {
                 sum += NNArray[(NNIndex - 1 - i) ];
             }
-            sum /= NumOfIntForAver;
+            sum /= NumOfIntervalsForAver;
             double d = sum;
-            d /= _samplingFreq; 
+            d /= _samplingFrequency; 
             d = 60 / d;
             return (int)Math.Round(d);
         }
@@ -64,18 +64,18 @@
         {
             if (OverflowState !=0)
             {
-                NumOfIntForAver = 0;
+                NumOfIntervalsForAver = 0;
                 return 0;
             }
             CurrentInterval++;
             if (CurrentInterval == NoWaveInterval1)
             {
-                DetectLevel = DetectLevel / 2;
+                DetectLevel /= 2;
             }
             if (CurrentInterval > NoWaveInterval2)
             {
-                DetectLevel = DetectLevel / 2;
-                NumOfIntForAver = 0;
+                DetectLevel /= 2;
+                NumOfIntervalsForAver = 0;
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
             if (Ind < DiffShift) return DetectLevel;
@@ -83,10 +83,7 @@
             if (CurrentInterval < LockInterval) return DetectLevel;
             if (CurrentValue > DetectLevel)
             {
-                if (CurrentValue > MaxD)
-                {
-                    MaxD = CurrentValue;
-                }
+                MaxD = Math.Max((int)CurrentValue, MaxD);
                 if (MaxD > CurrentValue)
                 {
                     int tmpNN = 0;
@@ -100,9 +97,10 @@
                     {
                         NNArray[NNIndex] = tmpNN;
                         NNIndex++;
-                        NumOfIntForAver++;
-                        NumOfIntForAver = Math.Min(NumOfIntForAver, MaxNumOfIntForAver);
+                        NumOfIntervalsForAver++;
+                        NumOfIntervalsForAver = Math.Min(NumOfIntervalsForAver, MaxNumOfIntervalsForAver);
                         FiltredPoints.Add(Ind);
+                        LockInterval = tmpNN / 2;
                     }
                     CurrentInterval = 0;
                     NNPointIndex++;
@@ -115,7 +113,7 @@
 
         private bool Filter25percent(int NewInterval)
         {
-            const int LoLimit = 50; //ms - 240 уд / мин 
+            const int LoLimit = 50;  //ms - 240 уд / мин 
             const int HiLimit = 400; //ms - 30  уд / мин 
             if (NewInterval < LoLimit) return false;
             if (NewInterval > HiLimit) return false;

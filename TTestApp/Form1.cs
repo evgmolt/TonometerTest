@@ -73,7 +73,7 @@ namespace TTestApp
 
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
             decomposer = new ByteDecomposerBCI(DataA);
-            decomposer.onDecomposePacketEvent += OnPacketReceived;
+            decomposer.OnDecomposePacketEvent += OnPacketReceived;
             painter = new Painter(bufPanel, decomposer);
         }
 
@@ -260,7 +260,7 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
-            FormHRV formHRV = new FormHRV(ArrayOfWaveIndexes, decomposer.SamplingFrequency);
+            FormHRV formHRV = new(ArrayOfWaveIndexes, decomposer.SamplingFrequency);
             formHRV.ShowDialog();
         }
 
@@ -483,7 +483,7 @@ namespace TTestApp
         private void butStopRecord_Click(object sender, EventArgs e)
         {
             progressBarRecord.Visible = false;
-            decomposer.onDecomposePacketEvent -= OnPacketReceived;
+            decomposer.OnDecomposePacketEvent -= OnPacketReceived;
             decomposer.RecordStarted = false;
             textWriter?.Dispose();
             ViewMode = true;

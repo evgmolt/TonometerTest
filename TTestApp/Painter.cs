@@ -96,7 +96,6 @@
                 }
             }
             pen0.Dispose();
-//            e.Graphics.Dispose();
         }
     }
 }

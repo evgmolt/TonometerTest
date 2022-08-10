@@ -242,7 +242,7 @@
             this.butFlow.Location = new System.Drawing.Point(22, 37);
             this.butFlow.Name = "butFlow";
             this.butFlow.Size = new System.Drawing.Size(85, 23);
-            this.butFlow.TabIndex = 9;
+            this.butFlow.TabIndex = 0;
             this.butFlow.Text = "Stop stream";
             this.butFlow.UseVisualStyleBackColor = true;
             this.butFlow.Click += new System.EventHandler(this.butFlow_Click);
@@ -586,7 +586,7 @@
             this.butValve1PWM.Location = new System.Drawing.Point(280, 13);
             this.butValve1PWM.Name = "butValve1PWM";
             this.butValve1PWM.Size = new System.Drawing.Size(75, 23);
-            this.butValve1PWM.TabIndex = 9;
+            this.butValve1PWM.TabIndex = 7;
             this.butValve1PWM.Text = "PWM";
             this.butValve1PWM.UseVisualStyleBackColor = true;
             this.butValve1PWM.Click += new System.EventHandler(this.butValve1PWM_Click);
@@ -596,7 +596,7 @@
             this.butPumpOff.Location = new System.Drawing.Point(643, 13);
             this.butPumpOff.Name = "butPumpOff";
             this.butPumpOff.Size = new System.Drawing.Size(75, 23);
-            this.butPumpOff.TabIndex = 8;
+            this.butPumpOff.TabIndex = 9;
             this.butPumpOff.Text = "Pump Off";
             this.butPumpOff.UseVisualStyleBackColor = true;
             this.butPumpOff.Click += new System.EventHandler(this.butPumpOff_Click);
@@ -606,7 +606,7 @@
             this.butPumpOn.Location = new System.Drawing.Point(562, 13);
             this.butPumpOn.Name = "butPumpOn";
             this.butPumpOn.Size = new System.Drawing.Size(75, 23);
-            this.butPumpOn.TabIndex = 7;
+            this.butPumpOn.TabIndex = 8;
             this.butPumpOn.Text = "Pump On";
             this.butPumpOn.UseVisualStyleBackColor = true;
             this.butPumpOn.Click += new System.EventHandler(this.butPumpOn_Click);

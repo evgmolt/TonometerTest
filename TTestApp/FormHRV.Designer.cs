@@ -32,8 +32,9 @@
             this.panelRythmogram = new System.Windows.Forms.Panel();
             this.panelHisto = new System.Windows.Forms.Panel();
             this.panelHRVData = new System.Windows.Forms.Panel();
-            this.labSDNN = new System.Windows.Forms.Label();
             this.labAMo = new System.Windows.Forms.Label();
+            this.labSDNN = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.tableLayoutPanel1.SuspendLayout();
             this.panelHRVData.SuspendLayout();
             this.SuspendLayout();
@@ -46,6 +47,7 @@
             this.tableLayoutPanel1.Controls.Add(this.panelRythmogram, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.panelHisto, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.panelHRVData, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -77,6 +79,7 @@
             // 
             // panelHRVData
             // 
+            this.panelHRVData.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelHRVData.Controls.Add(this.labAMo);
             this.panelHRVData.Controls.Add(this.labSDNN);
             this.panelHRVData.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -84,6 +87,15 @@
             this.panelHRVData.Name = "panelHRVData";
             this.panelHRVData.Size = new System.Drawing.Size(99, 161);
             this.panelHRVData.TabIndex = 2;
+            // 
+            // labAMo
+            // 
+            this.labAMo.AutoSize = true;
+            this.labAMo.Location = new System.Drawing.Point(9, 34);
+            this.labAMo.Name = "labAMo";
+            this.labAMo.Size = new System.Drawing.Size(74, 15);
+            this.labAMo.TabIndex = 1;
+            this.labAMo.Text = "Moda amp : ";
             // 
             // labSDNN
             // 
@@ -94,14 +106,14 @@
             this.labSDNN.TabIndex = 0;
             this.labSDNN.Text = "SDNN : ";
             // 
-            // labAMo
+            // panel1
             // 
-            this.labAMo.AutoSize = true;
-            this.labAMo.Location = new System.Drawing.Point(9, 34);
-            this.labAMo.Name = "labAMo";
-            this.labAMo.Size = new System.Drawing.Size(74, 15);
-            this.labAMo.TabIndex = 1;
-            this.labAMo.Text = "Moda amp : ";
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 3);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(99, 161);
+            this.panel1.TabIndex = 3;
             // 
             // FormHRV
             // 
@@ -126,5 +138,6 @@
         private Panel panelHRVData;
         private Label labSDNN;
         private Label labAMo;
+        private Panel panel1;
     }
 }

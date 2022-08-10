@@ -9,7 +9,7 @@ namespace TTestApp
         event Action<Message> WindowsMessage;
     }
 
-    public class USBserialPort: Form, IMessageHandler
+    public class USBserialPort: IMessageHandler
     {
         private const int _USBTimerInterval = 25;
         public SerialPort PortHandle;
@@ -26,6 +26,16 @@ namespace TTestApp
         public event Action<Exception> ConnectionFailure;
         public event Action ConnectionOk;
         public event Action<Message> WindowsMessage;
+
+        
+        public USBserialPort(IMessageHandler messageHandler, int baudrate)
+        {
+            _baudRate = baudrate;
+            messageHandler.WindowsMessage += OnMessage;
+            ReadEnabled = false;
+            PortBuf = new byte[_portBufSize];
+            ReadTimer = new System.Threading.Timer(ReadPort, null, 0, Timeout.Infinite);
+        }
 
         private void ReadPort(object state)
         {
@@ -48,17 +58,8 @@ namespace TTestApp
                     catch (Exception)
                     {
                     }
-                }                 
+                }
             }
-        }
-        
-        public USBserialPort(IMessageHandler messageHandler, int baudrate)
-        {
-            _baudRate = baudrate;
-            messageHandler.WindowsMessage += OnMessage;
-            ReadEnabled = false;
-            PortBuf = new byte[_portBufSize];
-            ReadTimer = new System.Threading.Timer(ReadPort, null, 0, Timeout.Infinite);
         }
 
         public bool WriteBuf(byte[] buf)

@@ -11,19 +11,19 @@
             File.WriteAllLines(fname, stringsArr);
         }
 
-        public static int GetPulseFromIndexesArray(int[] indexesArray, int SamplingFreq)
+        public static int GetPulseFromIndexesArray(int[] arrayOfIndexes, int SamplingFreq)
         {
             int secondPerMin = 60;
             double mean = 0;
 
-            for (int i = 1; i < indexesArray.Length; i++) //Внимание! Цикл с 1!
+            for (int i = 1; i < arrayOfIndexes.Length; i++) //Внимание! Цикл с 1!
             {
-                mean += indexesArray[i] - indexesArray[i - 1];
+                mean += arrayOfIndexes[i] - arrayOfIndexes[i - 1];
             }
             //Аналог цикла выше
-            mean = indexesArray.Zip(indexesArray.Skip(1), (first, second) => second - first).Sum();
+            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Sum();
 
-            mean /= indexesArray.Length - 1;
+            mean /= arrayOfIndexes.Length - 1;
             mean /= SamplingFreq;
             mean = secondPerMin / mean;
             return (int)mean;

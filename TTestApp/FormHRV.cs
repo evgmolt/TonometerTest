@@ -1,19 +1,10 @@
 ﻿using HRV;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace TTestApp
 {
     public partial class FormHRV : Form
     {
-        private Histogram histo;
+        private readonly Histogram histo;
         public FormHRV(int[]? arrayOfIndexes, int samplingFrequency)
         {
             InitializeComponent();

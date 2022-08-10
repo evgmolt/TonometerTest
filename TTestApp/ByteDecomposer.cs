@@ -15,7 +15,7 @@ namespace TTestApp
 
         protected DataArrays data;
 
-        public event EventHandler? onDecomposePacketEvent;
+        public event EventHandler? OnDecomposePacketEvent;
 
         public uint MainIndex = 0;
         public int PacketCounter = 0;
@@ -47,7 +47,7 @@ namespace TTestApp
 
         protected virtual void OnDecomposeLineEvent()
         {
-            onDecomposePacketEvent?.Invoke(this, EventArgs.Empty);
+            OnDecomposePacketEvent?.Invoke(this, EventArgs.Empty);
         }
 
         public abstract int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream);//Возвращает число прочитанных и обработанных байт
