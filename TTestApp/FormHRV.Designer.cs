@@ -122,7 +122,7 @@
             this.ClientSize = new System.Drawing.Size(800, 334);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "FormHRV";
-            this.Text = "FormHRV";
+            this.Text = "Heart rate variability";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panelHRVData.ResumeLayout(false);
             this.panelHRVData.PerformLayout();

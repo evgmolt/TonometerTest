@@ -62,7 +62,7 @@
             Thread.Sleep(100);
 
             CommandSetReg[numRegNum] = 5;
-            CommandSetReg[numRegValue] = 0x60;
+            CommandSetReg[numRegValue] = 0x20;
             CountCheckSum(ref CommandSetReg);
             usbPort.WriteBuf(CommandSetReg);
         }

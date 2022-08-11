@@ -15,7 +15,7 @@ namespace TTestApp
         string CurrentFile;
         int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
-        int MaxValue = 100000;
+        int MaxValue = 10000000;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -57,8 +57,8 @@ namespace TTestApp
             DataProcessing.CompressionChanged += onCompressionChanged;
             InitArraysForFlow();
             USBPort = new USBserialPort(this, decomposer.BaudRate);
-            USBPort.ConnectionFailure += onConnectionFailure;
-            USBPort.ConnectionOk += onConnectionOk;
+            USBPort.ConnectionFailure += OnConnectionFailure;
+            USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
             sF3Status = new SF3Status();
         }
@@ -77,12 +77,12 @@ namespace TTestApp
             painter = new Painter(bufPanel, decomposer);
         }
 
-        private void onConnectionOk()
+        private void OnConnectionOk()
         {
             CommandsBCI.BCISetup(USBPort);
         }
 
-        private void onConnectionFailure(Exception obj)
+        private void OnConnectionFailure(Exception obj)
         {
             MessageBoxButtons but = MessageBoxButtons.OK;
             MessageBoxIcon icon = MessageBoxIcon.Error;
@@ -262,6 +262,7 @@ namespace TTestApp
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
             FormHRV formHRV = new(ArrayOfWaveIndexes, decomposer.SamplingFrequency);
             formHRV.ShowDialog();
+            formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -286,10 +287,10 @@ namespace TTestApp
             }
             else
             {
-                ArrayList.Add(DataA.PressureViewArray);
-                ArrayList.Add(DataA.DerivArray);
-                //                ArrayList.Add(DataA.RealTimeArray);
-                //                ArrayList.Add(DataA.DCArray);
+//                ArrayList.Add(DataA.PressureViewArray);
+//                ArrayList.Add(DataA.DerivArray);
+                                ArrayList.Add(DataA.RealTimeArray);
+//                                ArrayList.Add(DataA.DCArray);
             }
             painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();
@@ -524,8 +525,8 @@ namespace TTestApp
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
-//                labCurrentPressure.Text = "Current : " + DataA.RealTimeArray[decomposer.MainIndex - 1].ToString() + " " + DataA.DCArray[currentIndex].ToString();
+//                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
+                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[decomposer.MainIndex - 1]).ToString();
             }
             if (decomposer.RecordStarted)
             {
@@ -625,6 +626,11 @@ namespace TTestApp
         {
             sF3Status.Valve1PWM = true;
             USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
+        }
+
+        private void panelBottom_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

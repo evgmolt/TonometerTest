@@ -140,7 +140,7 @@ namespace TTestApp
                             tmpValue -= 0x1000000;
                         byteNum = 16;
 
-                        data.RealTimeArray[MainIndex] = tmpValue;
+                        data.RealTimeArray[MainIndex] = tmpValue - 273600; 
                         if (QueueForDC.Count > 0)
                         {
                             data.DCArray[MainIndex] = (int)QueueForDC.Average();
