@@ -33,7 +33,7 @@ namespace TTestApp
         protected Queue<int> QueueForDC;
         protected Queue<int> QueueForAC;
 
-        public ByteDecomposer(DataArrays data, int sizeQforDC, int sizeQforAC)
+        public ByteDecomposer(DataArrays data, int sizeQForDC, int sizeQForAC)
         {
             this.data = data;
             RecordStarted = false;
@@ -41,8 +41,8 @@ namespace TTestApp
             MainIndex = 0;
             noDataCounter = 0;
             byteNum = 0;
-            QueueForDC = new Queue<int>(sizeQforDC);
-            QueueForAC = new Queue<int>(sizeQforAC);
+            QueueForDC = new Queue<int>(sizeQForDC);
+            QueueForAC = new Queue<int>(sizeQForAC);
         }
 
         protected virtual void OnDecomposeLineEvent()

@@ -15,7 +15,7 @@ namespace TTestApp
         string CurrentFile;
         int CurrentFileSize;
         string TmpDataFile = "tmpdata.t";
-        int MaxValue = 10000000;
+        int MaxValue = 1000000;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -276,7 +276,7 @@ namespace TTestApp
             {
                 if (radioButton11.Checked) //1:1
                 {
-                    ArrayList.Add(DataA.PressureViewArray);
+//                    ArrayList.Add(DataA.PressureViewArray);
                     ArrayList.Add(DataA.DerivArray);
                     ArrayList.Add(DataA.DebugArray);
                 }
@@ -287,10 +287,10 @@ namespace TTestApp
             }
             else
             {
-//                ArrayList.Add(DataA.PressureViewArray);
+                ArrayList.Add(DataA.PressureViewArray);
 //                ArrayList.Add(DataA.DerivArray);
-                                ArrayList.Add(DataA.RealTimeArray);
-//                                ArrayList.Add(DataA.DCArray);
+                ArrayList.Add(DataA.RealTimeArray);
+                ArrayList.Add(DataA.DCArray);
             }
             painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();

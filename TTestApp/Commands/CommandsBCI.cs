@@ -62,7 +62,7 @@
             Thread.Sleep(100);
 
             CommandSetReg[numRegNum] = 5;
-            CommandSetReg[numRegValue] = 0x20;
+            CommandSetReg[numRegValue] = 0x20;//Регистр CH1SET биты 4-6 Gain 
             CountCheckSum(ref CommandSetReg);
             usbPort.WriteBuf(CommandSetReg);
         }
