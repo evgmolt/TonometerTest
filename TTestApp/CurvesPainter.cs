@@ -1,13 +1,13 @@
 ﻿namespace TTestApp
 {
-    internal class Painter
+    internal class CurvesPainter
     {
         private readonly Control _control;
         private readonly ByteDecomposer _decomposer;
         private readonly Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Aqua };
         private readonly Color[] visirsColors = { Color.LightGray, Color.Brown, Color.Chocolate };
 
-        public Painter(Control control, ByteDecomposer decomposer)
+        public CurvesPainter(Control control, ByteDecomposer decomposer)
         {
             _control = control;
             _decomposer = decomposer;

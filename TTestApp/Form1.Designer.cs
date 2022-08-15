@@ -352,7 +352,7 @@
             // labNumOfWaves
             // 
             this.labNumOfWaves.AutoSize = true;
-            this.labNumOfWaves.Location = new System.Drawing.Point(423, 10);
+            this.labNumOfWaves.Location = new System.Drawing.Point(538, 10);
             this.labNumOfWaves.Name = "labNumOfWaves";
             this.labNumOfWaves.Size = new System.Drawing.Size(99, 15);
             this.labNumOfWaves.TabIndex = 15;
@@ -361,7 +361,7 @@
             // labY2
             // 
             this.labY2.AutoSize = true;
-            this.labY2.Location = new System.Drawing.Point(465, 104);
+            this.labY2.Location = new System.Drawing.Point(580, 104);
             this.labY2.Name = "labY2";
             this.labY2.Size = new System.Drawing.Size(51, 15);
             this.labY2.TabIndex = 14;
@@ -370,7 +370,7 @@
             // labY1
             // 
             this.labY1.AutoSize = true;
-            this.labY1.Location = new System.Drawing.Point(454, 84);
+            this.labY1.Location = new System.Drawing.Point(569, 84);
             this.labY1.Name = "labY1";
             this.labY1.Size = new System.Drawing.Size(62, 15);
             this.labY1.TabIndex = 13;
@@ -379,7 +379,7 @@
             // labY0
             // 
             this.labY0.AutoSize = true;
-            this.labY0.Location = new System.Drawing.Point(412, 66);
+            this.labY0.Location = new System.Drawing.Point(527, 66);
             this.labY0.Name = "labY0";
             this.labY0.Size = new System.Drawing.Size(110, 15);
             this.labY0.TabIndex = 12;
@@ -466,7 +466,7 @@
             // labelX
             // 
             this.labelX.AutoSize = true;
-            this.labelX.Location = new System.Drawing.Point(501, 51);
+            this.labelX.Location = new System.Drawing.Point(616, 51);
             this.labelX.Name = "labelX";
             this.labelX.Size = new System.Drawing.Size(35, 15);
             this.labelX.TabIndex = 2;

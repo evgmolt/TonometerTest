@@ -7,24 +7,24 @@ namespace TTestApp
     {
         USBserialPort USBPort;
         DataArrays? DataA;
-        ByteDecomposer decomposer;
-        Painter painter;
-        BufferedPanel bufPanel;
+        ByteDecomposer Decomposer;
+        CurvesPainter Painter;
+        BufferedPanel BufPanel;
         TTestConfig Cfg;
-        StreamWriter textWriter;
+        StreamWriter TextWriter;
         string CurrentFile;
         int CurrentFileSize;
-        string TmpDataFile = "tmpdata.t";
+        const string TmpDataFile = "tmpdata.t";
         int MaxValue = 1000000;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
-        bool Compression = false;
+        bool Compression;
         int PressureMeasurementStatus = (int)PMStatus.Ready;
 
-        int MaxPressure = 160;
-        int MinPressure = 30;
+        int MaxPressure = 0;
+        int MinPressure = 300;
 
         SF3Status sF3Status;
 
@@ -33,8 +33,8 @@ namespace TTestApp
         public Form1()
         {
             InitializeComponent();
-            bufPanel = new BufferedPanel(0);
-            bufPanel.MouseMove += bufPanel_MouseMove;
+            BufPanel = new BufferedPanel(0);
+            BufPanel.MouseMove += BufPanel_MouseMove;
             Cfg = TTestConfig.GetConfig();
             if (Cfg.Maximized)
             {
@@ -50,13 +50,13 @@ namespace TTestApp
             numUDRight.Value = Cfg.CoeffRight;
             radioButton11.Checked = true;
             panelGraph.Dock = DockStyle.Fill;
-            panelGraph.Controls.Add(bufPanel);
-            bufPanel.Dock = DockStyle.Fill;
-            bufPanel.Paint += bufferedPanel_Paint;
+            panelGraph.Controls.Add(BufPanel);
+            BufPanel.Dock = DockStyle.Fill;
+            BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
             DataProcessing.CompressionChanged += onCompressionChanged;
             InitArraysForFlow();
-            USBPort = new USBserialPort(this, decomposer.BaudRate);
+            USBPort = new USBserialPort(this, Decomposer.BaudRate);
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
@@ -72,9 +72,9 @@ namespace TTestApp
         {
 
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
-            decomposer = new ByteDecomposerBCI(DataA);
-            decomposer.OnDecomposePacketEvent += OnPacketReceived;
-            painter = new Painter(bufPanel, decomposer);
+            Decomposer = new ByteDecomposerBCI(DataA);
+            Decomposer.OnDecomposePacketEvent += OnPacketReceived;
+            Painter = new CurvesPainter(BufPanel, Decomposer);
         }
 
         private void OnConnectionOk()
@@ -144,7 +144,7 @@ namespace TTestApp
         {
             string[] lines = File.ReadAllLines(fileName);
             CurrentFileSize = lines.Length;
-            labRecordSize.Text = "Record size : " + (CurrentFileSize / decomposer.SamplingFrequency).ToString() + " s";
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
             if (CurrentFileSize == 0)
@@ -159,18 +159,17 @@ namespace TTestApp
                 return;
             }
             PrepareData();
-            bufPanel.Refresh();
+            BufPanel.Refresh();
         }
-
 
         private void PrepareData()
         {
             int DCArrayWindow = 100;
             DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
-            DataA.CountViewArrays(bufPanel);
+            DataA.CountViewArrays(BufPanel);
 
             //Детектор
-            WaveDetector WD = new(decomposer.SamplingFrequency);
+            WaveDetector WD = new(Decomposer.SamplingFrequency);
             WD.Reset();
             for (int i = 0; i < DataA.DerivArray.Length; i++)
             {
@@ -206,7 +205,7 @@ namespace TTestApp
             int skipSize = (XMaxIndex - ArrayForPulseLen / 2) > 0 ? XMaxIndex - ArrayForPulseLen / 2 : 0;
             int takeSize = (ArrayForPulseLen < ArrayOfWaveIndexes.Length - skipSize) ? ArrayForPulseLen : ArrayOfWaveIndexes.Length - skipSize;
             int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(skipSize).Take(ArrayForPulseLen).ToArray();
-            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, decomposer.SamplingFrequency).ToString();
+            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
             labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
 
             double P1 = 0;
@@ -260,9 +259,9 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
             labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
-            FormHRV formHRV = new(ArrayOfWaveIndexes, decomposer.SamplingFrequency);
-            formHRV.ShowDialog();
-            formHRV.Dispose();
+            //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+            //formHRV.ShowDialog();
+            //formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -287,12 +286,12 @@ namespace TTestApp
             }
             else
             {
-                ArrayList.Add(DataA.PressureViewArray);
+//                ArrayList.Add(DataA.PressureViewArray);
 //                ArrayList.Add(DataA.DerivArray);
                 ArrayList.Add(DataA.RealTimeArray);
-                ArrayList.Add(DataA.DCArray);
+//                ArrayList.Add(DataA.DCArray);
             }
-            painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
+            Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();
         }
 
@@ -309,7 +308,7 @@ namespace TTestApp
         private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
         {
             ViewShift = hScrollBar1.Value;
-            bufPanel.Refresh();
+            BufPanel.Refresh();
         }
 
         private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
@@ -327,7 +326,7 @@ namespace TTestApp
             {
                 Compression = false;
                 hScrollBar1.Visible = radioButton11.Checked;
-                bufPanel.Refresh();
+                BufPanel.Refresh();
             }
         }
 
@@ -340,7 +339,7 @@ namespace TTestApp
                 hScrollBar1.Visible = !radioButtonFit.Checked;
                 hScrollBar1.Value = 0;
                 MaxValue = 2 * (int)DataA.CompressedArray.Max();
-                bufPanel.Refresh();
+                BufPanel.Refresh();
             }
         }
 
@@ -354,11 +353,11 @@ namespace TTestApp
             {
                 return;
             }
-            DataA.CountViewArrays(bufPanel);
-            bufPanel.Refresh();
+            DataA.CountViewArrays(BufPanel);
+            BufPanel.Refresh();
         }
 
-        private void bufPanel_MouseMove(object? sender, MouseEventArgs e)
+        private void BufPanel_MouseMove(object? sender, MouseEventArgs e)
         {
             if (!ViewMode)
             {
@@ -376,7 +375,7 @@ namespace TTestApp
             int compressionMult = Compression ? DataProcessing.CompressionRatio : 1;
 
             int index = e.X * compressionMult + ViewShift;
-            double sec = index / decomposer.SamplingFrequency;
+            double sec = index / Decomposer.SamplingFrequency;
             labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
             labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
@@ -387,15 +386,15 @@ namespace TTestApp
         {
             double a = trackBarAmp.Value;
             ScaleY = Math.Pow(2, a / 2);
-            bufPanel.Refresh();
+            BufPanel.Refresh();
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)
         {
-            textWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
-            decomposer.PacketCounter = 0;
-            decomposer.MainIndex = 0;
-            decomposer.RecordStarted = true;
+            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            Decomposer.PacketCounter = 0;
+            Decomposer.MainIndex = 0;
+            Decomposer.RecordStarted = true;
             progressBarRecord.Visible = true;
             labMeanPressure.Text = "Mean : ";
             labSys.Text = "Sys : ";
@@ -405,9 +404,9 @@ namespace TTestApp
 
         private int ValueToMmhG(double value)
         {
-            double zero = 201230;
-            double pressure = 182;
-            double val = 1011080;
+            double zero = 465;
+            double pressure = 155;
+            double val = 2756082;
             return (int)((value - zero) * pressure / (val - zero));
         }
 
@@ -423,13 +422,13 @@ namespace TTestApp
             butPumpOn.Enabled = !sF3Status.PumpIsOn;
             butPumpOff.Enabled = sF3Status.PumpIsOn;
 
-            if (decomposer is null)
+            if (Decomposer is null)
             {
                 return;
             }
-            butStartRecord.Enabled = !ViewMode && !decomposer.RecordStarted!;
-            butStopRecord.Enabled = decomposer.RecordStarted;
-            butSaveFile.Enabled = ViewMode && decomposer.PacketCounter != 0;
+            butStartRecord.Enabled = !ViewMode && !Decomposer.RecordStarted!;
+            butStopRecord.Enabled = Decomposer.RecordStarted;
+            butSaveFile.Enabled = ViewMode && Decomposer.PacketCounter != 0;
             butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
             panelView.Enabled = ViewMode;
 //            labDeviceIsOff.Visible = !decomposer.DeviceTurnedOn;
@@ -460,13 +459,13 @@ namespace TTestApp
         {
             if (USBPort?.PortHandle?.IsOpen == true)
             {
-                decomposer?.Decompos(USBPort, null, textWriter);
+                Decomposer?.Decompos(USBPort, null, TextWriter);
             }
         }
 
         private void timerPaint_Tick(object sender, EventArgs e)
         {
-            bufPanel.Refresh();
+            BufPanel.Refresh();
         }
 
         private void butFlow_Click(object sender, EventArgs e)
@@ -484,19 +483,19 @@ namespace TTestApp
         private void butStopRecord_Click(object sender, EventArgs e)
         {
             progressBarRecord.Visible = false;
-            decomposer.OnDecomposePacketEvent -= OnPacketReceived;
-            decomposer.RecordStarted = false;
-            textWriter?.Dispose();
+            Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
+            Decomposer.RecordStarted = false;
+            TextWriter?.Dispose();
             ViewMode = true;
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;
 
-            CurrentFileSize = decomposer.PacketCounter;
-            labRecordSize.Text = "Record size : " + (CurrentFileSize / decomposer.SamplingFrequency).ToString() + " s";
+            CurrentFileSize = Decomposer.PacketCounter;
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
             PrepareData();
-            bufPanel.Refresh();
+            BufPanel.Refresh();
             controlPanel.Refresh();
 //            ReadFile(Cfg.DataDir + TmpDataFile);
         }
@@ -514,23 +513,25 @@ namespace TTestApp
         private void butRefresh_Click(object sender, EventArgs e)
         {
             PrepareData();
-            bufPanel.Refresh();
+            BufPanel.Refresh();
             controlPanel.Refresh();
         }
 
         private void OnPacketReceived(object? sender, EventArgs e)
         {
-            uint currentIndex = (decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            double CurrentPressure = DataA.DCArray[currentIndex];
+            uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
+            double CurrentPressure = DataA.RealTimeArray[currentIndex];
+            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
-            if (decomposer.MainIndex > 0)
+            if (Decomposer.MainIndex > 0)
             {
-//                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
-                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[decomposer.MainIndex - 1]).ToString();
+                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
+//                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
+//                    MaxPressure.ToString() + " " + MinPressure.ToString();
             }
-            if (decomposer.RecordStarted)
+            if (Decomposer.RecordStarted)
             {
-                labRecordSize.Text = "Record size : " + (decomposer.PacketCounter / decomposer.SamplingFrequency).ToString() + " c";
+                labRecordSize.Text = "Record size : " + (Decomposer.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
             }
             switch (PressureMeasurementStatus)
             {
@@ -542,8 +543,8 @@ namespace TTestApp
                     //Вызов метода оценки пульсаций (см. алгоритм)
                     if (CurrentPressure > MaxPressure)
                     {
-                        decomposer.PacketCounter = 0;
-                        decomposer.MainIndex = 0;
+                        Decomposer.PacketCounter = 0;
+                        Decomposer.MainIndex = 0;
                         USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
                         USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
 
