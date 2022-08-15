@@ -44,22 +44,24 @@
 
         public void CountViewArrays(Control panel)
         {
+            int DCArrayWindow = 100;
+            DCArray = DataProcessing.GetSmoothArray(RealTimeArray, DCArrayWindow);
             int SmoothWindowSize = 60;
             int MedianWindowSize = 6;
             for (int i = 0; i < RealTimeArray.Length; i++)
             {
                 PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray, i);
+//                PressureViewArray[i] = RealTimeArray[i];
             }
             double max = DCArray.Max<double>();
-            int maxInd = DCArray.ToList().IndexOf(max);
-            double startVal = DCArray[0];
-            double[] DetrendArray = new double[maxInd];
-            for (int i = 0; i < maxInd; i++)
+            double lastVal = DCArray[Size - 1];
+            double[] DetrendArray = new double[Size];
+            for (int i = 0; i < Size; i++)
             {
-                DetrendArray[i] = startVal + i * (max - startVal) / maxInd;
+                DetrendArray[i] = max - i * (max - lastVal) / Size;
             }
 
-            for (int i = 0; i < maxInd; i++)
+            for (int i = 0; i < Size; i++)
             {
                 PressureArray[i] = PressureViewArray[i] - DetrendArray[i];
             }

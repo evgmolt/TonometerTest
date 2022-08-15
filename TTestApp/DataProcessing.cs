@@ -5,6 +5,16 @@
         public static int CompressionRatio;
         public static event EventHandler? CompressionChanged;
 
+        public static DataArrays CutArray(DataArrays data) //Ищет максимум и возвращает часть массива от максимума и до конца
+        {
+            double Max = data.RealTimeArray.Max();
+            int IndexOfMax = Array.IndexOf(data.RealTimeArray, Max);
+            int NewLength = data.Size - IndexOfMax;
+            DataArrays result = new(NewLength);
+            Array.Copy(data.RealTimeArray, IndexOfMax, result.RealTimeArray, 0, NewLength);
+            return result;
+        }
+
         public static void SaveArray(string fname, int[] inputArray)
         {
             var stringsArr = inputArray.Select(s => s.ToString()).ToArray();

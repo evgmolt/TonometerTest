@@ -164,8 +164,7 @@ namespace TTestApp
 
         private void PrepareData()
         {
-            int DCArrayWindow = 100;
-            DataA.DCArray = DataProcessing.GetSmoothArray(DataA.RealTimeArray, DCArrayWindow);
+//            DataA = DataProcessing.CutArray(DataA);
             DataA.CountViewArrays(BufPanel);
 
             //Детектор
@@ -257,8 +256,8 @@ namespace TTestApp
             }
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
-            labSys.Text = "Sys : " + ValueToMmhG(P2).ToString();
-            labDia.Text = "Dia : " + ValueToMmhG(P1).ToString();
+            labSys.Text = "Sys : " + ValueToMmhG(P1).ToString();
+            labDia.Text = "Dia : " + ValueToMmhG(P2).ToString();
             //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
             //formHRV.ShowDialog();
             //formHRV.Dispose();
@@ -275,7 +274,7 @@ namespace TTestApp
             {
                 if (radioButton11.Checked) //1:1
                 {
-//                    ArrayList.Add(DataA.PressureViewArray);
+                    ArrayList.Add(DataA.PressureViewArray);
                     ArrayList.Add(DataA.DerivArray);
                     ArrayList.Add(DataA.DebugArray);
                 }
@@ -286,9 +285,9 @@ namespace TTestApp
             }
             else
             {
-//                ArrayList.Add(DataA.PressureViewArray);
+                ArrayList.Add(DataA.PressureViewArray);
 //                ArrayList.Add(DataA.DerivArray);
-                ArrayList.Add(DataA.RealTimeArray);
+//                ArrayList.Add(DataA.RealTimeArray);
 //                ArrayList.Add(DataA.DCArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
@@ -405,8 +404,8 @@ namespace TTestApp
         private int ValueToMmhG(double value)
         {
             double zero = 465;
-            double pressure = 155;
-            double val = 2756082;
+            double pressure = 142;
+            double val = 2503287;
             return (int)((value - zero) * pressure / (val - zero));
         }
 
@@ -432,7 +431,6 @@ namespace TTestApp
             butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
             panelView.Enabled = ViewMode;
 //            labDeviceIsOff.Visible = !decomposer.DeviceTurnedOn;
-
             if (USBPort == null)
             {
                 labPort.Text = "Disconnected";
@@ -521,13 +519,14 @@ namespace TTestApp
         {
             uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             double CurrentPressure = DataA.RealTimeArray[currentIndex];
-            
+            MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (Decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString();
+                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString() + " Max : " +
+                    MaxPressure.ToString(); ;
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
-//                    MaxPressure.ToString() + " " + MinPressure.ToString();
+//                    MaxPressure.ToString();
             }
             if (Decomposer.RecordStarted)
             {
