@@ -166,10 +166,9 @@ namespace TTestApp
 
         private void PrepareData()
         {
-//            DataProcessing.CutArray(DataA);
             DataA.CountViewArrays(BufPanel);
 
-            //Детектор
+            //Детектор - обнаружение пульсовых волн по производной
             WaveDetector WD = new(Decomposer.SamplingFrequency);
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
@@ -177,13 +176,14 @@ namespace TTestApp
                 DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
             }
 
-            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray();
+            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); //Используем только интервалы, прошедшие фильтр 25%
             if (ArrayOfWaveIndexesDerivative.Length == 0)
             {
                 return;
             }
 
             int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length - 1]; //Последнее значение выбрасываем
+            //Ищем максимумы пульсаций давления (в окрестностях максимума производной)
             for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
@@ -230,6 +230,8 @@ namespace TTestApp
 
             double P1 = 0;
             double P2 = 0;
+            int xP1 = 0;
+            int xP2 = 0;
             int MeanPress = (int)DataA.DCArray[XMax];
             double V1 = max * (double)Cfg.CoeffLeft;
             double V2 = max * (double)Cfg.CoeffRight;
@@ -245,6 +247,7 @@ namespace TTestApp
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
                     P1 = (int)(yDC1 + (yDC2 - yDC1) * coeff);
+                    xP1 = (int)(x1 + (x2-x1) * coeff);
                     break;
                 }
             }
@@ -260,9 +263,12 @@ namespace TTestApp
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
                     P2 = (int)(yDC2 + (yDC1 - yDC2) * coeff);
+                    xP2 = (int)(x2 - (x2 - x1) * coeff);
                     break;
                 }
             }
+            int[] ArrayPoints = { xP1, ArrayOfWaveIndexes[XMaxIndex], xP2 };
+            VisirList.Add(ArrayPoints);
 
             float[] envelopeArray = new float[ArrayOfWaveIndexes.Length];
             int[] envelopeMmhGArray = new int[ArrayOfWaveIndexes.Length];
@@ -276,20 +282,20 @@ namespace TTestApp
                 envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
             
-            int UpsampleFactor = 10;
-            int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
-            float[] xs = new float[InterpolatedLength];
-            for (int i = 0; i < InterpolatedLength; i++)
-            {
-                xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
-            }
-            int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
-            float[] x = new float[xint.Length];
-            for (int i = 0; i < xint.Length; i++)
-            {
-                x[i] = (float)xint[i];
-            }
-            float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
+            //int UpsampleFactor = 10;
+            //int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
+            //float[] xs = new float[InterpolatedLength];
+            //for (int i = 0; i < InterpolatedLength; i++)
+            //{
+            //    xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
+            //}
+            //int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
+            //float[] x = new float[xint.Length];
+            //for (int i = 0; i < xint.Length; i++)
+            //{
+            //    x[i] = (float)xint[i];
+            //}
+            //float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
 
             
 
@@ -314,8 +320,8 @@ namespace TTestApp
                 if (radioButton11.Checked) //1:1
                 {
                     ArrayList.Add(DataA.PressureViewArray);
-                    ArrayList.Add(DataA.DerivArray);
-                    ArrayList.Add(DataA.DebugArray);
+//                    ArrayList.Add(DataA.DerivArray);
+//                    ArrayList.Add(DataA.DebugArray);
                     ArrayList.Add(DataA.EnvelopeArray);
                 }
                 else //fit
@@ -417,7 +423,8 @@ namespace TTestApp
             labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
             labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
-            labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]);
+            labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]) + "  " +
+                ValueToMmhG(DataA.DCArray[index]).ToString();
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)

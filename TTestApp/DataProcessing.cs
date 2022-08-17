@@ -16,14 +16,6 @@
             int maxIndex = Array.IndexOf(regionArray, max);
             return index - range / 2 + maxIndex;
         }
-        public static void CutArray(DataArrays data) // Обнуляет последние N значений
-        {
-            int N = 500;
-            for (int i = data.Size - N; i < N; i++)
-            {
-                data.RealTimeArray[i] = 0;
-            }
-        }
 
         public static void SaveArray(string fname, int[] inputArray)
         {
