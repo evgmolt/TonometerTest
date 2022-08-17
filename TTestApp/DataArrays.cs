@@ -7,7 +7,7 @@
         public double[] DCArray;
         public double[] PressureArray;
         public double[] PressureViewArray;
-        public double[] CorrelationArray;
+        public double[] EnvelopeArray;
         public double[] CompressedArray;
         public double[] DerivArray;
         public double[] DebugArray;
@@ -20,7 +20,7 @@
             DCArray = new double[_size];
             PressureArray = new double[_size];
             PressureViewArray = new double[_size];
-            CorrelationArray = new double[_size];
+            EnvelopeArray = new double[_size];
             DerivArray = new double[_size];  
             DebugArray = new double[_size];
         }

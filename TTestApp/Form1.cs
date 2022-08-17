@@ -166,7 +166,7 @@ namespace TTestApp
 
         private void PrepareData()
         {
-//            DataA = DataProcessing.CutArray(DataA);
+//            DataProcessing.CutArray(DataA);
             DataA.CountViewArrays(BufPanel);
 
             //Детектор
@@ -183,13 +183,26 @@ namespace TTestApp
                 return;
             }
 
-            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length];
-            for (int i = 0; i < ArrayOfWaveIndexesDerivative.Length; i++)
+            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length - 1]; //Последнее значение выбрасываем
+            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
             }
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
+
+            for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
+            {
+                int x1 = ArrayOfWaveIndexes[i - 1];
+                int x2 = ArrayOfWaveIndexes[i];
+                double y1 = DataA.PressureViewArray[x1];
+                double y2 = DataA.PressureViewArray[x2];
+                double coeff = (y2 - y1) / (x2 - x1);
+                for (int j = x1 - 1; j < x2; j++)
+                {
+                    DataA.EnvelopeArray[i + j] = y1 + coeff * (j - x1);
+                }
+            }
 
             double max = -1000000;
             int XMax = default;
@@ -200,9 +213,9 @@ namespace TTestApp
                 {
                     break;
                 }
-                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] > max)
+                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] > max)
                 {
-                    max = DataA.DerivArray[ArrayOfWaveIndexes[i]];
+                    max = DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
                     XMax = ArrayOfWaveIndexes[i];
                     XMaxIndex = i;
                 }
@@ -222,12 +235,12 @@ namespace TTestApp
             double V2 = max * (double)Cfg.CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
             {
-                if (DataA.RealTimeArray[ArrayOfWaveIndexes[i]] < V1)
+                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] < V1)
                 {
                     int x1 = ArrayOfWaveIndexes[i];
                     int x2 = ArrayOfWaveIndexes[i + 1];
-                    double y1 = DataA.RealTimeArray[x1];
-                    double y2 = DataA.RealTimeArray[x2];
+                    double y1 = DataA.PressureViewArray[x1];
+                    double y2 = DataA.PressureViewArray[x2];
                     double coeff = (V1 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
@@ -237,12 +250,12 @@ namespace TTestApp
             }
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
-                if (DataA.RealTimeArray[ArrayOfWaveIndexes[i]] < V2)
+                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] < V2)
                 {
                     int x1 = ArrayOfWaveIndexes[i];
                     int x2 = ArrayOfWaveIndexes[i - 1];
-                    double y1 = DataA.RealTimeArray[x1];
-                    double y2 = DataA.RealTimeArray[x2];
+                    double y1 = DataA.PressureViewArray[x1];
+                    double y2 = DataA.PressureViewArray[x2];
                     double coeff = (V2 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
@@ -303,6 +316,7 @@ namespace TTestApp
                     ArrayList.Add(DataA.PressureViewArray);
                     ArrayList.Add(DataA.DerivArray);
                     ArrayList.Add(DataA.DebugArray);
+                    ArrayList.Add(DataA.EnvelopeArray);
                 }
                 else //fit
                 {
@@ -312,7 +326,6 @@ namespace TTestApp
             else
             {
                 ArrayList.Add(DataA.PressureViewArray);
-//                ArrayList.Add(DataA.DerivArray);
 //                ArrayList.Add(DataA.RealTimeArray);
 //                ArrayList.Add(DataA.DCArray);
             }
