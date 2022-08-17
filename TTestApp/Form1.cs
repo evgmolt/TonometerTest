@@ -177,10 +177,16 @@ namespace TTestApp
                 DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
             }
 
-            var ArrayOfWaveIndexes = WD.FiltredPoints.ToArray();
-            if (ArrayOfWaveIndexes.Length == 0)
+            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray();
+            if (ArrayOfWaveIndexesDerivative.Length == 0)
             {
                 return;
+            }
+
+            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length];
+            for (int i = 0; i < ArrayOfWaveIndexesDerivative.Length; i++)
+            {
+                ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
             }
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
@@ -216,12 +222,12 @@ namespace TTestApp
             double V2 = max * (double)Cfg.CoeffRight;
             for (int i = XMaxIndex; i > 0; i--)
             {
-                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] < V1)
+                if (DataA.RealTimeArray[ArrayOfWaveIndexes[i]] < V1)
                 {
                     int x1 = ArrayOfWaveIndexes[i];
                     int x2 = ArrayOfWaveIndexes[i + 1];
-                    double y1 = DataA.DerivArray[x1];
-                    double y2 = DataA.DerivArray[x2];
+                    double y1 = DataA.RealTimeArray[x1];
+                    double y2 = DataA.RealTimeArray[x2];
                     double coeff = (V1 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
@@ -231,12 +237,12 @@ namespace TTestApp
             }
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
-                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] < V2)
+                if (DataA.RealTimeArray[ArrayOfWaveIndexes[i]] < V2)
                 {
                     int x1 = ArrayOfWaveIndexes[i];
                     int x2 = ArrayOfWaveIndexes[i - 1];
-                    double y1 = DataA.DerivArray[x1];
-                    double y2 = DataA.DerivArray[x2];
+                    double y1 = DataA.RealTimeArray[x1];
+                    double y2 = DataA.RealTimeArray[x2];
                     double coeff = (V2 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
@@ -272,18 +278,7 @@ namespace TTestApp
             }
             float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
 
-            PointF[] envelopePointArray = new PointF[envelopeArray.Length];
-            for (int i = 0; i < envelopeArray.Length; i++)
-            {
-                envelopePointArray[i] = new PointF(i * 10, envelopeArray[i]);
-            }
-            using (var path = new GraphicsPath())
-            {
-                path.AddBeziers(envelopePointArray);
-                path.AddLines(envelopePointArray);
-                List<PointF> list_of_points = new List<PointF>(path.PathPoints);
-                DataProcessing.SavePointFArray("env_points.txt", list_of_points.ToArray());
-            }
+            
 
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();

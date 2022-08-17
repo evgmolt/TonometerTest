@@ -22,7 +22,7 @@ namespace TTestApp
         //AC - для сигнала
         //DC - для получения постоянной составляющей
         private const int _queueForACSize = 6;
-        private const int _queueForDCSize = 160;
+        private const int _queueForDCSize = 100;
         public ByteDecomposerBCI(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
         }
@@ -144,15 +144,10 @@ namespace TTestApp
 
                         data.RealTimeArray[MainIndex] = tmpValue;
                         QueueForDC.Enqueue(tmpValue);
-                        if (QueueForDC.Count > 0)
-                        {
-                            data.DCArray[MainIndex] = (int)QueueForDC.Average();
-                        }
-
-                        QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueForDCSize)
                         {
                             QueueForDC.Dequeue();
+                            data.DCArray[MainIndex] = (int)QueueForDC.Average();
                         }
 
                         QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());

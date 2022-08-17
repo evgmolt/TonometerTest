@@ -63,7 +63,7 @@
 
             for (int i = 0; i < Size; i++)
             {
-                PressureArray[i] = PressureViewArray[i] - DetrendArray[i];
+                PressureArray[i] = PressureViewArray[i] - DCArray[i];
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);

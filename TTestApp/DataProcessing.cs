@@ -4,7 +4,18 @@
     {
         public static int CompressionRatio;
         public static event EventHandler? CompressionChanged;
+        public static int DerivativeShift = 13;
+        public static int DerivativeAverageWidth = 4;
 
+        public static int GetMaxIndexInRegion(double[] sourceArray, int index)
+        {
+            int range = 60;
+            double[] regionArray = new double[range];
+            Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
+            double max = regionArray.Max();
+            int maxIndex = Array.IndexOf(regionArray, max);
+            return index - range / 2 + maxIndex;
+        }
         public static DataArrays CutArray(DataArrays data) //Ищет максимум и возвращает часть массива от максимума и до конца
         {
             double Max = data.RealTimeArray.Max();
@@ -200,23 +211,21 @@
 
         public static double GetDerivative(double[] DataArr, uint Ind)
         {
-            int DiffShift = 13;
-            const int Width = 4;
-            if (Ind < Width / 2 + DiffShift)
+            if (Ind < DerivativeAverageWidth / 2 + DerivativeShift)
             {
                 return 0;
             }
-            if (Ind - Width / 2 + Width > DataArr.Length - 1)
+            if (Ind - DerivativeAverageWidth / 2 + DerivativeAverageWidth > DataArr.Length - 1)
             {
                 return 0;
             }
             List<double> L1 = new();
             List<double> L2 = new();
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < DerivativeAverageWidth; i++)
             {
                 {
-                    L1.Add(DataArr[Ind - Width / 2 + i]);
-                    L2.Add(DataArr[Ind - Width / 2 - DiffShift + i]);
+                    L1.Add(DataArr[Ind - DerivativeAverageWidth / 2 + i]);
+                    L2.Add(DataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
                 }
             }
             if (L1.Count > 0 && L2.Count > 0)
