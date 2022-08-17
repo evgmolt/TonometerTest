@@ -22,7 +22,7 @@ namespace TTestApp
         //AC - для сигнала
         //DC - для получения постоянной составляющей
         private const int _queueForACSize = 6;
-        private const int _queueForDCSize = 60;
+        private const int _queueForDCSize = 160;
         public ByteDecomposerBCI(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
         }

@@ -20,6 +20,11 @@
             var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
+        public static void SavePointFArray(string fname, PointF[] inputArray)
+        {
+            var stringsArr = inputArray.Select(s => s.X.ToString() + " " + s.Y.ToString()).ToArray();
+            File.WriteAllLines(fname, stringsArr);
+        }
 
         public static int GetPulseFromIndexesArray(int[] arrayOfIndexes, int SamplingFreq)
         {

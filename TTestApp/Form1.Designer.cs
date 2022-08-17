@@ -147,7 +147,7 @@
             // 
             // butRefresh
             // 
-            this.butRefresh.Location = new System.Drawing.Point(22, 179);
+            this.butRefresh.Location = new System.Drawing.Point(22, 188);
             this.butRefresh.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.butRefresh.Name = "butRefresh";
             this.butRefresh.Size = new System.Drawing.Size(85, 22);
@@ -175,7 +175,7 @@
             131072});
             this.numUDRight.Location = new System.Drawing.Point(22, 151);
             this.numUDRight.Maximum = new decimal(new int[] {
-            90,
+            95,
             0,
             0,
             131072});
@@ -336,7 +336,6 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
-            this.panelBottom.Paint += new System.Windows.Forms.PaintEventHandler(this.panelBottom_Paint);
             // 
             // labDeviceIsOff
             // 

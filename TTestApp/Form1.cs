@@ -1,5 +1,7 @@
 ﻿using HRV;
+using System.Drawing.Drawing2D;
 using TTestApp.Commands;
+using TTestApp.Spline;
 
 namespace TTestApp
 {
@@ -170,7 +172,7 @@ namespace TTestApp
             //Детектор
             WaveDetector WD = new(Decomposer.SamplingFrequency);
             WD.Reset();
-            for (int i = 0; i < DataA.DerivArray.Length; i++)
+            for (int i = 0; i < CurrentFileSize; i++)
             {
                 DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
             }
@@ -243,7 +245,7 @@ namespace TTestApp
                 }
             }
 
-            int[] envelopeArray = new int[ArrayOfWaveIndexes.Length];
+            float[] envelopeArray = new float[ArrayOfWaveIndexes.Length];
             int[] envelopeMmhGArray = new int[ArrayOfWaveIndexes.Length];
             for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
@@ -251,9 +253,38 @@ namespace TTestApp
                 {
                     break;
                 }
-                envelopeArray[i] = (int)DataA.RealTimeArray[ArrayOfWaveIndexes[i]];
+                envelopeArray[i] = (float)DataA.RealTimeArray[ArrayOfWaveIndexes[i]];
                 envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
+            
+            int UpsampleFactor = 10;
+            int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
+            float[] xs = new float[InterpolatedLength];
+            for (int i = 0; i < InterpolatedLength; i++)
+            {
+                xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
+            }
+            int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
+            float[] x = new float[xint.Length];
+            for (int i = 0; i < xint.Length; i++)
+            {
+                x[i] = (float)xint[i];
+            }
+            float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
+
+            PointF[] envelopePointArray = new PointF[envelopeArray.Length];
+            for (int i = 0; i < envelopeArray.Length; i++)
+            {
+                envelopePointArray[i] = new PointF(i * 10, envelopeArray[i]);
+            }
+            using (var path = new GraphicsPath())
+            {
+                path.AddBeziers(envelopePointArray);
+                path.AddLines(envelopePointArray);
+                List<PointF> list_of_points = new List<PointF>(path.PathPoints);
+                DataProcessing.SavePointFArray("env_points.txt", list_of_points.ToArray());
+            }
+
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + ValueToMmhG(P1).ToString();
@@ -626,11 +657,6 @@ namespace TTestApp
         {
             sF3Status.Valve1PWM = true;
             USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
-        }
-
-        private void panelBottom_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }
