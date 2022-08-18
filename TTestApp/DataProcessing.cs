@@ -22,6 +22,11 @@
             var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
+        public static void SaveArray(string fname, float[] inputArray)
+        {
+            var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
+            File.WriteAllLines(fname, stringsArr);
+        }
         public static void SavePointFArray(string fname, PointF[] inputArray)
         {
             var stringsArr = inputArray.Select(s => s.X.ToString() + " " + s.Y.ToString()).ToArray();

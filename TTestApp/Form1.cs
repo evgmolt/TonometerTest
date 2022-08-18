@@ -183,7 +183,7 @@ namespace TTestApp
             }
 
             int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length - 1]; //Последнее значение выбрасываем
-            //Ищем максимумы пульсаций давления (в окрестностях максимума производной)
+            //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
             for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
@@ -191,6 +191,7 @@ namespace TTestApp
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
 
+            //Построение огибающей максимумов пульсаций давления
             for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
             {
                 int x1 = ArrayOfWaveIndexes[i - 1];
@@ -204,6 +205,7 @@ namespace TTestApp
                 }
             }
 
+            //Поиск пульсовой волны с максимальной амплитудой
             double max = -1000000;
             int XMax = default;
             int XMaxIndex = 0;
@@ -221,20 +223,20 @@ namespace TTestApp
                 }
             }
 
-            int ArrayForPulseLen = 8;
-            int skipSize = (XMaxIndex - ArrayForPulseLen / 2) > 0 ? XMaxIndex - ArrayForPulseLen / 2 : 0;
-            int takeSize = (ArrayForPulseLen < ArrayOfWaveIndexes.Length - skipSize) ? ArrayForPulseLen : ArrayOfWaveIndexes.Length - skipSize;
-            int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(skipSize).Take(ArrayForPulseLen).ToArray();
-            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
+            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayOfWaveIndexes, Decomposer.SamplingFrequency).ToString();
+//            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
             labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
 
             double P1 = 0;
             double P2 = 0;
             int xP1 = 0;
             int xP2 = 0;
+            //Среднее давление
             int MeanPress = (int)DataA.DCArray[XMax];
             double V1 = max * (double)Cfg.CoeffLeft;
             double V2 = max * (double)Cfg.CoeffRight;
+
+            //Определение систолического давления (влево от Max)
             for (int i = XMaxIndex; i > 0; i--)
             {
                 if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] < V1)
@@ -251,6 +253,7 @@ namespace TTestApp
                     break;
                 }
             }
+            //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
                 if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] < V2)
@@ -278,10 +281,10 @@ namespace TTestApp
                 {
                     break;
                 }
-                envelopeArray[i] = (float)DataA.RealTimeArray[ArrayOfWaveIndexes[i]];
+                envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
                 envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
-            
+
             //int UpsampleFactor = 10;
             //int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
             //float[] xs = new float[InterpolatedLength];
@@ -297,7 +300,8 @@ namespace TTestApp
             //}
             //float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
 
-            
+            //DataProcessing.SaveArray("env_spline.txt", ys);
+
 
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
