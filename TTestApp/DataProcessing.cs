@@ -7,6 +7,14 @@
         public static int DerivativeShift = 13;
         public static int DerivativeAverageWidth = 4;
 
+        public static int ValueToMmhG(double value)
+        {
+            double zero = 465;
+            double pressure = 142;
+            double val = 2503287;
+            return (int)((value - zero) * pressure / (val - zero));
+        }
+
         public static int GetMaxIndexInRegion(double[] sourceArray, int index)
         {
             int range = 60;
@@ -35,20 +43,21 @@
 
         public static int GetPulseFromIndexesArray(int[] arrayOfIndexes, int SamplingFreq)
         {
-            int secondPerMin = 60;
+            double secondPerMin = 60;
             double mean = 0;
-
+            
             for (int i = 1; i < arrayOfIndexes.Length; i++) //Внимание! Цикл с 1!
             {
                 mean += arrayOfIndexes[i] - arrayOfIndexes[i - 1];
             }
-            //Аналог цикла выше
-            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Sum();
-
             mean /= arrayOfIndexes.Length - 1;
+            
+            //Аналог цикла и деления выше
+            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();
+
             mean /= SamplingFreq;
             mean = secondPerMin / mean;
-            return (int)mean;
+            return (int)Math.Round(mean);
         }
 
         public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)

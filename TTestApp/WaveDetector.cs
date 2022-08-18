@@ -117,10 +117,11 @@
             const int HiLimit = 400; //ms - 30  уд / мин 
             if (NewInterval < LoLimit) return false;
             if (NewInterval > HiLimit) return false;
+            return true;
             int PrevInt = PrevInterval;
             PrevInterval = NewInterval;
-            if (NewInterval > PrevInt + PrevInt / 4) return false;
-            if (NewInterval < PrevInt - PrevInt / 4) return false;
+            if (NewInterval > PrevInt + PrevInt / 2) return false;
+            if (NewInterval < PrevInt - PrevInt / 2) return false;
             return true;
         }
     }

@@ -17,7 +17,7 @@ namespace TTestApp
         string CurrentFile;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
-        int MaxValue = 1000000;
+        int MaxValue = 200000;
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -56,7 +56,7 @@ namespace TTestApp
             BufPanel.Dock = DockStyle.Fill;
             BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
-            DataProcessing.CompressionChanged += onCompressionChanged;
+            DataProcessing.CompressionChanged += OnCompressionChanged;
             InitArraysForFlow();
             USBPort = new USBserialPort(this, Decomposer.BaudRate);
             USBPort.ConnectionFailure += OnConnectionFailure;
@@ -65,7 +65,7 @@ namespace TTestApp
             sF3Status = new SF3Status();
         }
 
-        private void onCompressionChanged(object? sender, EventArgs e)
+        private void OnCompressionChanged(object? sender, EventArgs e)
         {
             labCompressionRatio.Text = DataProcessing.CompressionRatio.ToString();
         }
@@ -182,7 +182,7 @@ namespace TTestApp
                 return;
             }
 
-            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length - 1]; //Последнее значение выбрасываем
+            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length - 2]; //Последнее значение выбрасываем
             //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
             for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
@@ -223,8 +223,12 @@ namespace TTestApp
                 }
             }
 
-            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayOfWaveIndexes, Decomposer.SamplingFrequency).ToString();
-//            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
+            //Вычисление пульса по ArrayForPulseLen интервалам, максимум в центре
+            int DecreaseSize = 3; //Количество отбрасываемых интервалов справа и слева
+            int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
+            int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+
+            labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
             labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
 
             double P1 = 0;
@@ -270,8 +274,8 @@ namespace TTestApp
                     break;
                 }
             }
-            int[] ArrayPoints = { xP1, ArrayOfWaveIndexes[XMaxIndex], xP2 };
-            VisirList.Add(ArrayPoints);
+            int[] ArrayOfPoints = { xP1, ArrayOfWaveIndexes[XMaxIndex], xP2 };
+            VisirList.Add(ArrayOfPoints);
 
             float[] envelopeArray = new float[ArrayOfWaveIndexes.Length];
             int[] envelopeMmhGArray = new int[ArrayOfWaveIndexes.Length];
@@ -282,31 +286,31 @@ namespace TTestApp
                     break;
                 }
                 envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
-                envelopeMmhGArray[i] = ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
+                envelopeMmhGArray[i] = DataProcessing.ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
 
-            //int UpsampleFactor = 10;
-            //int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
-            //float[] xs = new float[InterpolatedLength];
-            //for (int i = 0; i < InterpolatedLength; i++)
-            //{
-            //    xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
-            //}
-            //int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
-            //float[] x = new float[xint.Length];
-            //for (int i = 0; i < xint.Length; i++)
-            //{
-            //    x[i] = (float)xint[i];
-            //}
-            //float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
+            int UpsampleFactor = 10;
+            int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
+            float[] xs = new float[InterpolatedLength];
+            for (int i = 0; i < InterpolatedLength; i++)
+            {
+                xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
+            }
+            int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
+            float[] x = new float[xint.Length];
+            for (int i = 0; i < xint.Length; i++)
+            {
+                x[i] = (float)xint[i];
+            }
+            float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
 
-            //DataProcessing.SaveArray("env_spline.txt", ys);
+            DataProcessing.SaveArray("env_spline.txt", ys);
 
 
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
-            labMeanPressure.Text = "Mean : " + ValueToMmhG(MeanPress).ToString();
-            labSys.Text = "Sys : " + ValueToMmhG(P1).ToString();
-            labDia.Text = "Dia : " + ValueToMmhG(P2).ToString();
+            labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
+            labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
+            labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
             //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
             //formHRV.ShowDialog();
             //formHRV.Dispose();
@@ -324,8 +328,8 @@ namespace TTestApp
                 if (radioButton11.Checked) //1:1
                 {
                     ArrayList.Add(DataA.PressureViewArray);
-//                    ArrayList.Add(DataA.DerivArray);
-//                    ArrayList.Add(DataA.DebugArray);
+                    ArrayList.Add(DataA.DerivArray);
+                    ArrayList.Add(DataA.DebugArray);
                     ArrayList.Add(DataA.EnvelopeArray);
                 }
                 else //fit
@@ -428,7 +432,7 @@ namespace TTestApp
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
             labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
             labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]) + "  " +
-                ValueToMmhG(DataA.DCArray[index]).ToString();
+                         DataProcessing.ValueToMmhG(DataA.DCArray[index]).ToString();
         }
 
         private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
@@ -449,14 +453,6 @@ namespace TTestApp
             labSys.Text = "Sys : ";
             labDia.Text = "Dia : ";
             labPulse.Text = "Pulse : ";
-        }
-
-        private int ValueToMmhG(double value)
-        {
-            double zero = 465;
-            double pressure = 142;
-            double val = 2503287;
-            return (int)((value - zero) * pressure / (val - zero));
         }
 
         private void timerStatus_Tick(object sender, EventArgs e)
@@ -573,8 +569,8 @@ namespace TTestApp
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (Decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " + ValueToMmhG(CurrentPressure).ToString() + " Max : " +
-                    MaxPressure.ToString(); ;
+                labCurrentPressure.Text = "Current : " + DataProcessing.ValueToMmhG(CurrentPressure).ToString() + " Max : " +
+                    MaxPressure.ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }
@@ -664,6 +660,7 @@ namespace TTestApp
         {
             sF3Status.PumpIsOn = true;
             USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
+            MaxPressure = 0;
         }
 
         private void butPumpOff_Click(object sender, EventArgs e)
