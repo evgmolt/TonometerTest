@@ -188,22 +188,9 @@ namespace TTestApp
             {
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
             }
+//            Array.Copy(ArrayOfWaveIndexesDerivative, ArrayOfWaveIndexes, ArrayOfWaveIndexes.Length);
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
-
-            //Построение огибающей максимумов пульсаций давления
-            for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                int x1 = ArrayOfWaveIndexes[i - 1];
-                int x2 = ArrayOfWaveIndexes[i];
-                double y1 = DataA.PressureViewArray[x1];
-                double y2 = DataA.PressureViewArray[x2];
-                double coeff = (y2 - y1) / (x2 - x1);
-                for (int j = x1 - 1; j < x2; j++)
-                {
-                    DataA.EnvelopeArray[i + j] = y1 + coeff * (j - x1);
-                }
-            }
 
             //Поиск пульсовой волны с максимальной амплитудой
             double max = -1000000;
@@ -220,6 +207,30 @@ namespace TTestApp
                     max = DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
                     XMax = ArrayOfWaveIndexes[i];
                     XMaxIndex = i;
+                }
+            }
+
+            int[] ArrayLeft = new int[XMaxIndex];
+            int[] ArrayRight = new int[ArrayOfWaveIndexes.Length - XMaxIndex];
+            Array.Copy(ArrayOfWaveIndexes, ArrayLeft, ArrayLeft.Length);
+            Array.Copy(ArrayOfWaveIndexes, XMaxIndex, ArrayRight, 0, ArrayRight.Length);
+            double[] ArrayLeftValues = ArrayLeft.Select(x => DataA.PressureViewArray[x]).ToArray();
+            double[] ArrayRightValues = ArrayRight.Select(x => DataA.PressureViewArray[x]).ToArray();
+            double[] ArrLeftSorted = ArrayLeftValues.OrderBy(x => x).ToArray();
+            double[] ArrRightSorted = ArrayRightValues.OrderByDescending(x => x).ToArray();
+            double[] ArrValues = ArrLeftSorted.Concat(ArrRightSorted).ToArray();
+
+            //Построение огибающей максимумов пульсаций давления
+            for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
+            {
+                int x1 = ArrayOfWaveIndexes[i - 1];
+                int x2 = ArrayOfWaveIndexes[i];
+                double y1 = ArrValues[i-1];
+                double y2 = ArrValues[i];
+                double coeff = (y2 - y1) / (x2 - x1);
+                for (int j = x1 - 1; j < x2; j++)
+                {
+                    DataA.EnvelopeArray[i + j] = y1 + coeff * (j - x1);
                 }
             }
 
@@ -247,8 +258,8 @@ namespace TTestApp
                 {
                     int x1 = ArrayOfWaveIndexes[i];
                     int x2 = ArrayOfWaveIndexes[i + 1];
-                    double y1 = DataA.PressureViewArray[x1];
-                    double y2 = DataA.PressureViewArray[x2];
+                    double y1 = ArrValues[i];
+                    double y2 = ArrValues[i + 1];
                     double coeff = (V1 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
@@ -264,8 +275,8 @@ namespace TTestApp
                 {
                     int x1 = ArrayOfWaveIndexes[i];
                     int x2 = ArrayOfWaveIndexes[i - 1];
-                    double y1 = DataA.PressureViewArray[x1];
-                    double y2 = DataA.PressureViewArray[x2];
+                    double y1 = ArrValues[i];
+                    double y2 = ArrValues[i - 1];
                     double coeff = (V2 - y1) / (y2 - y1);
                     double yDC1 = DataA.DCArray[x1];
                     double yDC2 = DataA.DCArray[x2];
