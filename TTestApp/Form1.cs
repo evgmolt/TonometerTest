@@ -182,29 +182,30 @@ namespace TTestApp
                 return;
             }
 
-            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length - 2]; //Последнее значение выбрасываем
-            //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
-            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
-            }
-//            Array.Copy(ArrayOfWaveIndexesDerivative, ArrayOfWaveIndexes, ArrayOfWaveIndexes.Length);
+            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length]; 
+            ////Поиск максимумов пульсаций давления (в окрестностях максимума производной)
+            //for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
+            //{
+            //    ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
+            //}
+            Array.Copy(ArrayOfWaveIndexesDerivative, ArrayOfWaveIndexes, ArrayOfWaveIndexes.Length);
+
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
 
-            //Поиск пульсовой волны с максимальной амплитудой
+            //Поиск производной пульсовой волны с максимальной амплитудой
             double max = -1000000;
             int XMax = default;
             int XMaxIndex = 0;
-            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
+            for (int i = 0; i < ArrayOfWaveIndexes.Length - 5; i++)
             {
                 if (ArrayOfWaveIndexes[i] > DataA.Size)
                 {
                     break;
                 }
-                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] > max)
+                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] > max)
                 {
-                    max = DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
+                    max = DataA.DerivArray[ArrayOfWaveIndexes[i]];
                     XMax = ArrayOfWaveIndexes[i];
                     XMaxIndex = i;
                 }
@@ -214,11 +215,11 @@ namespace TTestApp
             int[] ArrayRight = new int[ArrayOfWaveIndexes.Length - XMaxIndex];
             Array.Copy(ArrayOfWaveIndexes, ArrayLeft, ArrayLeft.Length);
             Array.Copy(ArrayOfWaveIndexes, XMaxIndex, ArrayRight, 0, ArrayRight.Length);
-            double[] ArrayLeftValues = ArrayLeft.Select(x => DataA.PressureViewArray[x]).ToArray();
-            double[] ArrayRightValues = ArrayRight.Select(x => DataA.PressureViewArray[x]).ToArray();
+            double[] ArrayLeftValues = ArrayLeft.Select(x => DataA.DerivArray[x]).ToArray();
+            double[] ArrayRightValues = ArrayRight.Select(x => DataA.DerivArray[x]).ToArray();
             double[] ArrLeftSorted = ArrayLeftValues.OrderBy(x => x).ToArray();
-            double[] ArrRightSorted = ArrayRightValues.OrderByDescending(x => x).ToArray();
-            double[] ArrValues = ArrLeftSorted.Concat(ArrRightSorted).ToArray();
+//            double[] ArrRightSorted = ArrayRightValues.OrderByDescending(x => x).ToArray();
+            double[] ArrValues = ArrLeftSorted.Concat(ArrayRightValues).ToArray();
 
             //Построение огибающей максимумов пульсаций давления
             for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
@@ -244,8 +245,8 @@ namespace TTestApp
 
             double P1 = 0;
             double P2 = 0;
-            int xP1 = 0;
-            int xP2 = 0;
+            int indexP1 = 0;
+            int indexP2 = 0;
             //Среднее давление
             int MeanPress = (int)DataA.DCArray[XMax];
             double V1 = max * (double)Cfg.CoeffLeft;
@@ -254,38 +255,32 @@ namespace TTestApp
             //Определение систолического давления (влево от Max)
             for (int i = XMaxIndex; i > 0; i--)
             {
-                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] < V1)
+                if (ArrValues[i] < V1)
                 {
                     int x1 = ArrayOfWaveIndexes[i];
                     int x2 = ArrayOfWaveIndexes[i + 1];
                     double y1 = ArrValues[i];
                     double y2 = ArrValues[i + 1];
-                    double coeff = (V1 - y1) / (y2 - y1);
-                    double yDC1 = DataA.DCArray[x1];
-                    double yDC2 = DataA.DCArray[x2];
-                    P1 = (int)(yDC1 + (yDC2 - yDC1) * coeff);
-                    xP1 = (int)(x1 + (x2-x1) * coeff);
+                    indexP1 = (int)(x1 + (x2 - x1) * (V1 - y1) / (y2 - y1));
+                    P1 = DataA.DCArray[indexP1];
                     break;
                 }
             }
             //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
-                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] < V2)
+                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] < V2)
                 {
-                    int x1 = ArrayOfWaveIndexes[i];
-                    int x2 = ArrayOfWaveIndexes[i - 1];
-                    double y1 = ArrValues[i];
-                    double y2 = ArrValues[i - 1];
-                    double coeff = (V2 - y1) / (y2 - y1);
-                    double yDC1 = DataA.DCArray[x1];
-                    double yDC2 = DataA.DCArray[x2];
-                    P2 = (int)(yDC2 + (yDC1 - yDC2) * coeff);
-                    xP2 = (int)(x2 - (x2 - x1) * coeff);
+                    int x2 = ArrayOfWaveIndexes[i];
+                    int x1 = ArrayOfWaveIndexes[i - 1];
+                    double y2 = ArrValues[i];
+                    double y1 = ArrValues[i - 1];
+                    indexP2 = (int)(x2 - (x1 - x2) * (V1 - y2) / (y1 - x2));
+                    P2 = DataA.DCArray[indexP2];
                     break;
                 }
             }
-            int[] ArrayOfPoints = { xP1, ArrayOfWaveIndexes[XMaxIndex], xP2 };
+            int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
             VisirList.Add(ArrayOfPoints);
 
             float[] envelopeArray = new float[ArrayOfWaveIndexes.Length];
@@ -296,7 +291,7 @@ namespace TTestApp
                 {
                     break;
                 }
-                envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
+                envelopeArray[i] = (float)DataA.DerivArray[ArrayOfWaveIndexes[i]];
                 envelopeMmhGArray[i] = DataProcessing.ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
 
