@@ -29,7 +29,7 @@ namespace TTestApp
         int MaxPressure = 0;
         int MinPressure = 300;
 
-        GigaDeviceStatus GigaDeviceStatus;
+        GigaDeviceStatus GigaDevStatus;
 
         public event Action<Message> WindowsMessage;
 
@@ -63,7 +63,7 @@ namespace TTestApp
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
-            GigaDeviceStatus = new GigaDeviceStatus();
+            GigaDevStatus = new GigaDeviceStatus();
         }
 
         private void OnCompressionChanged(object? sender, EventArgs e)
@@ -496,15 +496,15 @@ namespace TTestApp
 
         private void timerStatus_Tick(object sender, EventArgs e)
         {
-            labValve1.Text = GigaDeviceStatus.Valve1IsClosed ? "Valve 1 : closed" : "Valve 1 : opened";
-            labValve2.Text = GigaDeviceStatus.Valve2IsClosed ? "Valve 2 : closed" : "Valve 2 : opened";
-            labPump.Text = GigaDeviceStatus.PumpIsOn ? "Pump : On" : "Pump : Off";
-            butValve1Close.Enabled = !GigaDeviceStatus.Valve1IsClosed;
-            butValve1Open.Enabled = GigaDeviceStatus.Valve1IsClosed;
-            butValve2Close.Enabled = !GigaDeviceStatus.Valve2IsClosed;
-            butValve2Open.Enabled = GigaDeviceStatus.Valve2IsClosed;
-            butPumpOn.Enabled = !GigaDeviceStatus.PumpIsOn;
-            butPumpOff.Enabled = GigaDeviceStatus.PumpIsOn;
+            labValve1.Text = GigaDevStatus.Valve1IsClosed ? "Valve 1 : closed" : "Valve 1 : opened";
+            labValve2.Text = GigaDevStatus.Valve2IsClosed ? "Valve 2 : closed" : "Valve 2 : opened";
+            labPump.Text = GigaDevStatus.PumpIsOn ? "Pump : On" : "Pump : Off";
+            butValve1Close.Enabled = !GigaDevStatus.Valve1IsClosed;
+            butValve1Open.Enabled = GigaDevStatus.Valve1IsClosed;
+            butValve2Close.Enabled = !GigaDevStatus.Valve2IsClosed;
+            butValve2Open.Enabled = GigaDevStatus.Valve2IsClosed;
+            butPumpOn.Enabled = !GigaDevStatus.PumpIsOn;
+            butPumpOff.Enabled = GigaDevStatus.PumpIsOn;
 
             if (Decomposer is null)
             {
@@ -596,7 +596,7 @@ namespace TTestApp
             if (Decomposer.RecordStarted)
             {
                 labRecordSize.Text = "Record size : " + (Decomposer.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
-                Detector.Detect(0, DataA.DerivArray, (int)Decomposer.MainIndex);
+                Detector?.Detect(0, DataA.DerivArray, (int)Decomposer.MainIndex);
             }
             switch (PressureMeasurementStatus)
             {
@@ -630,9 +630,9 @@ namespace TTestApp
 
         private void butPressureMeasStart_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.Valve1IsClosed = true;
-            GigaDeviceStatus.Valve2IsClosed = true;
-            GigaDeviceStatus.PumpIsOn = true;
+            GigaDevStatus.Valve1IsClosed = true;
+            GigaDevStatus.Valve2IsClosed = true;
+            GigaDevStatus.PumpIsOn = true;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
@@ -642,9 +642,9 @@ namespace TTestApp
 
         private void butPressureMeasAbort_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.Valve1IsClosed = false;
-            GigaDeviceStatus.Valve2IsClosed = false;
-            GigaDeviceStatus.PumpIsOn = false;
+            GigaDevStatus.Valve1IsClosed = false;
+            GigaDevStatus.Valve2IsClosed = false;
+            GigaDevStatus.PumpIsOn = false;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
@@ -654,44 +654,44 @@ namespace TTestApp
 
         private void butValve1Open_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.Valve1IsClosed = false;
+            GigaDevStatus.Valve1IsClosed = false;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
         }
 
         private void butValve1Close_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.Valve1IsClosed = true;
+            GigaDevStatus.Valve1IsClosed = true;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
         }
 
         private void butValve2Open_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.Valve2IsClosed = false;
+            GigaDevStatus.Valve2IsClosed = false;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
         }
 
         private void butValve2Close_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.Valve2IsClosed = true;
+            GigaDevStatus.Valve2IsClosed = true;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
         }
 
         private void butPumpOn_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.PumpIsOn = true;
+            GigaDevStatus.PumpIsOn = true;
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
             MaxPressure = 0;
         }
 
         private void butPumpOff_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.PumpIsOn = false;
+            GigaDevStatus.PumpIsOn = false;
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
         }
 
         private void butValve1PWM_Click(object sender, EventArgs e)
         {
-            GigaDeviceStatus.Valve1PWM = true;
+            GigaDevStatus.Valve1PWM = true;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
         }
     }
