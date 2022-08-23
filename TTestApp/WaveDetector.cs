@@ -3,8 +3,8 @@
     class WaveDetector
     {
         private int CurrentInterval;
-        public double DetectLevel = 500;
-        private const double MinDetectLevel = 500;
+        public double DetectLevel = 100;
+        private const double MinDetectLevel = 100;
         private const int DiffShift = 13;
         private int LockInterval = 60;
         private const int NoWaveInterval1 = 600;
@@ -22,6 +22,9 @@
         public List<int> FiltredPoints;
         private readonly int _samplingFrequency;
 
+        private double DataValue;
+        public event EventHandler<WaveDetectorEventArgs>? OnWaveDetected;
+
         public WaveDetector(int samplingFrequency)
         {
             NNPointArr = new Point[NNArrSize];
@@ -30,6 +33,13 @@
             _samplingFrequency = samplingFrequency;
         }
 
+        protected virtual void WaveDetected()
+        {
+            WaveDetectorEventArgs args = new WaveDetectorEventArgs();
+            args.WaveCount = FiltredPoints.Count();
+            args.DerivValue = DataValue;
+            OnWaveDetected?.Invoke(this, args);
+        }
         public void Reset()
         {
             NNPointIndex = 0;
@@ -79,7 +89,7 @@
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
             if (Ind < DiffShift) return DetectLevel;
-            double CurrentValue = DataArr[Ind];
+            double CurrentValue = DataArr[Ind - 1];
             if (CurrentInterval < LockInterval) return DetectLevel;
             if (CurrentValue > DetectLevel)
             {
@@ -101,6 +111,8 @@
                         NumOfIntervalsForAver = Math.Min(NumOfIntervalsForAver, MaxNumOfIntervalsForAver);
                         FiltredPoints.Add(Ind);
                         LockInterval = tmpNN / 2;
+                        DataValue = CurrentValue;
+                        WaveDetected();
                     }
                     CurrentInterval = 0;
                     NNPointIndex++;

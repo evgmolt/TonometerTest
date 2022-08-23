@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TTestApp.Commands
 {
-    internal struct SF3Status
+    internal struct GigaDeviceStatus
     {
         public bool Valve1IsClosed;
         public bool Valve1PWM;

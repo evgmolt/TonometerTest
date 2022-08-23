@@ -10,6 +10,7 @@ namespace TTestApp
         USBserialPort USBPort;
         DataArrays? DataA;
         ByteDecomposer Decomposer;
+        WaveDetector? Detector;
         CurvesPainter Painter;
         BufferedPanel BufPanel;
         TTestConfig Cfg;
@@ -28,7 +29,7 @@ namespace TTestApp
         int MaxPressure = 0;
         int MinPressure = 300;
 
-        SF3Status sF3Status;
+        GigaDeviceStatus GigaDeviceStatus;
 
         public event Action<Message> WindowsMessage;
 
@@ -62,7 +63,7 @@ namespace TTestApp
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
-            sF3Status = new SF3Status();
+            GigaDeviceStatus = new GigaDeviceStatus();
         }
 
         private void OnCompressionChanged(object? sender, EventArgs e)
@@ -72,7 +73,6 @@ namespace TTestApp
 
         private void InitArraysForFlow()
         {
-
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
             Decomposer = new ByteDecomposerBCI(DataA);
             Decomposer.OnDecomposePacketEvent += OnPacketReceived;
@@ -182,30 +182,30 @@ namespace TTestApp
                 return;
             }
 
-            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length]; 
-            ////Поиск максимумов пульсаций давления (в окрестностях максимума производной)
-            //for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
-            //{
-            //    ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
-            //}
-            Array.Copy(ArrayOfWaveIndexesDerivative, ArrayOfWaveIndexes, ArrayOfWaveIndexes.Length);
+            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length];
+            //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
+            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
+            {
+                ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
+            }
+//            Array.Copy(ArrayOfWaveIndexesDerivative, ArrayOfWaveIndexes, ArrayOfWaveIndexes.Length);
 
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
 
-            //Поиск производной пульсовой волны с максимальной амплитудой
+            //Поиск пульсовой волны с максимальной амплитудой
             double max = -1000000;
             int XMax = default;
             int XMaxIndex = 0;
-            for (int i = 0; i < ArrayOfWaveIndexes.Length - 5; i++)
+            for (int i = 0; i < ArrayOfWaveIndexes.Length - 4; i++)
             {
                 if (ArrayOfWaveIndexes[i] > DataA.Size)
                 {
                     break;
                 }
-                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] > max)
+                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] > max)
                 {
-                    max = DataA.DerivArray[ArrayOfWaveIndexes[i]];
+                    max = DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
                     XMax = ArrayOfWaveIndexes[i];
                     XMaxIndex = i;
                 }
@@ -215,8 +215,8 @@ namespace TTestApp
             int[] ArrayRight = new int[ArrayOfWaveIndexes.Length - XMaxIndex];
             Array.Copy(ArrayOfWaveIndexes, ArrayLeft, ArrayLeft.Length);
             Array.Copy(ArrayOfWaveIndexes, XMaxIndex, ArrayRight, 0, ArrayRight.Length);
-            double[] ArrayLeftValues = ArrayLeft.Select(x => DataA.DerivArray[x]).ToArray();
-            double[] ArrayRightValues = ArrayRight.Select(x => DataA.DerivArray[x]).ToArray();
+            double[] ArrayLeftValues = ArrayLeft.Select(x => DataA.PressureViewArray[x]).ToArray();
+            double[] ArrayRightValues = ArrayRight.Select(x => DataA.PressureViewArray[x]).ToArray();
             double[] ArrLeftSorted = ArrayLeftValues.OrderBy(x => x).ToArray();
 //            double[] ArrRightSorted = ArrayRightValues.OrderByDescending(x => x).ToArray();
             double[] ArrValues = ArrLeftSorted.Concat(ArrayRightValues).ToArray();
@@ -235,7 +235,7 @@ namespace TTestApp
                 }
             }
 
-            //Вычисление пульса по ArrayForPulseLen интервалам, максимум в центре
+            //Вычисление пульса 
             int DecreaseSize = 3; //Количество отбрасываемых интервалов справа и слева
             int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
             int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
@@ -269,7 +269,7 @@ namespace TTestApp
             //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
-                if (DataA.DerivArray[ArrayOfWaveIndexes[i]] < V2)
+                if (ArrValues[i] < V2)
                 {
                     int x2 = ArrayOfWaveIndexes[i];
                     int x1 = ArrayOfWaveIndexes[i - 1];
@@ -291,7 +291,7 @@ namespace TTestApp
                 {
                     break;
                 }
-                envelopeArray[i] = (float)DataA.DerivArray[ArrayOfWaveIndexes[i]];
+                envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
                 envelopeMmhGArray[i] = DataProcessing.ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
 
@@ -311,7 +311,6 @@ namespace TTestApp
             float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
 
             DataProcessing.SaveArray("env_spline.txt", ys);
-
 
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
@@ -346,7 +345,7 @@ namespace TTestApp
             else
             {
                 ArrayList.Add(DataA.PressureViewArray);
-//                ArrayList.Add(DataA.RealTimeArray);
+                ArrayList.Add(DataA.DerivArray);
 //                ArrayList.Add(DataA.DCArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
@@ -448,6 +447,28 @@ namespace TTestApp
             BufPanel.Refresh();
         }
 
+        private void butStopRecord_Click(object sender, EventArgs e)
+        {
+            Detector.OnWaveDetected -= NewWaveDetected;
+            Detector = null;
+            progressBarRecord.Visible = false;
+            Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
+            Decomposer.RecordStarted = false;
+            TextWriter?.Dispose();
+            ViewMode = true;
+            timerPaint.Enabled = !ViewMode;
+            timerRead.Enabled = false;
+
+            CurrentFileSize = Decomposer.PacketCounter;
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
+            UpdateScrollBar(CurrentFileSize);
+
+            //            PrepareData();
+            BufPanel.Refresh();
+            controlPanel.Refresh();
+            //            ReadFile(Cfg.DataDir + TmpDataFile);
+        }
+
         private void butStartRecord_Click(object sender, EventArgs e)
         {
             TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
@@ -459,19 +480,31 @@ namespace TTestApp
             labSys.Text = "Sys : ";
             labDia.Text = "Dia : ";
             labPulse.Text = "Pulse : ";
+            Detector = new WaveDetector(Decomposer.SamplingFrequency);
+            Detector.OnWaveDetected += NewWaveDetected;
+            FileNum++;
+        }
+
+        int FileNum = 0;
+        private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
+        {
+            string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
+            string text = e.WaveCount.ToString() + "  " + ((int)e.DerivValue).ToString();
+            labNumOfWaves.Text = text;
+            File.AppendAllText(fileName, text + Environment.NewLine);
         }
 
         private void timerStatus_Tick(object sender, EventArgs e)
         {
-            labValve1.Text = sF3Status.Valve1IsClosed ? "Valve 1 : closed" : "Valve 1 : opened";
-            labValve2.Text = sF3Status.Valve2IsClosed ? "Valve 2 : closed" : "Valve 2 : opened";
-            labPump.Text = sF3Status.PumpIsOn ? "Pump : On" : "Pump : Off";
-            butValve1Close.Enabled = !sF3Status.Valve1IsClosed;
-            butValve1Open.Enabled = sF3Status.Valve1IsClosed;
-            butValve2Close.Enabled = !sF3Status.Valve2IsClosed;
-            butValve2Open.Enabled = sF3Status.Valve2IsClosed;
-            butPumpOn.Enabled = !sF3Status.PumpIsOn;
-            butPumpOff.Enabled = sF3Status.PumpIsOn;
+            labValve1.Text = GigaDeviceStatus.Valve1IsClosed ? "Valve 1 : closed" : "Valve 1 : opened";
+            labValve2.Text = GigaDeviceStatus.Valve2IsClosed ? "Valve 2 : closed" : "Valve 2 : opened";
+            labPump.Text = GigaDeviceStatus.PumpIsOn ? "Pump : On" : "Pump : Off";
+            butValve1Close.Enabled = !GigaDeviceStatus.Valve1IsClosed;
+            butValve1Open.Enabled = GigaDeviceStatus.Valve1IsClosed;
+            butValve2Close.Enabled = !GigaDeviceStatus.Valve2IsClosed;
+            butValve2Open.Enabled = GigaDeviceStatus.Valve2IsClosed;
+            butPumpOn.Enabled = !GigaDeviceStatus.PumpIsOn;
+            butPumpOff.Enabled = GigaDeviceStatus.PumpIsOn;
 
             if (Decomposer is null)
             {
@@ -530,26 +563,6 @@ namespace TTestApp
             }
         }
 
-        private void butStopRecord_Click(object sender, EventArgs e)
-        {
-            progressBarRecord.Visible = false;
-            Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
-            Decomposer.RecordStarted = false;
-            TextWriter?.Dispose();
-            ViewMode = true;
-            timerPaint.Enabled = !ViewMode;
-            timerRead.Enabled = false;
-
-            CurrentFileSize = Decomposer.PacketCounter;
-            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
-            UpdateScrollBar(CurrentFileSize);
-
-            PrepareData();
-            BufPanel.Refresh();
-            controlPanel.Refresh();
-//            ReadFile(Cfg.DataDir + TmpDataFile);
-        }
-
         private void numUDLeft_ValueChanged(object sender, EventArgs e)
         {
             Cfg.CoeffLeft = numUDLeft.Value;
@@ -583,6 +596,7 @@ namespace TTestApp
             if (Decomposer.RecordStarted)
             {
                 labRecordSize.Text = "Record size : " + (Decomposer.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
+                Detector.Detect(0, DataA.DerivArray, (int)Decomposer.MainIndex);
             }
             switch (PressureMeasurementStatus)
             {
@@ -596,8 +610,8 @@ namespace TTestApp
                     {
                         Decomposer.PacketCounter = 0;
                         Decomposer.MainIndex = 0;
-                        USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
-                        USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
+                        USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
+                        USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
 
                         PressureMeasurementStatus = (int)PMStatus.Measurement;
                     }
@@ -616,69 +630,69 @@ namespace TTestApp
 
         private void butPressureMeasStart_Click(object sender, EventArgs e)
         {
-            sF3Status.Valve1IsClosed = true;
-            sF3Status.Valve2IsClosed = true;
-            sF3Status.PumpIsOn = true;
-            USBPort.WriteByte((byte)CmdSF3.Valve1Close);
-            USBPort.WriteByte((byte)CmdSF3.Valve2Close);
-            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
+            GigaDeviceStatus.Valve1IsClosed = true;
+            GigaDeviceStatus.Valve2IsClosed = true;
+            GigaDeviceStatus.PumpIsOn = true;
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
+            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
             PressureMeasurementStatus = (int)PMStatus.Calibration;
             labMeasInProgress.Visible = true;
         }
 
         private void butPressureMeasAbort_Click(object sender, EventArgs e)
         {
-            sF3Status.Valve1IsClosed = false;
-            sF3Status.Valve2IsClosed = false;
-            sF3Status.PumpIsOn = false;
-            USBPort.WriteByte((byte)CmdSF3.Valve1Open);
-            USBPort.WriteByte((byte)CmdSF3.Valve2Open);
-            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
+            GigaDeviceStatus.Valve1IsClosed = false;
+            GigaDeviceStatus.Valve2IsClosed = false;
+            GigaDeviceStatus.PumpIsOn = false;
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
+            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
             PressureMeasurementStatus = (int)PMStatus.Ready;
             labMeasInProgress.Visible = false;
         }
 
         private void butValve1Open_Click(object sender, EventArgs e)
         {
-            sF3Status.Valve1IsClosed = false;
-            USBPort.WriteByte((byte)CmdSF3.Valve1Open);
+            GigaDeviceStatus.Valve1IsClosed = false;
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
         }
 
         private void butValve1Close_Click(object sender, EventArgs e)
         {
-            sF3Status.Valve1IsClosed = true;
-            USBPort.WriteByte((byte)CmdSF3.Valve1Close);
+            GigaDeviceStatus.Valve1IsClosed = true;
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
         }
 
         private void butValve2Open_Click(object sender, EventArgs e)
         {
-            sF3Status.Valve2IsClosed = false;
-            USBPort.WriteByte((byte)CmdSF3.Valve2Open);
+            GigaDeviceStatus.Valve2IsClosed = false;
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
         }
 
         private void butValve2Close_Click(object sender, EventArgs e)
         {
-            sF3Status.Valve2IsClosed = true;
-            USBPort.WriteByte((byte)CmdSF3.Valve2Close);
+            GigaDeviceStatus.Valve2IsClosed = true;
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
         }
 
         private void butPumpOn_Click(object sender, EventArgs e)
         {
-            sF3Status.PumpIsOn = true;
-            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOn);
+            GigaDeviceStatus.PumpIsOn = true;
+            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
             MaxPressure = 0;
         }
 
         private void butPumpOff_Click(object sender, EventArgs e)
         {
-            sF3Status.PumpIsOn = false;
-            USBPort.WriteByte((byte)CmdSF3.PumpSwitchOff);
+            GigaDeviceStatus.PumpIsOn = false;
+            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
         }
 
         private void butValve1PWM_Click(object sender, EventArgs e)
         {
-            sF3Status.Valve1PWM = true;
-            USBPort.WriteByte((byte)CmdSF3.Valve1PWMOn);
+            GigaDeviceStatus.Valve1PWM = true;
+            USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
         }
     }
 }

@@ -157,6 +157,7 @@ namespace TTestApp
                         }
 
                         data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        data.DerivArray[MainIndex] = DataProcessing.GetDerivative(data.PressureArray, MainIndex);
 
                         byteNum = 0;
 
