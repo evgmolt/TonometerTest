@@ -9,6 +9,6 @@ namespace TTestApp
     internal class WaveDetectorEventArgs : EventArgs
     {
         public int WaveCount { get; set; }
-        public double DerivValue { get; set; }
+        public double Value { get; set; }
     }
 }

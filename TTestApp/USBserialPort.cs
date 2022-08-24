@@ -141,7 +141,7 @@ namespace TTestApp
         {
             PortNames = GetPortsNames();
             if (PortNames == null) return;
-            for (int i = 0; i < PortNames.Count(); i++)
+            for (int i = 0; i < PortNames.Length; i++)
             {
                 PortHandle = new SerialPort(PortNames[i], _baudRate)
                 {
@@ -183,7 +183,7 @@ namespace TTestApp
             string[] portvalues = r_port.GetValueNames();
             List<string> portNames = new List<string>();
             int Ind = 0;
-            for (int i = 0; i < portvalues.Count(); i++)
+            for (int i = 0; i < portvalues.Length; i++)
             {
                 if (FTDI)
                 {

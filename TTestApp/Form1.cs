@@ -463,7 +463,7 @@ namespace TTestApp
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
-            //            PrepareData();
+            //PrepareData();
             BufPanel.Refresh();
             controlPanel.Refresh();
             //            ReadFile(Cfg.DataDir + TmpDataFile);
@@ -489,7 +489,7 @@ namespace TTestApp
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
-            string text = e.WaveCount.ToString() + "  " + ((int)e.DerivValue).ToString();
+            string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString();
             labNumOfWaves.Text = text;
             File.AppendAllText(fileName, text + Environment.NewLine);
         }
