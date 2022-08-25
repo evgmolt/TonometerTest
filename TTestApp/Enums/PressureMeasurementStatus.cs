@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TTestApp.Enums
 {
-    internal enum PressureMeasurementStatus //Pressure measurement status
+    internal enum PressureMeasurementStatus 
     {
         Ready,
         Calibration,

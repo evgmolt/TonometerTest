@@ -35,7 +35,7 @@
             var stringsArr = inputArray.Select(s => Math.Round(s).ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
-        public static void SavePointFArray(string fname, PointF[] inputArray)
+        public static void SaveArray(string fname, PointF[] inputArray)
         {
             var stringsArr = inputArray.Select(s => s.X.ToString() + " " + s.Y.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
