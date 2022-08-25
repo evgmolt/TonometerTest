@@ -13,7 +13,7 @@ namespace TTestApp
 
         protected const byte marker1 = 0x19; // Если маркер - 1 байт, используется этот. Если больше, то объявлять свои в наследнике
 
-        protected DataArrays data;
+        protected DataArrays Data;
 
         public event EventHandler? OnDecomposePacketEvent;
 
@@ -35,7 +35,7 @@ namespace TTestApp
 
         public ByteDecomposer(DataArrays data, int sizeQForDC, int sizeQForAC)
         {
-            this.data = data;
+            Data = data;
             RecordStarted = false;
             DeviceTurnedOn = true;
             MainIndex = 0;
@@ -48,6 +48,11 @@ namespace TTestApp
         protected virtual void OnDecomposeLineEvent()
         {
             OnDecomposePacketEvent?.Invoke(this, EventArgs.Empty);
+        }
+
+        public int Decompos(USBserialPort usbport, StreamWriter saveFileStream)
+        {
+            return Decompos(usbport, null, saveFileStream);
         }
 
         public abstract int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream);//Возвращает число прочитанных и обработанных байт

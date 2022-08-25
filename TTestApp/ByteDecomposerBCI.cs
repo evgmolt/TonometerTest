@@ -142,12 +142,12 @@ namespace TTestApp
 
                         tmpValue -= 273500;
 
-                        data.RealTimeArray[MainIndex] = tmpValue;
+                        Data.RealTimeArray[MainIndex] = tmpValue;
                         QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueForDCSize)
                         {
                             QueueForDC.Dequeue();
-                            data.DCArray[MainIndex] = (int)QueueForDC.Average();
+                            Data.DCArray[MainIndex] = (int)QueueForDC.Average();
                         }
 
                         QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());
@@ -156,14 +156,14 @@ namespace TTestApp
                             QueueForAC.Dequeue();
                         }
 
-                        data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
-                        data.DerivArray[MainIndex] = DataProcessing.GetDerivative(data.PressureArray, MainIndex);
+                        Data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        Data.DerivArray[MainIndex] = DataProcessing.GetDerivative(Data.PressureArray, MainIndex);
 
                         byteNum = 0;
 
                         if (RecordStarted)
                         {
-                            txtFileStream.WriteLine(data.GetDataString(MainIndex));
+                            txtFileStream.WriteLine(Data.GetDataString(MainIndex));
                         }
                         OnDecomposeLineEvent();
                         PacketCounter++;

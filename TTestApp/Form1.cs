@@ -1,6 +1,7 @@
 ﻿using HRV;
 using System.Drawing.Drawing2D;
 using TTestApp.Commands;
+using TTestApp.Enums;
 using TTestApp.Spline;
 
 namespace TTestApp
@@ -24,7 +25,7 @@ namespace TTestApp
         double ScaleY = 1;
         List<int[]> VisirList;
         bool Compression;
-        int PressureMeasurementStatus = (int)PMStatus.Ready;
+        int PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Ready;
 
         int MaxPressure = 0;
         int MinPressure = 300;
@@ -173,7 +174,7 @@ namespace TTestApp
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
             {
-                DataA.DebugArray[i] = WD.Detect(0, DataA.DerivArray, i);
+                DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i);
             }
 
             var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); //Используем только интервалы, прошедшие фильтр 25%
@@ -316,9 +317,9 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
-            //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-            //formHRV.ShowDialog();
-            //formHRV.Dispose();
+            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+            formHRV.ShowDialog();
+            formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -463,7 +464,7 @@ namespace TTestApp
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
-            //PrepareData();
+            PrepareData();
             BufPanel.Refresh();
             controlPanel.Refresh();
             //            ReadFile(Cfg.DataDir + TmpDataFile);
@@ -542,7 +543,7 @@ namespace TTestApp
         {
             if (USBPort?.PortHandle?.IsOpen == true)
             {
-                Decomposer?.Decompos(USBPort, null, TextWriter);
+                Decomposer?.Decompos(USBPort, TextWriter);
             }
         }
 
@@ -596,15 +597,15 @@ namespace TTestApp
             if (Decomposer.RecordStarted)
             {
                 labRecordSize.Text = "Record size : " + (Decomposer.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
-                Detector?.Detect(0, DataA.DerivArray, (int)Decomposer.MainIndex);
+                Detector?.Detect(DataA.DerivArray, (int)Decomposer.MainIndex);
             }
-            switch (PressureMeasurementStatus)
+            switch (PressureMeasStatus)
             {
-                case (int)PMStatus.Calibration:
+                case (int)Enums.PressureMeasurementStatus.Calibration:
                     //Вызов метода калибровки
-                    PressureMeasurementStatus = (int)PMStatus.Pumping;
+                    PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Pumping;
                     break;
-                case (int)PMStatus.Pumping:
+                case (int)Enums.PressureMeasurementStatus.Pumping:
                     //Вызов метода оценки пульсаций (см. алгоритм)
                     if (CurrentPressure > MaxPressure)
                     {
@@ -613,13 +614,13 @@ namespace TTestApp
                         USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
                         USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
 
-                        PressureMeasurementStatus = (int)PMStatus.Measurement;
+                        PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Measurement;
                     }
                     break;
-                case (int)PMStatus.Measurement:
+                case (int)Enums.PressureMeasurementStatus.Measurement:
                     if (CurrentPressure < MinPressure)
                     {
-                        PressureMeasurementStatus = (int)PMStatus.Ready;
+                        PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Ready;
                         PrepareData();
                     }
                     break;
@@ -636,7 +637,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
-            PressureMeasurementStatus = (int)PMStatus.Calibration;
+            PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Calibration;
             labMeasInProgress.Visible = true;
         }
 
@@ -648,7 +649,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
-            PressureMeasurementStatus = (int)PMStatus.Ready;
+            PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Ready;
             labMeasInProgress.Visible = false;
         }
 

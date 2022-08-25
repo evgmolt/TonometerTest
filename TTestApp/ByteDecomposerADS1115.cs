@@ -62,8 +62,8 @@
                             QueueForDC.Dequeue();
                         }
 
-                        data.RealTimeArray[MainIndex] = tmpValue;
-                        data.DCArray[MainIndex] = (int)QueueForDC.Average();
+                        Data.RealTimeArray[MainIndex] = tmpValue;
+                        Data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
                         QueueForAC.Enqueue(100 + tmpValue - (int)QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
@@ -71,13 +71,13 @@
                             QueueForAC.Dequeue();
                         }
 
-                        data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        Data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
 
                         byteNum = 0;
 
                         if (RecordStarted)
                         {
-                            txtFileStream.WriteLine(data.GetDataString(MainIndex));
+                            txtFileStream.WriteLine(Data.GetDataString(MainIndex));
                         }
                         OnDecomposeLineEvent();
                         PacketCounter++;
