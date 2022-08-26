@@ -45,6 +45,8 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labMeasStatus = new System.Windows.Forms.Label();
+            this.labPumpStatus = new System.Windows.Forms.Label();
             this.labDeviceIsOff = new System.Windows.Forms.Label();
             this.labNumOfWaves = new System.Windows.Forms.Label();
             this.labY2 = new System.Windows.Forms.Label();
@@ -317,6 +319,8 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labMeasStatus);
+            this.panelBottom.Controls.Add(this.labPumpStatus);
             this.panelBottom.Controls.Add(this.labDeviceIsOff);
             this.panelBottom.Controls.Add(this.labNumOfWaves);
             this.panelBottom.Controls.Add(this.labY2);
@@ -337,6 +341,26 @@
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
             // 
+            // labMeasStatus
+            // 
+            this.labMeasStatus.AutoSize = true;
+            this.labMeasStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labMeasStatus.Location = new System.Drawing.Point(449, 50);
+            this.labMeasStatus.Name = "labMeasStatus";
+            this.labMeasStatus.Size = new System.Drawing.Size(170, 21);
+            this.labMeasStatus.TabIndex = 19;
+            this.labMeasStatus.Text = "Measurement: Ready";
+            // 
+            // labPumpStatus
+            // 
+            this.labPumpStatus.AutoSize = true;
+            this.labPumpStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labPumpStatus.Location = new System.Drawing.Point(509, 29);
+            this.labPumpStatus.Name = "labPumpStatus";
+            this.labPumpStatus.Size = new System.Drawing.Size(110, 21);
+            this.labPumpStatus.TabIndex = 18;
+            this.labPumpStatus.Text = "Pump: Ready";
+            // 
             // labDeviceIsOff
             // 
             this.labDeviceIsOff.AutoSize = true;
@@ -351,16 +375,17 @@
             // labNumOfWaves
             // 
             this.labNumOfWaves.AutoSize = true;
-            this.labNumOfWaves.Location = new System.Drawing.Point(538, 10);
+            this.labNumOfWaves.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labNumOfWaves.Location = new System.Drawing.Point(509, 8);
             this.labNumOfWaves.Name = "labNumOfWaves";
-            this.labNumOfWaves.Size = new System.Drawing.Size(99, 15);
+            this.labNumOfWaves.Size = new System.Drawing.Size(142, 21);
             this.labNumOfWaves.TabIndex = 15;
             this.labNumOfWaves.Text = "Waves detected : ";
             // 
             // labY2
             // 
             this.labY2.AutoSize = true;
-            this.labY2.Location = new System.Drawing.Point(580, 104);
+            this.labY2.Location = new System.Drawing.Point(580, 163);
             this.labY2.Name = "labY2";
             this.labY2.Size = new System.Drawing.Size(51, 15);
             this.labY2.TabIndex = 14;
@@ -369,7 +394,7 @@
             // labY1
             // 
             this.labY1.AutoSize = true;
-            this.labY1.Location = new System.Drawing.Point(569, 84);
+            this.labY1.Location = new System.Drawing.Point(569, 143);
             this.labY1.Name = "labY1";
             this.labY1.Size = new System.Drawing.Size(62, 15);
             this.labY1.TabIndex = 13;
@@ -378,7 +403,7 @@
             // labY0
             // 
             this.labY0.AutoSize = true;
-            this.labY0.Location = new System.Drawing.Point(527, 66);
+            this.labY0.Location = new System.Drawing.Point(527, 125);
             this.labY0.Name = "labY0";
             this.labY0.Size = new System.Drawing.Size(110, 15);
             this.labY0.TabIndex = 12;
@@ -465,7 +490,7 @@
             // labelX
             // 
             this.labelX.AutoSize = true;
-            this.labelX.Location = new System.Drawing.Point(616, 51);
+            this.labelX.Location = new System.Drawing.Point(616, 110);
             this.labelX.Name = "labelX";
             this.labelX.Size = new System.Drawing.Size(35, 15);
             this.labelX.TabIndex = 2;
@@ -858,5 +883,7 @@
         private Button butValve1Open;
         private Label labValve2;
         private Label labValve1;
+        private Label labPumpStatus;
+        private Label labMeasStatus;
     }
 }

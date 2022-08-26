@@ -28,9 +28,10 @@ namespace TTestApp
         int PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
         int PumpStatus = (int)PumpingStatus.Ready;
 
-        int MaxPressure = 0;
-        int MinPressure = 300;
+        double MaxPressure = 1000000000000;
+        double MinPressure = 300;
 
+        double CurrentPressure;
         double MaxDerivValue;
 
         GigaDeviceStatus GigaDevStatus;
@@ -487,6 +488,7 @@ namespace TTestApp
             Detector = new WaveDetector(Decomposer.SamplingFrequency);
             Detector.OnWaveDetected += NewWaveDetected;
             FileNum++;
+            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
         }
 
         int FileNum = 0;
@@ -494,34 +496,72 @@ namespace TTestApp
         {
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
             string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString() + " " + PumpStatus.ToString();
-            labNumOfWaves.Text = text;
-            File.AppendAllText(fileName, text + Environment.NewLine);
+            labNumOfWaves.Text = "Waves detected: " + text;
+//            File.AppendAllText(fileName, text + Environment.NewLine);
 
-            if (PressureMeasStatus != (int)PressureMeasurementStatus.Pumping)
+            labPumpStatus.Text = "Pump :" + PumpStatus switch
             {
-//                return;
-            }
-            switch (PumpStatus)
+                (int)PumpingStatus.Ready => "Ready",
+                (int)PumpingStatus.MaximumSearch => "Maximum search",
+                (int)PumpingStatus.MaximumFound => "Maximum found",
+                _ => "Ready",
+            };
+
+            labMeasStatus.Text = "Measurement :" + PressureMeasStatus switch
             {
-                case (int)PumpingStatus.Ready:
-                    if (e.Value > (int)PumpingPressureLevel.StartLevel)
+                (int)PressureMeasurementStatus.Ready => "Ready",
+                (int)PressureMeasurementStatus.Calibration => "Calibration",
+                (int)PressureMeasurementStatus.Pumping => "Pumping",
+                (int)PressureMeasurementStatus.Measurement => "Measurement",
+                _ => "Ready",
+            };
+
+            switch (PressureMeasStatus)
+            {
+                case (int)PressureMeasurementStatus.Calibration:
+                    //Вызов метода калибровки
+                    PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Pumping;
+                    break;
+                case (int)PressureMeasurementStatus.Pumping:
+                    switch (PumpStatus)
                     {
-                        PumpStatus = (int)PumpingStatus.MaximumSearch;
+                        case (int)PumpingStatus.Ready:
+                            if (e.Value > (int)PumpingPressureLevel.StartLevel)
+                            {
+                                PumpStatus = (int)PumpingStatus.MaximumSearch;
+                            }
+                            break;
+                        case (int)PumpingStatus.MaximumSearch:
+                            MaxDerivValue = Math.Max(MaxDerivValue, e.Value);
+                            if (MaxDerivValue > e.Value)
+                            {
+                                PumpStatus = (int)PumpingStatus.MaximumFound;
+                            }
+                            break;
+                        case (int)PumpingStatus.MaximumFound:
+                            if (e.Value < (int)PumpingPressureLevel.StopLevel) // || CurrentPressure > MaxPressure)
+                            {
+                                PumpStatus = (int)PumpingStatus.Ready;
+                                Decomposer.PacketCounter = 0;
+                                Decomposer.MainIndex = 0;
+                                MaxDerivValue = 0;
+                                //USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
+                                //USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
+                                PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
+                                //Останавливаем накачку
+                            }
+                            break;
                     }
-                break;
-                case (int)PumpingStatus.MaximumSearch:
-                    MaxDerivValue = Math.Max(MaxDerivValue, e.Value);
-                    if (MaxDerivValue > e.Value)
+                    break;
+                case (int)Enums.PressureMeasurementStatus.Measurement:
+                    MaxDerivValue = Math.Max(e.Value, MaxDerivValue);
+                    if (e.Value < MaxDerivValue * 0.7)
                     {
-                        PumpStatus = (int)PumpingStatus.MaximumFound;
+                        PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+                        butStopRecord_Click(this, EventArgs.Empty);
                     }
-                break;
-                case (int)PumpingStatus.MaximumFound:
-                    if (e.Value < (int)PumpingPressureLevel.StopLevel)
-                    {
-                        PumpStatus = (int)PumpingStatus.Ready;
-                        //Останавливаем накачку
-                    }
+                    break;
+                default:
                     break;
             }
 
@@ -616,7 +656,7 @@ namespace TTestApp
         private void OnPacketReceived(object? sender, EventArgs e)
         {
             uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            double CurrentPressure = DataA.RealTimeArray[currentIndex];
+            CurrentPressure = DataA.RealTimeArray[currentIndex];
             MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (Decomposer.MainIndex > 0)
@@ -630,34 +670,6 @@ namespace TTestApp
             {
                 labRecordSize.Text = "Record size : " + (Decomposer.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 Detector?.Detect(DataA.DerivArray, (int)Decomposer.MainIndex);
-            }
-            switch (PressureMeasStatus)
-            {
-                case (int)Enums.PressureMeasurementStatus.Calibration:
-                    //Вызов метода калибровки
-                    PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Pumping;
-                    break;
-                case (int)Enums.PressureMeasurementStatus.Pumping:
-                    //Вызов метода оценки пульсаций (см. алгоритм)
-                    if (CurrentPressure > MaxPressure)
-                    {
-                        Decomposer.PacketCounter = 0;
-                        Decomposer.MainIndex = 0;
-                        USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
-                        USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
-
-                        PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Measurement;
-                    }
-                    break;
-                case (int)Enums.PressureMeasurementStatus.Measurement:
-                    if (CurrentPressure < MinPressure)
-                    {
-                        PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Ready;
-                        PrepareData();
-                    }
-                    break;
-                default:
-                    break;
             }
         }
 

@@ -9,6 +9,6 @@ namespace TTestApp.Enums
     internal enum PumpingPressureLevel
     {
         StartLevel = 3000,
-        StopLevel = 4000
+        StopLevel = 6000
     }
 }
