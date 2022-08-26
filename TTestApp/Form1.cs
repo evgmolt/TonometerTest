@@ -25,10 +25,13 @@ namespace TTestApp
         double ScaleY = 1;
         List<int[]> VisirList;
         bool Compression;
-        int PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Ready;
+        int PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+        int PumpStatus = (int)PumpingStatus.Ready;
 
         int MaxPressure = 0;
         int MinPressure = 300;
+
+        double MaxDerivValue;
 
         GigaDeviceStatus GigaDevStatus;
 
@@ -490,9 +493,38 @@ namespace TTestApp
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
-            string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString();
+            string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString() + " " + PumpStatus.ToString();
             labNumOfWaves.Text = text;
             File.AppendAllText(fileName, text + Environment.NewLine);
+
+            if (PressureMeasStatus != (int)PressureMeasurementStatus.Pumping)
+            {
+//                return;
+            }
+            switch (PumpStatus)
+            {
+                case (int)PumpingStatus.Ready:
+                    if (e.Value > (int)PumpingPressureLevel.StartLevel)
+                    {
+                        PumpStatus = (int)PumpingStatus.MaximumSearch;
+                    }
+                break;
+                case (int)PumpingStatus.MaximumSearch:
+                    MaxDerivValue = Math.Max(MaxDerivValue, e.Value);
+                    if (MaxDerivValue > e.Value)
+                    {
+                        PumpStatus = (int)PumpingStatus.MaximumFound;
+                    }
+                break;
+                case (int)PumpingStatus.MaximumFound:
+                    if (e.Value < (int)PumpingPressureLevel.StopLevel)
+                    {
+                        PumpStatus = (int)PumpingStatus.Ready;
+                        //Останавливаем накачку
+                    }
+                    break;
+            }
+
         }
 
         private void timerStatus_Tick(object sender, EventArgs e)
@@ -634,6 +666,7 @@ namespace TTestApp
             GigaDevStatus.Valve1IsClosed = true;
             GigaDevStatus.Valve2IsClosed = true;
             GigaDevStatus.PumpIsOn = true;
+            PumpStatus = (int)PumpingStatus.MaximumSearch;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
@@ -646,6 +679,7 @@ namespace TTestApp
             GigaDevStatus.Valve1IsClosed = false;
             GigaDevStatus.Valve2IsClosed = false;
             GigaDevStatus.PumpIsOn = false;
+            PumpStatus = (int)PumpingStatus.Ready;
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
