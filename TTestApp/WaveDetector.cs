@@ -84,8 +84,16 @@
                 NumOfIntervalsForAver = 0;
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
-            if (Ind < DataProcessing.DerivativeShift) return DetectLevel;
-            if (CurrentInterval < LockInterval) return DetectLevel;
+            if (Ind < DataProcessing.DerivativeShift)
+            {
+                return DetectLevel;
+            }
+
+            if (CurrentInterval < LockInterval)
+            {
+                return DetectLevel;
+            }
+
             CurrentValue = DataArr[Ind - 1];
             if (CurrentValue > DetectLevel)
             {

@@ -27,6 +27,8 @@ namespace TTestApp
         bool Compression;
         int PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
         int PumpStatus = (int)PumpingStatus.Ready;
+        double MaxFoundMoment;
+        double MaxTimeAfterMaxFound = 2.5; //sec
 
         double MaxPressure = 1000000000000;
         double MinPressure = 300;
@@ -494,12 +496,14 @@ namespace TTestApp
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
+            double StopMeasCoeff = 0.7;
+
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
             string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString() + " " + PumpStatus.ToString();
             labNumOfWaves.Text = "Waves detected: " + text;
 //            File.AppendAllText(fileName, text + Environment.NewLine);
 
-            labPumpStatus.Text = "Pump :" + PumpStatus switch
+            labPumpStatus.Text = "Pump : " + PumpStatus switch
             {
                 (int)PumpingStatus.Ready => "Ready",
                 (int)PumpingStatus.MaximumSearch => "Maximum search",
@@ -507,7 +511,7 @@ namespace TTestApp
                 _ => "Ready",
             };
 
-            labMeasStatus.Text = "Measurement :" + PressureMeasStatus switch
+            labMeasStatus.Text = "Measurement : " + PressureMeasStatus switch
             {
                 (int)PressureMeasurementStatus.Ready => "Ready",
                 (int)PressureMeasurementStatus.Calibration => "Calibration",
@@ -520,7 +524,7 @@ namespace TTestApp
             {
                 case (int)PressureMeasurementStatus.Calibration:
                     //Вызов метода калибровки
-                    PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Pumping;
+                    PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
                     break;
                 case (int)PressureMeasurementStatus.Pumping:
                     switch (PumpStatus)
@@ -536,10 +540,13 @@ namespace TTestApp
                             if (MaxDerivValue > e.Value)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumFound;
+                                MaxFoundMoment = (int)Decomposer.MainIndex;
                             }
                             break;
                         case (int)PumpingStatus.MaximumFound:
-                            if (e.Value < (int)PumpingPressureLevel.StopLevel) // || CurrentPressure > MaxPressure)
+                            int Index = (int)Decomposer.MainIndex;
+                            bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
+                            if (e.Value < (int)PumpingPressureLevel.StopLevel || timeout)
                             {
                                 PumpStatus = (int)PumpingStatus.Ready;
                                 Decomposer.PacketCounter = 0;
@@ -553,9 +560,10 @@ namespace TTestApp
                             break;
                     }
                     break;
-                case (int)Enums.PressureMeasurementStatus.Measurement:
+                case (int)PressureMeasurementStatus.Measurement:
                     MaxDerivValue = Math.Max(e.Value, MaxDerivValue);
-                    if (e.Value < MaxDerivValue * 0.7)
+
+                    if (e.Value < MaxDerivValue * StopMeasCoeff)
                     {
                         PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
                         butStopRecord_Click(this, EventArgs.Empty);
@@ -564,7 +572,6 @@ namespace TTestApp
                 default:
                     break;
             }
-
         }
 
         private void timerStatus_Tick(object sender, EventArgs e)
@@ -682,7 +689,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
-            PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Calibration;
+            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
             labMeasInProgress.Visible = true;
         }
 
@@ -695,7 +702,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
-            PressureMeasStatus = (int)Enums.PressureMeasurementStatus.Ready;
+            PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
             labMeasInProgress.Visible = false;
         }
 
