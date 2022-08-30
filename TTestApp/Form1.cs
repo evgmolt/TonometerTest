@@ -660,16 +660,18 @@ namespace TTestApp
             controlPanel.Refresh();
         }
 
-        private void OnPacketReceived(object? sender, EventArgs e)
+        private void OnPacketReceived(object? sender, PacketEventArgs e)
         {
             uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            CurrentPressure = DataA.RealTimeArray[currentIndex];
+            CurrentPressure = e.RealTimeValue;// DataA.RealTimeArray[currentIndex];
             MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (Decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " + DataProcessing.ValueToMmhG(CurrentPressure).ToString() + " Max : " +
-                    MaxPressure.ToString();
+                labCurrentPressure.Text = "Current : " + 
+                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString() + 
+                                           " Max : " +
+                                           CurrentPressure.ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }

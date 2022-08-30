@@ -15,7 +15,7 @@ namespace TTestApp
 
         protected DataArrays Data;
 
-        public event EventHandler? OnDecomposePacketEvent;
+        public event EventHandler<PacketEventArgs>? OnDecomposePacketEvent;
 
         public uint MainIndex = 0;
         public int PacketCounter = 0;
@@ -47,7 +47,16 @@ namespace TTestApp
 
         protected virtual void OnDecomposeLineEvent()
         {
-            OnDecomposePacketEvent?.Invoke(this, EventArgs.Empty);
+            OnDecomposePacketEvent?.Invoke(
+                this, 
+                new PacketEventArgs
+                {
+                    DCValue = Data.DCArray[MainIndex],
+                    RealTimeValue = Data.RealTimeArray[MainIndex],
+                    PressureViewValue = Data.PressureViewArray[MainIndex],
+                    DerivValue = Data.DerivArray[MainIndex],
+                    MainIndex = MainIndex
+                });
         }
 
         public int Decompos(USBserialPort usbport, StreamWriter saveFileStream)
