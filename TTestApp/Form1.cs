@@ -274,7 +274,7 @@ namespace TTestApp
                 }
             }
             //Определение диастолического давления (вправо от Max)
-            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
+            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length - 1; i++)
             {
                 if (ArrValues[i] < V2)
                 {
