@@ -40,7 +40,10 @@
             //Вычисление RMSSD
             var diffSeqNN = _NNArray.Zip(_NNArray.Skip(1), (first, second) => second - first);
             var diffSeqSqrNN = diffSeqNN.Select(x => x * x);
-            _RMSSD = (int)Math.Sqrt(diffSeqSqrNN.Sum() / diffSeqSqrNN.Count());
+            if (diffSeqSqrNN.Count() > 0)
+            {
+                _RMSSD = (int)Math.Sqrt(diffSeqSqrNN.Sum() / diffSeqSqrNN.Count());
+            }
 
             //Вычисление CV
             _CV = _SDNN * 100 / _averNN;

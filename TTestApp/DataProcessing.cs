@@ -4,29 +4,60 @@
     {
         public static int CompressionRatio;
         public static event EventHandler? CompressionChanged;
+        public static int DerivativeShift = 13;
+        public static int DerivativeAverageWidth = 4;
+
+        public static int ValueToMmhG(double value)
+        {
+            double zero = 465;
+            double pressure = 142;
+            double val = 2503287;
+            return (int)((value - zero) * pressure / (val - zero));
+        }
+
+        public static int GetMaxIndexInRegion(double[] sourceArray, int index)
+        {
+            int range = 60;
+            double[] regionArray = new double[range];
+            Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
+            double max = regionArray.Max();
+            int maxIndex = Array.IndexOf(regionArray, max);
+            return index - range / 2 + maxIndex;
+        }
 
         public static void SaveArray(string fname, int[] inputArray)
         {
             var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
+        public static void SaveArray(string fname, float[] inputArray)
+        {
+            var stringsArr = inputArray.Select(s => Math.Round(s).ToString()).ToArray();
+            File.WriteAllLines(fname, stringsArr);
+        }
+        public static void SaveArray(string fname, PointF[] inputArray)
+        {
+            var stringsArr = inputArray.Select(s => s.X.ToString() + " " + s.Y.ToString()).ToArray();
+            File.WriteAllLines(fname, stringsArr);
+        }
 
         public static int GetPulseFromIndexesArray(int[] arrayOfIndexes, int SamplingFreq)
         {
-            int secondPerMin = 60;
+            double secondPerMin = 60;
             double mean = 0;
-
+            
             for (int i = 1; i < arrayOfIndexes.Length; i++) //Внимание! Цикл с 1!
             {
                 mean += arrayOfIndexes[i] - arrayOfIndexes[i - 1];
             }
-            //Аналог цикла выше
-            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Sum();
-
             mean /= arrayOfIndexes.Length - 1;
+            
+            //Аналог цикла и деления выше
+            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();
+
             mean /= SamplingFreq;
             mean = secondPerMin / mean;
-            return (int)mean;
+            return (int)Math.Round(mean);
         }
 
         public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)
@@ -185,23 +216,21 @@
 
         public static double GetDerivative(double[] DataArr, uint Ind)
         {
-            int DiffShift = 13;
-            const int Width = 4;
-            if (Ind < Width / 2 + DiffShift)
+            if (Ind < DerivativeAverageWidth / 2 + DerivativeShift)
             {
                 return 0;
             }
-            if (Ind - Width / 2 + Width > DataArr.Length - 1)
+            if (Ind - DerivativeAverageWidth / 2 + DerivativeAverageWidth > DataArr.Length - 1)
             {
                 return 0;
             }
             List<double> L1 = new();
             List<double> L2 = new();
-            for (int i = 0; i < Width; i++)
+            for (int i = 0; i < DerivativeAverageWidth; i++)
             {
                 {
-                    L1.Add(DataArr[Ind - Width / 2 + i]);
-                    L2.Add(DataArr[Ind - Width / 2 - DiffShift + i]);
+                    L1.Add(DataArr[Ind - DerivativeAverageWidth / 2 + i]);
+                    L2.Add(DataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
                 }
             }
             if (L1.Count > 0 && L2.Count > 0)

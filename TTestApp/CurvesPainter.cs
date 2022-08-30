@@ -4,7 +4,7 @@
     {
         private readonly Control _control;
         private readonly ByteDecomposer _decomposer;
-        private readonly Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Aqua };
+        private readonly Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Brown };
         private readonly Color[] visirsColors = { Color.LightGray, Color.Brown, Color.Chocolate };
 
         public CurvesPainter(Control control, ByteDecomposer decomposer)
@@ -35,6 +35,7 @@
             var pen0 = new Pen(Color.Black, 1);
             e.Graphics.Clear(Color.White);
             e.Graphics.DrawRectangle(pen0, R0);
+            e.Graphics.DrawLine(pen0, 0, R0.Height / 2, R0.Width, R0.Height / 2);
             if (!ViewMode)
             {
                 for (int i = 0; i < data.Count; i++)

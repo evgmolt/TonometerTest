@@ -7,7 +7,7 @@
         public double[] DCArray;
         public double[] PressureArray;
         public double[] PressureViewArray;
-        public double[] CorrelationArray;
+        public double[] EnvelopeArray;
         public double[] CompressedArray;
         public double[] DerivArray;
         public double[] DebugArray;
@@ -20,7 +20,7 @@
             DCArray = new double[_size];
             PressureArray = new double[_size];
             PressureViewArray = new double[_size];
-            CorrelationArray = new double[_size];
+            EnvelopeArray = new double[_size];
             DerivArray = new double[_size];  
             DebugArray = new double[_size];
         }
@@ -44,24 +44,26 @@
 
         public void CountViewArrays(Control panel)
         {
+            int DCArrayWindow = 100;
+            DCArray = DataProcessing.GetSmoothArray(RealTimeArray, DCArrayWindow);
             int SmoothWindowSize = 60;
             int MedianWindowSize = 6;
             for (int i = 0; i < RealTimeArray.Length; i++)
             {
                 PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray, i);
+//                PressureViewArray[i] = RealTimeArray[i];
             }
             double max = DCArray.Max<double>();
-            int maxInd = DCArray.ToList().IndexOf(max);
-            double startVal = DCArray[0];
-            double[] DetrendArray = new double[maxInd];
-            for (int i = 0; i < maxInd; i++)
+            double lastVal = DCArray[Size - 1];
+            double[] DetrendArray = new double[Size];
+            for (int i = 0; i < Size; i++)
             {
-                DetrendArray[i] = startVal + i * (max - startVal) / maxInd;
+                DetrendArray[i] = max - i * (max - lastVal) / Size;
             }
 
-            for (int i = 0; i < maxInd; i++)
+            for (int i = 0; i < Size; i++)
             {
-                PressureArray[i] = PressureViewArray[i] - DetrendArray[i];
+                PressureArray[i] = PressureViewArray[i] - DCArray[i];
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);

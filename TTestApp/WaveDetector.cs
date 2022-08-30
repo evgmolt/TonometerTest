@@ -3,9 +3,8 @@
     class WaveDetector
     {
         private int CurrentInterval;
-        public double DetectLevel = 500;
-        private const double MinDetectLevel = 500;
-        private const int DiffShift = 13;
+        public double DetectLevel = 2000;
+        private const double MinDetectLevel = 1000;
         private int LockInterval = 60;
         private const int NoWaveInterval1 = 600;
         private const int NoWaveInterval2 = 1000;
@@ -17,10 +16,12 @@
         private int[] NNArray;
         private int NNIndex;
         private int NumOfIntervalsForAver;
-        private const int MinNumOfIntervalsForAver = 3;
         private const int MaxNumOfIntervalsForAver = 10;
         public List<int> FiltredPoints;
         private readonly int _samplingFrequency;
+
+        private double CurrentValue;
+        public EventHandler<WaveDetectorEventArgs>? OnWaveDetected;
 
         public WaveDetector(int samplingFrequency)
         {
@@ -28,6 +29,16 @@
             NNArray = new int[NNArrSize];
             FiltredPoints = new List<int>();
             _samplingFrequency = samplingFrequency;
+        }
+
+        protected virtual void WaveDetected()
+        {
+            WaveDetectorEventArgs args = new()
+            {
+                WaveCount = FiltredPoints.Count,
+                Value = CurrentValue
+            };
+            OnWaveDetected?.Invoke(this, args);
         }
 
         public void Reset()
@@ -60,13 +71,8 @@
             return (int)Math.Round(d);
         }
 
-        public double Detect(int OverflowState, double[] DataArr, int Ind)
+        public double Detect(double[] DataArr, int Ind)
         {
-            if (OverflowState !=0)
-            {
-                NumOfIntervalsForAver = 0;
-                return 0;
-            }
             CurrentInterval++;
             if (CurrentInterval == NoWaveInterval1)
             {
@@ -78,16 +84,24 @@
                 NumOfIntervalsForAver = 0;
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
-            if (Ind < DiffShift) return DetectLevel;
-            double CurrentValue = DataArr[Ind];
-            if (CurrentInterval < LockInterval) return DetectLevel;
+            if (Ind < DataProcessing.DerivativeShift)
+            {
+                return DetectLevel;
+            }
+
+            if (CurrentInterval < LockInterval)
+            {
+                return DetectLevel;
+            }
+
+            CurrentValue = DataArr[Ind - 1];
             if (CurrentValue > DetectLevel)
             {
                 MaxD = Math.Max((int)CurrentValue, MaxD);
                 if (MaxD > CurrentValue)
                 {
                     int tmpNN = 0;
-                    NNPointArr[NNPointIndex].X = Ind;
+                    NNPointArr[NNPointIndex].X = Ind - 1;
                     NNPointArr[NNPointIndex].Y = (int)MaxD;
                     if (NNPointIndex > 0)
                     {
@@ -99,8 +113,9 @@
                         NNIndex++;
                         NumOfIntervalsForAver++;
                         NumOfIntervalsForAver = Math.Min(NumOfIntervalsForAver, MaxNumOfIntervalsForAver);
-                        FiltredPoints.Add(Ind);
+                        FiltredPoints.Add(Ind - 1);
                         LockInterval = tmpNN / 2;
+                        WaveDetected();
                     }
                     CurrentInterval = 0;
                     NNPointIndex++;
@@ -117,10 +132,11 @@
             const int HiLimit = 400; //ms - 30  уд / мин 
             if (NewInterval < LoLimit) return false;
             if (NewInterval > HiLimit) return false;
+            return true;
             int PrevInt = PrevInterval;
             PrevInterval = NewInterval;
-            if (NewInterval > PrevInt + PrevInt / 4) return false;
-            if (NewInterval < PrevInt - PrevInt / 4) return false;
+            if (NewInterval > PrevInt + PrevInt / 2) return false;
+            if (NewInterval < PrevInt - PrevInt / 2) return false;
             return true;
         }
     }

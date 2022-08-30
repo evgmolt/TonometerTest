@@ -4,13 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TTestApp
+namespace TTestApp.Enums
 {
-    internal enum PMStatus //Pressure measurement status
+    internal enum PumpingStatus
     {
         Ready,
-        Calibration,
-        Pumping,
-        Measurement
+        MaximumSearch,
+        MaximumFound
     }
 }
