@@ -323,9 +323,9 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
-            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-            formHRV.ShowDialog();
-            formHRV.Dispose();
+//            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+//            formHRV.ShowDialog();
+//            formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -499,9 +499,8 @@ namespace TTestApp
             double StopMeasCoeff = 0.7;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
-            string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString() + " " + PumpStatus.ToString();
+            string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString();
             labNumOfWaves.Text = "Waves detected: " + text;
-//            File.AppendAllText(fileName, text + Environment.NewLine);
 
             labPumpStatus.Text = "Pump : " + PumpStatus switch
             {
@@ -530,12 +529,14 @@ namespace TTestApp
                     switch (PumpStatus)
                     {
                         case (int)PumpingStatus.Ready:
+                            File.AppendAllText(fileName, "Ready  " + text + Environment.NewLine);
                             if (e.Value > (int)PumpingPressureLevel.StartLevel)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumSearch;
                             }
                             break;
                         case (int)PumpingStatus.MaximumSearch:
+                            File.AppendAllText(fileName, "Search " + text + Environment.NewLine);
                             MaxDerivValue = Math.Max(MaxDerivValue, e.Value);
                             if (MaxDerivValue > e.Value)
                             {
@@ -544,8 +545,10 @@ namespace TTestApp
                             }
                             break;
                         case (int)PumpingStatus.MaximumFound:
+                            File.AppendAllText(fileName, "Found  " + text + Environment.NewLine);
                             int Index = (int)Decomposer.MainIndex;
                             bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
+                            if (timeout) label5.Text = "Timeout";
                             if (e.Value < (int)PumpingPressureLevel.StopLevel || timeout)
                             {
                                 PumpStatus = (int)PumpingStatus.Ready;
@@ -664,14 +667,14 @@ namespace TTestApp
         {
             uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             CurrentPressure = e.RealTimeValue;// DataA.RealTimeArray[currentIndex];
-            MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
+//            MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (Decomposer.MainIndex > 0)
             {
                 labCurrentPressure.Text = "Current : " + 
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() + 
-                                           " Max : " +
-                                           CurrentPressure.ToString();
+                                           " Deriv : " +
+                                           e.DerivValue.ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }

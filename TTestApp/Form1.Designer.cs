@@ -91,6 +91,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.label5 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -319,6 +320,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.label5);
             this.panelBottom.Controls.Add(this.labMeasStatus);
             this.panelBottom.Controls.Add(this.labPumpStatus);
             this.panelBottom.Controls.Add(this.labDeviceIsOff);
@@ -787,6 +789,16 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label5.Location = new System.Drawing.Point(782, 15);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(38, 21);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "test";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -885,5 +897,6 @@
         private Label labValve1;
         private Label labPumpStatus;
         private Label labMeasStatus;
+        private Label label5;
     }
 }
