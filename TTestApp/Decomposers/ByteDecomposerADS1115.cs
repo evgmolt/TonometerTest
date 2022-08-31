@@ -1,9 +1,9 @@
-﻿namespace TTestApp
+﻿namespace TTestApp.Decomposers
 {
     internal class ByteDecomposerADS1115 : ByteDecomposer
     {
-        public override int SamplingFrequency => 200; 
-        public override int BaudRate => 115200; 
+        public override int SamplingFrequency => 200;
+        public override int BaudRate => 115200;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
 
@@ -49,11 +49,11 @@
                         }
                         break;
                     case 1:// pressure1_0
-                        tmpValue = (int)usbport.PortBuf[i];
+                        tmpValue = usbport.PortBuf[i];
                         byteNum = 2;
                         break;
                     case 2:// E1_1
-                        tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        tmpValue += 0x100 * usbport.PortBuf[i];
                         byteNum = 3;
 
                         QueueForDC.Enqueue(tmpValue);
@@ -82,7 +82,7 @@
                         OnDecomposeLineEvent();
                         PacketCounter++;
                         MainIndex++;
-                        MainIndex &= (DataArrSize - 1);
+                        MainIndex &= DataArrSize - 1;
                         break;
                 }
             }

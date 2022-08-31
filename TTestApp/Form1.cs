@@ -1,6 +1,7 @@
 ﻿using HRV;
 using System.Drawing.Drawing2D;
 using TTestApp.Commands;
+using TTestApp.Decomposers;
 using TTestApp.Enums;
 using TTestApp.Spline;
 
@@ -73,6 +74,7 @@ namespace TTestApp
             GigaDevStatus = new GigaDeviceStatus();
         }
 
+
         private void OnCompressionChanged(object? sender, EventArgs e)
         {
             labCompressionRatio.Text = DataProcessing.CompressionRatio.ToString();
@@ -112,43 +114,7 @@ namespace TTestApp
             base.WndProc(ref m);
         }
 
-        private void butSaveFile_Click(object sender, EventArgs e)
-        {
-            saveFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                Cfg.DataDir = Path.GetDirectoryName(saveFileDialog1.FileName) + @"\";
-                TTestConfig.SaveConfig(Cfg);
-                CurrentFile = Path.GetFileName(saveFileDialog1.FileName);
-                if (File.Exists(Cfg.DataDir + CurrentFile))
-                {
-                    File.Delete(Cfg.DataDir + CurrentFile);
-                }
-                File.Move(saveFileDialog1.InitialDirectory + TmpDataFile, Cfg.DataDir + CurrentFile);
-                Text = "File : " + CurrentFile;
-            }
-        }
-
-        private void butOpenFile_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.FileName = "";
-            openFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                ViewMode = true;
-                if (File.Exists(openFileDialog1.FileName))
-                {
-                    Cfg.DataDir = Path.GetDirectoryName(openFileDialog1.FileName) + @"\";
-                    TTestConfig.SaveConfig(Cfg);
-                    timerRead.Enabled = false;
-
-                    CurrentFile = Path.GetFileName(openFileDialog1.FileName);
-                    ReadFile(Cfg.DataDir + CurrentFile);
-                }
-            }
-            Text = "File : " + CurrentFile;
-        }
-
+        
         private void ReadFile(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
@@ -454,44 +420,6 @@ namespace TTestApp
             BufPanel.Refresh();
         }
 
-        private void butStopRecord_Click(object sender, EventArgs e)
-        {
-            Detector.OnWaveDetected -= NewWaveDetected;
-            Detector = null;
-            progressBarRecord.Visible = false;
-            Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
-            Decomposer.RecordStarted = false;
-            TextWriter?.Dispose();
-            ViewMode = true;
-            timerPaint.Enabled = !ViewMode;
-            timerRead.Enabled = false;
-
-            CurrentFileSize = Decomposer.PacketCounter;
-            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
-            UpdateScrollBar(CurrentFileSize);
-
-            PrepareData();
-            BufPanel.Refresh();
-            controlPanel.Refresh();
-            //            ReadFile(Cfg.DataDir + TmpDataFile);
-        }
-
-        private void butStartRecord_Click(object sender, EventArgs e)
-        {
-            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
-            Decomposer.PacketCounter = 0;
-            Decomposer.MainIndex = 0;
-            Decomposer.RecordStarted = true;
-            progressBarRecord.Visible = true;
-            labMeanPressure.Text = "Mean : ";
-            labSys.Text = "Sys : ";
-            labDia.Text = "Dia : ";
-            labPulse.Text = "Pulse : ";
-            Detector = new WaveDetector(Decomposer.SamplingFrequency);
-            Detector.OnWaveDetected += NewWaveDetected;
-            FileNum++;
-            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
-        }
 
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
@@ -504,17 +432,17 @@ namespace TTestApp
 
             labPumpStatus.Text = "Pump : " + PumpStatus switch
             {
-                (int)PumpingStatus.Ready => "Ready",
+                (int)PumpingStatus.Ready         => "Ready",
                 (int)PumpingStatus.MaximumSearch => "Maximum search",
-                (int)PumpingStatus.MaximumFound => "Maximum found",
+                (int)PumpingStatus.MaximumFound  => "Maximum found",
                 _ => "Ready",
             };
 
             labMeasStatus.Text = "Measurement : " + PressureMeasStatus switch
             {
-                (int)PressureMeasurementStatus.Ready => "Ready",
+                (int)PressureMeasurementStatus.Ready       => "Ready",
                 (int)PressureMeasurementStatus.Calibration => "Calibration",
-                (int)PressureMeasurementStatus.Pumping => "Pumping",
+                (int)PressureMeasurementStatus.Pumping     => "Pumping",
                 (int)PressureMeasurementStatus.Measurement => "Measurement",
                 _ => "Ready",
             };
@@ -529,28 +457,36 @@ namespace TTestApp
                     switch (PumpStatus)
                     {
                         case (int)PumpingStatus.Ready:
-                            File.AppendAllText(fileName, "Ready  " + text + Environment.NewLine);
                             if (e.Value > (int)PumpingPressureLevel.StartLevel)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumSearch;
+                                File.AppendAllText(fileName, "Search " + text + Environment.NewLine);
+                            }
+                            else
+                            {
+                                File.AppendAllText(fileName, "Ready  " + text + Environment.NewLine);
                             }
                             break;
                         case (int)PumpingStatus.MaximumSearch:
-                            File.AppendAllText(fileName, "Search " + text + Environment.NewLine);
                             MaxDerivValue = Math.Max(MaxDerivValue, e.Value);
                             if (MaxDerivValue > e.Value)
                             {
+                                File.AppendAllText(fileName, "Maximum found  " + text + Environment.NewLine);
                                 PumpStatus = (int)PumpingStatus.MaximumFound;
                                 MaxFoundMoment = (int)Decomposer.MainIndex;
                             }
+                            else
+                            {
+                                File.AppendAllText(fileName, "Search " + text + Environment.NewLine);
+                            }
                             break;
                         case (int)PumpingStatus.MaximumFound:
-                            File.AppendAllText(fileName, "Found  " + text + Environment.NewLine);
                             int Index = (int)Decomposer.MainIndex;
                             bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
                             if (timeout) label5.Text = "Timeout";
                             if (e.Value < (int)PumpingPressureLevel.StopLevel || timeout)
                             {
+                                File.AppendAllText(fileName, "Stop pumping  " + text + Environment.NewLine);
                                 PumpStatus = (int)PumpingStatus.Ready;
                                 Decomposer.PacketCounter = 0;
                                 Decomposer.MainIndex = 0;
@@ -559,6 +495,10 @@ namespace TTestApp
                                 //USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
                                 PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
                                 //Останавливаем накачку
+                            }
+                            else
+                            {
+                                File.AppendAllText(fileName, "Maximum found  " + text + Environment.NewLine);
                             }
                             break;
                     }
@@ -577,75 +517,6 @@ namespace TTestApp
             }
         }
 
-        private void timerStatus_Tick(object sender, EventArgs e)
-        {
-            labValve1.Text = GigaDevStatus.Valve1IsClosed ? "Valve 1 : closed" : "Valve 1 : opened";
-            labValve2.Text = GigaDevStatus.Valve2IsClosed ? "Valve 2 : closed" : "Valve 2 : opened";
-            labPump.Text = GigaDevStatus.PumpIsOn ? "Pump : On" : "Pump : Off";
-            butValve1Close.Enabled = !GigaDevStatus.Valve1IsClosed;
-            butValve1Open.Enabled = GigaDevStatus.Valve1IsClosed;
-            butValve2Close.Enabled = !GigaDevStatus.Valve2IsClosed;
-            butValve2Open.Enabled = GigaDevStatus.Valve2IsClosed;
-            butPumpOn.Enabled = !GigaDevStatus.PumpIsOn;
-            butPumpOff.Enabled = GigaDevStatus.PumpIsOn;
-
-            if (Decomposer is null)
-            {
-                return;
-            }
-            butStartRecord.Enabled = !ViewMode && !Decomposer.RecordStarted!;
-            butStopRecord.Enabled = Decomposer.RecordStarted;
-            butSaveFile.Enabled = ViewMode && Decomposer.PacketCounter != 0;
-            butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
-            panelView.Enabled = ViewMode;
-//            labDeviceIsOff.Visible = !decomposer.DeviceTurnedOn;
-            if (USBPort == null)
-            {
-                labPort.Text = "Disconnected";
-                ViewMode = true;
-                return;
-            }
-            if (USBPort.PortHandle == null)
-            {
-                labPort.Text = "Disconnected";
-                ViewMode = true;
-                return;
-            }
-            if (USBPort.PortHandle.IsOpen)
-            {
-                labPort.Text = "Connected to " + USBPort.PortNames[USBPort.CurrentPort];
-            }
-            else
-            {
-                labPort.Text = "Disconnected";
-            }
-        }
-
-        private void timerRead_Tick(object sender, EventArgs e)
-        {
-            if (USBPort?.PortHandle?.IsOpen == true)
-            {
-                Decomposer?.Decompos(USBPort, TextWriter);
-            }
-        }
-
-        private void timerPaint_Tick(object sender, EventArgs e)
-        {
-            BufPanel.Refresh();
-        }
-
-        private void butFlow_Click(object sender, EventArgs e)
-        {
-            ViewMode = !ViewMode;
-            timerRead.Enabled = !ViewMode;
-            timerPaint.Enabled = !ViewMode;
-            if (!ViewMode)
-            {
-                InitArraysForFlow();
-                hScrollBar1.Visible = false;
-            }
-        }
-
         private void numUDLeft_ValueChanged(object sender, EventArgs e)
         {
             Cfg.CoeffLeft = numUDLeft.Value;
@@ -654,13 +525,6 @@ namespace TTestApp
         private void numUDRight_ValueChanged(object sender, EventArgs e)
         {
             Cfg.CoeffRight = numUDRight.Value;
-        }
-
-        private void butRefresh_Click(object sender, EventArgs e)
-        {
-            PrepareData();
-            BufPanel.Refresh();
-            controlPanel.Refresh();
         }
 
         private void OnPacketReceived(object? sender, PacketEventArgs e)
@@ -685,73 +549,5 @@ namespace TTestApp
             }
         }
 
-        private void butPressureMeasStart_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.Valve1IsClosed = true;
-            GigaDevStatus.Valve2IsClosed = true;
-            GigaDevStatus.PumpIsOn = true;
-            PumpStatus = (int)PumpingStatus.MaximumSearch;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
-            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
-            labMeasInProgress.Visible = true;
-        }
-
-        private void butPressureMeasAbort_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.Valve1IsClosed = false;
-            GigaDevStatus.Valve2IsClosed = false;
-            GigaDevStatus.PumpIsOn = false;
-            PumpStatus = (int)PumpingStatus.Ready;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
-            PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
-            labMeasInProgress.Visible = false;
-        }
-
-        private void butValve1Open_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.Valve1IsClosed = false;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
-        }
-
-        private void butValve1Close_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.Valve1IsClosed = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
-        }
-
-        private void butValve2Open_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.Valve2IsClosed = false;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
-        }
-
-        private void butValve2Close_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.Valve2IsClosed = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
-        }
-
-        private void butPumpOn_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.PumpIsOn = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
-            MaxPressure = 0;
-        }
-
-        private void butPumpOff_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.PumpIsOn = false;
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
-        }
-
-        private void butValve1PWM_Click(object sender, EventArgs e)
-        {
-            GigaDevStatus.Valve1PWM = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
-        }
     }
 }

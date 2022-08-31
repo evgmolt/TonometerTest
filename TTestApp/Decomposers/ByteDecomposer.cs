@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace TTestApp
+namespace TTestApp.Decomposers
 {
     abstract class ByteDecomposer
     {
@@ -28,7 +28,7 @@ namespace TTestApp
         protected int noDataCounter;
 
         protected int byteNum;
-        
+
         //Очереди для усреднения скользящим окном
         protected Queue<int> QueueForDC;
         protected Queue<int> QueueForAC;
@@ -48,7 +48,7 @@ namespace TTestApp
         protected virtual void OnDecomposeLineEvent()
         {
             OnDecomposePacketEvent?.Invoke(
-                this, 
+                this,
                 new PacketEventArgs
                 {
                     DCValue = Data.DCArray[MainIndex],

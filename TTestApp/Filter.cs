@@ -1,4 +1,6 @@
-﻿namespace TTestApp
+﻿using TTestApp.Decomposers;
+
+namespace TTestApp
 {
     public static class Filter
     {

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace TTestApp
+namespace TTestApp.Decomposers
 {
     sealed class ByteDecomposerBCI : ByteDecomposer
     {
@@ -21,7 +21,7 @@ namespace TTestApp
         //Размер очередей для усреднения скользящим окном
         //AC - для сигнала
         //DC - для получения постоянной составляющей
-        private const int _queueForACSize = 6;
+        private const int _queueForACSize = 10;
         private const int _queueForDCSize = 100;
         public ByteDecomposerBCI(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
@@ -127,15 +127,15 @@ namespace TTestApp
                         byteNum = 13; //Таймштамп
                         break;
                     case 13:
-                        tmpValue = 0x10000 * (int)usbport.PortBuf[i];
+                        tmpValue = 0x10000 * usbport.PortBuf[i];
                         byteNum = 14;
                         break;
                     case 14:
-                        tmpValue += 0x100 * (int)usbport.PortBuf[i];
+                        tmpValue += 0x100 * usbport.PortBuf[i];
                         byteNum = 15;
                         break;
                     case 15:// 
-                        tmpValue += (int)usbport.PortBuf[i];
+                        tmpValue += usbport.PortBuf[i];
                         if ((tmpValue & 0x800000) != 0)
                             tmpValue -= 0x1000000;
                         byteNum = 16;
@@ -168,7 +168,7 @@ namespace TTestApp
                         OnDecomposeLineEvent();
                         PacketCounter++;
                         MainIndex++;
-                        MainIndex &= (DataArrSize - 1);
+                        MainIndex &= DataArrSize - 1;
                         break;
                     default:
                         byteNum++;

@@ -1,4 +1,6 @@
-﻿namespace TTestApp
+﻿using TTestApp.Decomposers;
+
+namespace TTestApp
 {
     static class ViewArrayMaker
     {
