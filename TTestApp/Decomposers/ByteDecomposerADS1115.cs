@@ -54,6 +54,11 @@
                         break;
                     case 2:// E1_1
                         tmpValue += 0x100 * usbport.PortBuf[i];
+                        if ((tmpValue & 0x8000) != 0)
+                        {
+                            tmpValue -= 0x10000;
+                        }
+
                         byteNum = 3;
 
                         QueueForDC.Enqueue(tmpValue);
@@ -62,7 +67,7 @@
                             QueueForDC.Dequeue();
                         }
 
-                        Data.RealTimeArray[MainIndex] = tmpValue;
+                        Data.RealTimeArray[MainIndex] = tmpValue - 400;
                         Data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
                         QueueForAC.Enqueue(100 + tmpValue - (int)QueueForDC.Average());

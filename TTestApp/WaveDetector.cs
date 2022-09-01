@@ -23,6 +23,8 @@
         private double CurrentValue;
         public EventHandler<WaveDetectorEventArgs>? OnWaveDetected;
 
+        public int Arrythmia;
+
         public WaveDetector(int samplingFrequency)
         {
             NNPointArr = new Point[NNArrSize];
@@ -36,7 +38,8 @@
             WaveDetectorEventArgs args = new()
             {
                 WaveCount = FiltredPoints.Count,
-                Value = CurrentValue
+                Value = CurrentValue,
+                Arrithmia = Arrythmia
             };
             OnWaveDetected?.Invoke(this, args);
         }
@@ -47,6 +50,7 @@
             NNIndex = 0;
             FiltredPoints.Clear();
             DetectLevel = MinDetectLevel;
+            Arrythmia = 0;
         }
 
         public int GetCurrentPulse()
@@ -129,14 +133,32 @@
         private bool Filter25percent(int NewInterval)
         {
             const int LoLimit = 50;  //ms - 240 уд / мин 
-            const int HiLimit = 400; //ms - 30  уд / мин 
-            if (NewInterval < LoLimit) return false;
-            if (NewInterval > HiLimit) return false;
-            return true;
+            const int HiLimit = 400; //ms - 30  уд / мин
+            const int MinNumberForArrythmia = 4;
+            if (NewInterval < LoLimit) 
+            {
+                return false;
+            }
+            if (NewInterval > HiLimit)
+            {
+                return false;
+            }
+            if (NNPointIndex < MinNumberForArrythmia)
+            {
+                return true;
+            }
             int PrevInt = PrevInterval;
             PrevInterval = NewInterval;
-            if (NewInterval > PrevInt + PrevInt / 2) return false;
-            if (NewInterval < PrevInt - PrevInt / 2) return false;
+            if (NewInterval > PrevInt + PrevInt / 2)
+            {
+                Arrythmia++;
+                return false;
+            }
+            if (NewInterval < PrevInt - PrevInt / 2)
+            {
+                Arrythmia++;
+                return false;
+            }
             return true;
         }
     }

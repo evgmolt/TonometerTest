@@ -45,6 +45,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.label5 = new System.Windows.Forms.Label();
             this.labMeasStatus = new System.Windows.Forms.Label();
             this.labPumpStatus = new System.Windows.Forms.Label();
             this.labDeviceIsOff = new System.Windows.Forms.Label();
@@ -91,7 +92,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labArrythmia = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -320,6 +321,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labArrythmia);
             this.panelBottom.Controls.Add(this.label5);
             this.panelBottom.Controls.Add(this.labMeasStatus);
             this.panelBottom.Controls.Add(this.labPumpStatus);
@@ -342,6 +344,16 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.label5.Location = new System.Drawing.Point(782, 15);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(38, 21);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "test";
             // 
             // labMeasStatus
             // 
@@ -789,15 +801,15 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
-            // label5
+            // labArrythmia
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(782, 15);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(38, 21);
-            this.label5.TabIndex = 20;
-            this.label5.Text = "test";
+            this.labArrythmia.AutoSize = true;
+            this.labArrythmia.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labArrythmia.Location = new System.Drawing.Point(938, 8);
+            this.labArrythmia.Name = "labArrythmia";
+            this.labArrythmia.Size = new System.Drawing.Size(19, 21);
+            this.labArrythmia.TabIndex = 21;
+            this.labArrythmia.Text = "0";
             // 
             // Form1
             // 
@@ -898,5 +910,6 @@
         private Label labPumpStatus;
         private Label labMeasStatus;
         private Label label5;
+        private Label labArrythmia;
     }
 }

@@ -64,7 +64,6 @@ namespace TTestApp
         {
             GigaDevStatus.PumpIsOn = true;
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
-            MaxPressure = 0;
         }
 
         private void butPumpOff_Click(object sender, EventArgs e)
@@ -80,6 +79,7 @@ namespace TTestApp
         }
         private void butStopRecord_Click(object sender, EventArgs e)
         {
+            labArrythmia.Text = Detector.Arrythmia.ToString();
             Detector.OnWaveDetected -= NewWaveDetected;
             Detector = null;
             progressBarRecord.Visible = false;

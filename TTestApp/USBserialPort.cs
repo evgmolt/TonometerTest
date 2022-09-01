@@ -167,8 +167,7 @@ namespace TTestApp
 
         private static string[] GetPortsNames()
         {
-            const string ArduinoSerialString = "Serial";
-            const string ArduinoSerialString0 = "Serial0";
+            const string ArduinoSerialString = "Serial2";
             const string FTDIString = "VCP";
             bool FTDI = true;
 
@@ -195,7 +194,7 @@ namespace TTestApp
                 }
                 else
                 {
-                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0 && portvalues[i].IndexOf(ArduinoSerialString) < 0)
+                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0)
                     {
                         portNames.Add((string)r_port.GetValue(portvalues[i]));
                         Ind++;

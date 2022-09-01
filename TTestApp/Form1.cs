@@ -1,5 +1,4 @@
 ﻿using HRV;
-using System.Drawing.Drawing2D;
 using TTestApp.Commands;
 using TTestApp.Decomposers;
 using TTestApp.Enums;
@@ -31,7 +30,7 @@ namespace TTestApp
         double MaxFoundMoment;
         double MaxTimeAfterMaxFound = 2.5; //sec
 
-        double MaxPressure = 1000000000000;
+//        double MaxPressure = 0;
         double MinPressure = 300;
 
         double CurrentPressure;
@@ -74,7 +73,6 @@ namespace TTestApp
             GigaDevStatus = new GigaDeviceStatus();
         }
 
-
         private void OnCompressionChanged(object? sender, EventArgs e)
         {
             labCompressionRatio.Text = DataProcessing.CompressionRatio.ToString();
@@ -90,7 +88,10 @@ namespace TTestApp
 
         private void OnConnectionOk()
         {
-            CommandsBCI.BCISetup(USBPort);
+            if (Decomposer is ByteDecomposerBCI)
+            {
+                CommandsBCI.BCISetup(USBPort);
+            }
         }
 
         private void OnConnectionFailure(Exception obj)
@@ -113,7 +114,6 @@ namespace TTestApp
             }
             base.WndProc(ref m);
         }
-
         
         private void ReadFile(string fileName)
         {
@@ -149,6 +149,7 @@ namespace TTestApp
                 DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i);
             }
 
+            labArrythmia.Text = WD.Arrythmia.ToString();
             var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); //Используем только интервалы, прошедшие фильтр 25%
             if (ArrayOfWaveIndexesDerivative.Length == 0)
             {
@@ -319,7 +320,6 @@ namespace TTestApp
             {
                 ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DerivArray);
-//                ArrayList.Add(DataA.DCArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
             ArrayList.Clear();
@@ -335,42 +335,12 @@ namespace TTestApp
             hScrollBar1.Visible = hScrollBar1.Maximum > hScrollBar1.Width;
         }
 
-        private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
-        {
-            ViewShift = hScrollBar1.Value;
-            BufPanel.Refresh();
-        }
-
         private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
         {
             Cfg.Maximized = WindowState == FormWindowState.Maximized;
             Cfg.WindowWidth = Width;
             Cfg.WindowHeight = Height;
             TTestConfig.SaveConfig(Cfg);
-        }
-
-        private void radioButton11_CheckedChanged(object? sender, EventArgs e)
-        {
-            RadioButton radioButton = (RadioButton)sender;
-            if (radioButton.Checked)
-            {
-                Compression = false;
-                hScrollBar1.Visible = radioButton11.Checked;
-                BufPanel.Refresh();
-            }
-        }
-
-        private void radioButtonFit_CheckedChanged(object? sender, EventArgs e)
-        {
-            RadioButton radioButton = (RadioButton)sender;
-            if (radioButton.Checked)
-            {
-                Compression = true;
-                hScrollBar1.Visible = !radioButtonFit.Checked;
-                hScrollBar1.Value = 0;
-                MaxValue = 2 * (int)DataA.CompressedArray.Max();
-                BufPanel.Refresh();
-            }
         }
 
         private void Form1_Resize(object? sender, EventArgs e)
@@ -413,21 +383,13 @@ namespace TTestApp
                          DataProcessing.ValueToMmhG(DataA.DCArray[index]).ToString();
         }
 
-        private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
-        {
-            double a = trackBarAmp.Value;
-            ScaleY = Math.Pow(2, a / 2);
-            BufPanel.Refresh();
-        }
-
-
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
             double StopMeasCoeff = 0.7;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
-            string text = e.WaveCount.ToString() + "  " + ((int)e.Value).ToString();
+            string text = e.WaveCount.ToString() + "\t\t" + ((int)e.Value).ToString();
             labNumOfWaves.Text = "Waves detected: " + text;
 
             labPumpStatus.Text = "Pump : " + PumpStatus switch
@@ -460,24 +422,24 @@ namespace TTestApp
                             if (e.Value > (int)PumpingPressureLevel.StartLevel)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumSearch;
-                                File.AppendAllText(fileName, "Search " + text + Environment.NewLine);
+                                File.AppendAllText(fileName, "Search\t\t" + text + Environment.NewLine);
                             }
                             else
                             {
-                                File.AppendAllText(fileName, "Ready  " + text + Environment.NewLine);
+                                File.AppendAllText(fileName, "Ready\t\t" + text + Environment.NewLine);
                             }
                             break;
                         case (int)PumpingStatus.MaximumSearch:
                             MaxDerivValue = Math.Max(MaxDerivValue, e.Value);
                             if (MaxDerivValue > e.Value)
                             {
-                                File.AppendAllText(fileName, "Maximum found  " + text + Environment.NewLine);
+                                File.AppendAllText(fileName, "Maximum found\t\t" + text + Environment.NewLine);
                                 PumpStatus = (int)PumpingStatus.MaximumFound;
                                 MaxFoundMoment = (int)Decomposer.MainIndex;
                             }
                             else
                             {
-                                File.AppendAllText(fileName, "Search " + text + Environment.NewLine);
+                                File.AppendAllText(fileName, "Search\t\t" + text + Environment.NewLine);
                             }
                             break;
                         case (int)PumpingStatus.MaximumFound:
@@ -486,7 +448,7 @@ namespace TTestApp
                             if (timeout) label5.Text = "Timeout";
                             if (e.Value < (int)PumpingPressureLevel.StopLevel || timeout)
                             {
-                                File.AppendAllText(fileName, "Stop pumping  " + text + Environment.NewLine);
+                                File.AppendAllText(fileName, "Stop pumping\t\t" + text + Environment.NewLine);
                                 PumpStatus = (int)PumpingStatus.Ready;
                                 Decomposer.PacketCounter = 0;
                                 Decomposer.MainIndex = 0;
@@ -498,7 +460,7 @@ namespace TTestApp
                             }
                             else
                             {
-                                File.AppendAllText(fileName, "Maximum found  " + text + Environment.NewLine);
+                                File.AppendAllText(fileName, "Maximum found\t\t" + text + Environment.NewLine);
                             }
                             break;
                     }
@@ -516,17 +478,6 @@ namespace TTestApp
                     break;
             }
         }
-
-        private void numUDLeft_ValueChanged(object sender, EventArgs e)
-        {
-            Cfg.CoeffLeft = numUDLeft.Value;
-        }
-
-        private void numUDRight_ValueChanged(object sender, EventArgs e)
-        {
-            Cfg.CoeffRight = numUDRight.Value;
-        }
-
         private void OnPacketReceived(object? sender, PacketEventArgs e)
         {
             uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
@@ -538,7 +489,7 @@ namespace TTestApp
                 labCurrentPressure.Text = "Current : " + 
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() + 
                                            " Deriv : " +
-                                           e.DerivValue.ToString();
+                                           CurrentPressure.ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }
@@ -548,6 +499,5 @@ namespace TTestApp
                 Detector?.Detect(DataA.DerivArray, (int)Decomposer.MainIndex);
             }
         }
-
     }
 }
