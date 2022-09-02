@@ -16,6 +16,7 @@ namespace TTestApp.Decomposers
 
         public override int StopPumpingLevel => 8000;
 
+        public override int ZeroLine => 273500;
 
         private const byte _markerBCI0 = 0xAA;
         private const byte _markerBCI1 = 0x55;
@@ -145,7 +146,7 @@ namespace TTestApp.Decomposers
                             tmpValue -= 0x1000000;
                         byteNum = 16;
 
-                        tmpValue -= 273500;
+                        tmpValue -= ZeroLine;
 
                         Data.RealTimeArray[MainIndex] = tmpValue;
                         QueueForDC.Enqueue(tmpValue);

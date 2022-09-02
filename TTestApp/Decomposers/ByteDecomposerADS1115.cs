@@ -8,6 +8,7 @@
         public override int MaxNoDataCounter => 10;
         public override int StartSearchMaxLevel => throw new NotImplementedException();
         public override int StopPumpingLevel => throw new NotImplementedException();
+        public override int ZeroLine => 400;
 
         private const int _queueForACSize = 6;
         private const int _queueForDCSize = 60;
@@ -67,7 +68,7 @@
                             QueueForDC.Dequeue();
                         }
 
-                        Data.RealTimeArray[MainIndex] = tmpValue - 400;
+                        Data.RealTimeArray[MainIndex] = tmpValue - ZeroLine;
                         Data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
                         QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());
