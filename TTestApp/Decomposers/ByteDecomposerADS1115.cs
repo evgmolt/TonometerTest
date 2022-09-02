@@ -7,6 +7,10 @@
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
 
+        public override int StartSearchMaxLevel => throw new NotImplementedException();
+
+        public override int StopPumpingLevel => throw new NotImplementedException();
+
         private const int _queueForACSize = 6;
         private const int _queueForDCSize = 60;
 

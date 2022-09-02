@@ -81,7 +81,7 @@ namespace TTestApp
         private void InitArraysForFlow()
         {
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
-            Decomposer = new ByteDecomposerBCI(DataA);
+            Decomposer = new ByteDecomposerADS1115(DataA);
             Decomposer.OnDecomposePacketEvent += OnPacketReceived;
             Painter = new CurvesPainter(BufPanel, Decomposer);
         }
@@ -269,7 +269,7 @@ namespace TTestApp
                 envelopeMmhGArray[i] = DataProcessing.ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
 
-            int UpsampleFactor = 10;
+/*            int UpsampleFactor = 10;
             int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
             float[] xs = new float[InterpolatedLength];
             for (int i = 0; i < InterpolatedLength; i++)
@@ -284,7 +284,7 @@ namespace TTestApp
             }
             float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
 
-            DataProcessing.SaveArray("env_spline.txt", ys);
+            DataProcessing.SaveArray("env_spline.txt", ys);*/
 
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
@@ -419,7 +419,7 @@ namespace TTestApp
                     switch (PumpStatus)
                     {
                         case (int)PumpingStatus.Ready:
-                            if (e.Value > (int)PumpingPressureLevel.StartLevel)
+                            if (e.Value > Decomposer.StartSearchMaxLevel)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumSearch;
                                 File.AppendAllText(fileName, "Search\t\t" + text + Environment.NewLine);
@@ -446,7 +446,7 @@ namespace TTestApp
                             int Index = (int)Decomposer.MainIndex;
                             bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
                             if (timeout) label5.Text = "Timeout";
-                            if (e.Value < (int)PumpingPressureLevel.StopLevel || timeout)
+                            if (e.Value < Decomposer.StopPumpingLevel || timeout)
                             {
                                 File.AppendAllText(fileName, "Stop pumping\t\t" + text + Environment.NewLine);
                                 PumpStatus = (int)PumpingStatus.Ready;

@@ -169,7 +169,8 @@ namespace TTestApp
         {
             const string ArduinoSerialString = "Serial2";
             const string FTDIString = "VCP";
-            bool FTDI = true;
+            const string STMString = "VCP0";
+            bool FTDI = false;
 
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
@@ -186,7 +187,7 @@ namespace TTestApp
             {
                 if (FTDI)
                 {
-                    if (portvalues[i].IndexOf(FTDIString) >= 0)
+                    if (portvalues[i].IndexOf(STMString) >= 0)
                     {
                         portNames.Add((string)r_port.GetValue(portvalues[i]));
                         Ind++;
@@ -194,7 +195,7 @@ namespace TTestApp
                 }
                 else
                 {
-                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0)
+                    if (portvalues[i].IndexOf(STMString) >= 0)
                     {
                         portNames.Add((string)r_port.GetValue(portvalues[i]));
                         Ind++;

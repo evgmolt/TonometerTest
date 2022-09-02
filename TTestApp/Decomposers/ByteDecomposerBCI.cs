@@ -12,6 +12,11 @@ namespace TTestApp.Decomposers
 
         public override int MaxNoDataCounter => 100;
 
+        public override int StartSearchMaxLevel => 3000;
+
+        public override int StopPumpingLevel => 8000;
+
+
         private const byte _markerBCI0 = 0xAA;
         private const byte _markerBCI1 = 0x55;
         private const byte _markerBCI2 = 0x66;

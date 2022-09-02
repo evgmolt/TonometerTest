@@ -5,7 +5,8 @@ namespace TTestApp.Decomposers
     abstract class ByteDecomposer
     {
         public const int DataArrSize = 0x100000;
-
+        public abstract int StartSearchMaxLevel { get; }
+        public abstract int StopPumpingLevel { get; }
         public abstract int SamplingFrequency { get; }
         public abstract int BaudRate { get; }
         public abstract int BytesInPacket { get; } // Размер посылки

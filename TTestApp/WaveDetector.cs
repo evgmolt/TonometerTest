@@ -143,12 +143,12 @@
             {
                 return false;
             }
+            int PrevInt = PrevInterval;
+            PrevInterval = NewInterval;
             if (NNPointIndex < MinNumberForArrythmia)
             {
                 return true;
             }
-            int PrevInt = PrevInterval;
-            PrevInterval = NewInterval;
             if (NewInterval > PrevInt + PrevInt / 2)
             {
                 Arrythmia++;
