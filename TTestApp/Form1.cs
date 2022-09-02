@@ -19,7 +19,8 @@ namespace TTestApp
         string CurrentFile;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
-        int MaxValue = 200000;
+        int MaxValue = 200000; // Для BCI
+//        int MaxValue = 2000;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -320,9 +321,10 @@ namespace TTestApp
             {
                 ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DerivArray);
+                ArrayList.Add(DataA.DCArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
-            ArrayList.Clear();
+//            ArrayList.Clear();
         }
 
         private void UpdateScrollBar(int size)

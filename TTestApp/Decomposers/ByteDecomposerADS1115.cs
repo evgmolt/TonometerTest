@@ -6,9 +6,7 @@
         public override int BaudRate => 115200;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
-
         public override int StartSearchMaxLevel => throw new NotImplementedException();
-
         public override int StopPumpingLevel => throw new NotImplementedException();
 
         private const int _queueForACSize = 6;
@@ -39,7 +37,7 @@
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Save file stream error. " + ex.Message);
+                    MessageBox.Show("Save file stream error" + ex.Message);
                 }
             }
             for (int i = 0; i < bytes; i++)
@@ -52,18 +50,16 @@
                             byteNum = 1;
                         }
                         break;
-                    case 1:// pressure1_0
+                    case 1:
                         tmpValue = usbport.PortBuf[i];
                         byteNum = 2;
                         break;
-                    case 2:// E1_1
+                    case 2:
                         tmpValue += 0x100 * usbport.PortBuf[i];
                         if ((tmpValue & 0x8000) != 0)
                         {
                             tmpValue -= 0x10000;
                         }
-
-                        byteNum = 3;
 
                         QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueForDCSize)
@@ -74,7 +70,7 @@
                         Data.RealTimeArray[MainIndex] = tmpValue - 400;
                         Data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
-                        QueueForAC.Enqueue(100 + tmpValue - (int)QueueForDC.Average());
+                        QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
                         {
                             QueueForAC.Dequeue();
