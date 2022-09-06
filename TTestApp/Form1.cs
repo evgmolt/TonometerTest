@@ -19,8 +19,8 @@ namespace TTestApp
         string CurrentFile;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
-        int MaxValue = 200000; // Для BCI
-//        int MaxValue = 2000;   // Для ADS1115
+//        int MaxValue = 200000; // Для BCI
+        int MaxValue = 400;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -31,7 +31,7 @@ namespace TTestApp
         double MaxFoundMoment;
         double MaxTimeAfterMaxFound = 2.5; //sec
 
-//        double MaxPressure = 0;
+        double MaxPressure = 0;
         double MinPressure = 300;
 
         double CurrentPressure;
@@ -141,7 +141,7 @@ namespace TTestApp
         private void PrepareData()
         {
             DataA.CountViewArrays(BufPanel);
-
+        
             //Детектор - обнаружение пульсовых волн по производной
             WaveDetector WD = new(Decomposer.SamplingFrequency);
             WD.Reset();
@@ -321,7 +321,7 @@ namespace TTestApp
             {
                 ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DerivArray);
-                ArrayList.Add(DataA.DCArray);
+                ArrayList.Add(DataA.DebugArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
 //            ArrayList.Clear();
@@ -391,7 +391,7 @@ namespace TTestApp
             double StopMeasCoeff = 0.7;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
-            string text = e.WaveCount.ToString() + "\t\t" + ((int)e.Value).ToString();
+            string text = e.WaveCount.ToString() + " " + ((int)e.Value).ToString();
             labNumOfWaves.Text = "Waves detected: " + text;
 
             labPumpStatus.Text = "Pump : " + PumpStatus switch
@@ -484,14 +484,15 @@ namespace TTestApp
         {
             uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             CurrentPressure = e.RealTimeValue;// DataA.RealTimeArray[currentIndex];
-//            MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
+            MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (Decomposer.MainIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " + 
-                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString() + 
+                labCurrentPressure.Text = "Current : " +
+                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
                                            " Deriv : " +
-                                           CurrentPressure.ToString();
+                                           //                                           MaxPressure.ToString();
+                                           DataA.DerivArray[currentIndex].ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }

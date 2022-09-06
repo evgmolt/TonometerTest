@@ -2,15 +2,15 @@
 {
     internal class ByteDecomposerADS1115 : ByteDecomposer
     {
-        public override int SamplingFrequency => 200;
+        public override int SamplingFrequency => 250;
         public override int BaudRate => 115200;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
-        public override int StartSearchMaxLevel => throw new NotImplementedException();
-        public override int StopPumpingLevel => throw new NotImplementedException();
-        public override int ZeroLine => 400;
+        public override int StartSearchMaxLevel => 10;
+        public override int StopPumpingLevel => 12;
+        public override int ZeroLine => 5;
 
-        private const int _queueForACSize = 6;
+        private const int _queueForACSize = 60;
         private const int _queueForDCSize = 60;
 
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)

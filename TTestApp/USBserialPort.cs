@@ -195,7 +195,7 @@ namespace TTestApp
                 }
                 else
                 {
-                    if (portvalues[i].IndexOf(STMString) >= 0)
+                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0)
                     {
                         portNames.Add((string)r_port.GetValue(portvalues[i]));
                         Ind++;

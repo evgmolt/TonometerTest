@@ -3,8 +3,8 @@
     class WaveDetector
     {
         private int CurrentInterval;
-        public double DetectLevel = 2000;
-        private const double MinDetectLevel = 1000;
+        public double DetectLevel = 5;
+        private const double MinDetectLevel = 5;
         private int LockInterval = 60;
         private const int NoWaveInterval1 = 600;
         private const int NoWaveInterval2 = 1000;

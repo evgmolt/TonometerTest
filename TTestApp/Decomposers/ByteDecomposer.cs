@@ -66,6 +66,7 @@ namespace TTestApp.Decomposers
             return Decompos(usbport, null, saveFileStream);
         }
 
-        public abstract int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream);//Возвращает число прочитанных и обработанных байт
+        public abstract int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream);
+        //Возвращает число прочитанных и обработанных байт
     }
 }

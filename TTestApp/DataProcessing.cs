@@ -9,9 +9,9 @@
 
         public static int ValueToMmhG(double value)
         {
-            double zero = 465;
-            double pressure = 142;
-            double val = 2503287;
+            double zero = 5;
+            double pressure = 196.6666667;
+            double val = 5471;
             return (int)((value - zero) * pressure / (val - zero));
         }
 
