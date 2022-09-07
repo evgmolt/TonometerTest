@@ -141,7 +141,7 @@ namespace TTestApp
         private void PrepareData()
         {
             DataA.CountViewArrays(BufPanel);
-        
+//            return;
             //Детектор - обнаружение пульсовых волн по производной
             WaveDetector WD = new(Decomposer.SamplingFrequency);
             WD.Reset();
@@ -499,7 +499,7 @@ namespace TTestApp
             if (Decomposer.RecordStarted)
             {
                 labRecordSize.Text = "Record size : " + (Decomposer.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
-                Detector?.Detect(DataA.DerivArray, (int)Decomposer.MainIndex);
+                DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
         }
     }

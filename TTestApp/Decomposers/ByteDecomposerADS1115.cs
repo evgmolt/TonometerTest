@@ -6,11 +6,11 @@
         public override int BaudRate => 115200;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
-        public override int StartSearchMaxLevel => 10;
-        public override int StopPumpingLevel => 12;
+        public override int StartSearchMaxLevel => 20;
+        public override int StopPumpingLevel => 30;
         public override int ZeroLine => 5;
 
-        private const int _queueForACSize = 60;
+        private const int _queueForACSize = 6;
         private const int _queueForDCSize = 60;
 
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
@@ -62,21 +62,26 @@
                             tmpValue -= 0x10000;
                         }
 
+                        //Очередь для выделения постоянной составляющей
                         QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueForDCSize)
                         {
                             QueueForDC.Dequeue();
                         }
 
+                        //Массив исходных данный - смещение
                         Data.RealTimeArray[MainIndex] = tmpValue - ZeroLine;
+                        //Массив постоянной составляющей
                         Data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
+                        //Очередь - переменная составляющая
                         QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
                         {
                             QueueForAC.Dequeue();
                         }
 
+                        //Массив переменной составляющей
                         Data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
 
                         byteNum = 0;

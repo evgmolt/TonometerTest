@@ -56,7 +56,7 @@ namespace TTestApp.Decomposers
                     DCValue = Data.DCArray[MainIndex],
                     RealTimeValue = Data.RealTimeArray[MainIndex],
                     PressureViewValue = Data.PressureViewArray[MainIndex],
-                    DerivValue = Data.DerivArray[MainIndex],
+                    PacketCounter = PacketCounter,
                     MainIndex = MainIndex
                 });
         }
