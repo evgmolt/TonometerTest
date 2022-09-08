@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.tbName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.numUpDownSYS = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
@@ -37,20 +37,30 @@
             this.label4 = new System.Windows.Forms.Label();
             this.numUpDownPULSE = new System.Windows.Forms.NumericUpDown();
             this.gbSex = new System.Windows.Forms.GroupBox();
-            this.rbMale = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.rbMale = new System.Windows.Forms.RadioButton();
+            this.label5 = new System.Windows.Forms.Label();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.panelResult = new System.Windows.Forms.Panel();
+            this.butOk = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.cbArrythmia = new System.Windows.Forms.CheckBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tbComment = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownSYS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownDIA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownPULSE)).BeginInit();
             this.gbSex.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            this.panelResult.SuspendLayout();
             this.SuspendLayout();
             // 
-            // textBox1
+            // tbName
             // 
-            this.textBox1.Location = new System.Drawing.Point(92, 25);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(100, 23);
-            this.textBox1.TabIndex = 0;
+            this.tbName.Location = new System.Drawing.Point(96, 25);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(100, 23);
+            this.tbName.TabIndex = 0;
             // 
             // label1
             // 
@@ -63,7 +73,7 @@
             // 
             // numUpDownSYS
             // 
-            this.numUpDownSYS.Location = new System.Drawing.Point(92, 245);
+            this.numUpDownSYS.Location = new System.Drawing.Point(83, 38);
             this.numUpDownSYS.Maximum = new decimal(new int[] {
             250,
             0,
@@ -86,7 +96,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(21, 247);
+            this.label2.Location = new System.Drawing.Point(8, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 15);
             this.label2.TabIndex = 3;
@@ -95,7 +105,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(21, 300);
+            this.label3.Location = new System.Drawing.Point(9, 93);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(26, 15);
             this.label3.TabIndex = 4;
@@ -103,7 +113,7 @@
             // 
             // numUpDownDIA
             // 
-            this.numUpDownDIA.Location = new System.Drawing.Point(92, 298);
+            this.numUpDownDIA.Location = new System.Drawing.Point(83, 91);
             this.numUpDownDIA.Maximum = new decimal(new int[] {
             150,
             0,
@@ -126,7 +136,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(20, 359);
+            this.label4.Location = new System.Drawing.Point(9, 152);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(40, 15);
             this.label4.TabIndex = 6;
@@ -134,7 +144,7 @@
             // 
             // numUpDownPULSE
             // 
-            this.numUpDownPULSE.Location = new System.Drawing.Point(92, 357);
+            this.numUpDownPULSE.Location = new System.Drawing.Point(83, 150);
             this.numUpDownPULSE.Maximum = new decimal(new int[] {
             150,
             0,
@@ -165,9 +175,20 @@
             this.gbSex.TabStop = false;
             this.gbSex.Text = "Sex";
             // 
+            // radioButton2
+            // 
+            this.radioButton2.AutoSize = true;
+            this.radioButton2.Location = new System.Drawing.Point(66, 17);
+            this.radioButton2.Name = "radioButton2";
+            this.radioButton2.Size = new System.Drawing.Size(63, 19);
+            this.radioButton2.TabIndex = 1;
+            this.radioButton2.Text = "Female";
+            this.radioButton2.UseVisualStyleBackColor = true;
+            // 
             // rbMale
             // 
             this.rbMale.AutoSize = true;
+            this.rbMale.Checked = true;
             this.rbMale.Location = new System.Drawing.Point(9, 17);
             this.rbMale.Name = "rbMale";
             this.rbMale.Size = new System.Drawing.Size(51, 19);
@@ -176,38 +197,121 @@
             this.rbMale.Text = "Male";
             this.rbMale.UseVisualStyleBackColor = true;
             // 
-            // radioButton2
+            // label5
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(66, 17);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(63, 19);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "Female";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(22, 136);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(28, 15);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Age";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(96, 134);
+            this.numericUpDown1.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(100, 23);
+            this.numericUpDown1.TabIndex = 10;
+            this.numericUpDown1.Value = new decimal(new int[] {
+            30,
+            0,
+            0,
+            0});
+            // 
+            // panelResult
+            // 
+            this.panelResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelResult.Controls.Add(this.cbArrythmia);
+            this.panelResult.Controls.Add(this.numUpDownSYS);
+            this.panelResult.Controls.Add(this.label2);
+            this.panelResult.Controls.Add(this.label3);
+            this.panelResult.Controls.Add(this.numUpDownDIA);
+            this.panelResult.Controls.Add(this.numUpDownPULSE);
+            this.panelResult.Controls.Add(this.label4);
+            this.panelResult.Location = new System.Drawing.Point(12, 231);
+            this.panelResult.Name = "panelResult";
+            this.panelResult.Size = new System.Drawing.Size(200, 257);
+            this.panelResult.TabIndex = 11;
+            // 
+            // butOk
+            // 
+            this.butOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.butOk.Location = new System.Drawing.Point(12, 513);
+            this.butOk.Name = "butOk";
+            this.butOk.Size = new System.Drawing.Size(75, 23);
+            this.butOk.TabIndex = 12;
+            this.butOk.Text = "Ok";
+            this.butOk.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.button1.Location = new System.Drawing.Point(137, 513);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Cancel";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // cbArrythmia
+            // 
+            this.cbArrythmia.AutoSize = true;
+            this.cbArrythmia.Location = new System.Drawing.Point(17, 205);
+            this.cbArrythmia.Name = "cbArrythmia";
+            this.cbArrythmia.Size = new System.Drawing.Size(86, 19);
+            this.cbArrythmia.TabIndex = 8;
+            this.cbArrythmia.Text = "Arrhythmia";
+            this.cbArrythmia.UseVisualStyleBackColor = true;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(22, 186);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(61, 15);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Comment";
+            // 
+            // tbComment
+            // 
+            this.tbComment.Location = new System.Drawing.Point(96, 183);
+            this.tbComment.Name = "tbComment";
+            this.tbComment.Size = new System.Drawing.Size(100, 23);
+            this.tbComment.TabIndex = 15;
             // 
             // FormPatientData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(228, 575);
+            this.Controls.Add(this.tbComment);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.butOk);
+            this.Controls.Add(this.panelResult);
+            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.gbSex);
-            this.Controls.Add(this.numUpDownPULSE);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.numUpDownDIA);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.numUpDownSYS);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.tbName);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FormPatientData";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "New patient";
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownSYS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownDIA)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownPULSE)).EndInit();
             this.gbSex.ResumeLayout(false);
             this.gbSex.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            this.panelResult.ResumeLayout(false);
+            this.panelResult.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -215,7 +319,7 @@
 
         #endregion
 
-        private TextBox textBox1;
+        private TextBox tbName;
         private Label label1;
         private NumericUpDown numUpDownSYS;
         private Label label2;
@@ -226,5 +330,13 @@
         private GroupBox gbSex;
         private RadioButton radioButton2;
         private RadioButton rbMale;
+        private Label label5;
+        private NumericUpDown numericUpDown1;
+        private Panel panelResult;
+        private Button butOk;
+        private Button button1;
+        private CheckBox cbArrythmia;
+        private Label label6;
+        private TextBox tbComment;
     }
 }

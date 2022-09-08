@@ -17,6 +17,7 @@ namespace TTestApp
         TTestConfig Cfg;
         StreamWriter TextWriter;
         string CurrentFile;
+        Patient CurrentPatient;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
 //        int MaxValue = 200000; // Для BCI

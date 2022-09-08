@@ -45,6 +45,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labArrythmia = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.labMeasStatus = new System.Windows.Forms.Label();
             this.labPumpStatus = new System.Windows.Forms.Label();
@@ -92,7 +93,6 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.labArrythmia = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -158,6 +158,7 @@
             this.butRefresh.TabIndex = 13;
             this.butRefresh.Text = "Refresh";
             this.butRefresh.UseVisualStyleBackColor = true;
+            this.butRefresh.Visible = false;
             this.butRefresh.Click += new System.EventHandler(this.butRefresh_Click);
             // 
             // label3
@@ -168,6 +169,7 @@
             this.label3.Size = new System.Drawing.Size(35, 15);
             this.label3.TabIndex = 12;
             this.label3.Text = "Right";
+            this.label3.Visible = false;
             // 
             // numUDRight
             // 
@@ -196,6 +198,7 @@
             0,
             0,
             131072});
+            this.numUDRight.Visible = false;
             this.numUDRight.ValueChanged += new System.EventHandler(this.numUDRight_ValueChanged);
             // 
             // panelView
@@ -207,6 +210,7 @@
             this.panelView.Name = "panelView";
             this.panelView.Size = new System.Drawing.Size(89, 68);
             this.panelView.TabIndex = 10;
+            this.panelView.Visible = false;
             // 
             // radioButton11
             // 
@@ -259,6 +263,7 @@
             this.label2.Size = new System.Drawing.Size(27, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "Left";
+            this.label2.Visible = false;
             // 
             // numUDLeft
             // 
@@ -287,6 +292,7 @@
             0,
             0,
             131072});
+            this.numUDLeft.Visible = false;
             this.numUDLeft.ValueChanged += new System.EventHandler(this.numUDLeft_ValueChanged);
             // 
             // butOpenFile
@@ -345,6 +351,16 @@
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
             // 
+            // labArrythmia
+            // 
+            this.labArrythmia.AutoSize = true;
+            this.labArrythmia.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labArrythmia.Location = new System.Drawing.Point(938, 8);
+            this.labArrythmia.Name = "labArrythmia";
+            this.labArrythmia.Size = new System.Drawing.Size(19, 21);
+            this.labArrythmia.TabIndex = 21;
+            this.labArrythmia.Text = "0";
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -354,6 +370,7 @@
             this.label5.Size = new System.Drawing.Size(38, 21);
             this.label5.TabIndex = 20;
             this.label5.Text = "test";
+            this.label5.Visible = false;
             // 
             // labMeasStatus
             // 
@@ -364,6 +381,7 @@
             this.labMeasStatus.Size = new System.Drawing.Size(170, 21);
             this.labMeasStatus.TabIndex = 19;
             this.labMeasStatus.Text = "Measurement: Ready";
+            this.labMeasStatus.Visible = false;
             // 
             // labPumpStatus
             // 
@@ -374,6 +392,7 @@
             this.labPumpStatus.Size = new System.Drawing.Size(110, 21);
             this.labPumpStatus.TabIndex = 18;
             this.labPumpStatus.Text = "Pump: Ready";
+            this.labPumpStatus.Visible = false;
             // 
             // labDeviceIsOff
             // 
@@ -395,6 +414,7 @@
             this.labNumOfWaves.Size = new System.Drawing.Size(142, 21);
             this.labNumOfWaves.TabIndex = 15;
             this.labNumOfWaves.Text = "Waves detected : ";
+            this.labNumOfWaves.Visible = false;
             // 
             // labY2
             // 
@@ -404,6 +424,7 @@
             this.labY2.Size = new System.Drawing.Size(51, 15);
             this.labY2.TabIndex = 14;
             this.labY2.Text = "DCArray";
+            this.labY2.Visible = false;
             // 
             // labY1
             // 
@@ -413,6 +434,7 @@
             this.labY1.Size = new System.Drawing.Size(62, 15);
             this.labY1.TabIndex = 13;
             this.labY1.Text = "DerivArray";
+            this.labY1.Visible = false;
             // 
             // labY0
             // 
@@ -422,6 +444,7 @@
             this.labY0.Size = new System.Drawing.Size(110, 15);
             this.labY0.TabIndex = 12;
             this.labY0.Text = "PressureViewArray :";
+            this.labY0.Visible = false;
             // 
             // labMaxSize
             // 
@@ -431,6 +454,7 @@
             this.labMaxSize.Size = new System.Drawing.Size(38, 15);
             this.labMaxSize.TabIndex = 11;
             this.labMaxSize.Text = "label4";
+            this.labMaxSize.Visible = false;
             // 
             // labPulse
             // 
@@ -500,6 +524,7 @@
             this.labCompressionRatio.Size = new System.Drawing.Size(92, 15);
             this.labCompressionRatio.TabIndex = 3;
             this.labCompressionRatio.Text = "Compression : 1";
+            this.labCompressionRatio.Visible = false;
             // 
             // labelX
             // 
@@ -509,6 +534,7 @@
             this.labelX.Size = new System.Drawing.Size(35, 15);
             this.labelX.TabIndex = 2;
             this.labelX.Text = "X : 0  ";
+            this.labelX.Visible = false;
             // 
             // panel2
             // 
@@ -619,6 +645,7 @@
             this.controlPanel.Name = "controlPanel";
             this.controlPanel.Size = new System.Drawing.Size(1012, 93);
             this.controlPanel.TabIndex = 17;
+            this.controlPanel.Visible = false;
             // 
             // butValve1PWM
             // 
@@ -729,6 +756,7 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(224, 97);
             this.panel5.TabIndex = 8;
+            this.panel5.Visible = false;
             // 
             // labMeasInProgress
             // 
@@ -800,16 +828,6 @@
             // 
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            // 
-            // labArrythmia
-            // 
-            this.labArrythmia.AutoSize = true;
-            this.labArrythmia.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labArrythmia.Location = new System.Drawing.Point(938, 8);
-            this.labArrythmia.Name = "labArrythmia";
-            this.labArrythmia.Size = new System.Drawing.Size(19, 21);
-            this.labArrythmia.TabIndex = 21;
-            this.labArrythmia.Text = "0";
             // 
             // Form1
             // 
