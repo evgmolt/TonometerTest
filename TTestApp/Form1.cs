@@ -34,7 +34,6 @@ namespace TTestApp
         double MaxPressure = 0;
         double MinPressure = 300;
 
-        double CurrentPressure;
         double MaxDerivValue;
 
         GigaDeviceStatus GigaDevStatus;
@@ -291,9 +290,9 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
-//            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-//            formHRV.ShowDialog();
-//            formHRV.Dispose();
+            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+            formHRV.ShowDialog();
+            formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -482,11 +481,11 @@ namespace TTestApp
         }
         private void OnPacketReceived(object? sender, PacketEventArgs e)
         {
-            uint currentIndex = (Decomposer.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            CurrentPressure = e.RealTimeValue;// DataA.RealTimeArray[currentIndex];
+            uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
+            double CurrentPressure = e.RealTimeValue;
             MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
-            if (Decomposer.MainIndex > 0)
+            if (currentIndex > 0)
             {
                 labCurrentPressure.Text = "Current : " +
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
@@ -498,7 +497,7 @@ namespace TTestApp
             }
             if (Decomposer.RecordStarted)
             {
-                labRecordSize.Text = "Record size : " + (Decomposer.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
+                labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
         }

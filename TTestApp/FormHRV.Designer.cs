@@ -54,7 +54,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 334);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 596);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panelRythmogram
@@ -63,7 +63,7 @@
             this.panelRythmogram.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRythmogram.Location = new System.Drawing.Point(108, 3);
             this.panelRythmogram.Name = "panelRythmogram";
-            this.panelRythmogram.Size = new System.Drawing.Size(689, 161);
+            this.panelRythmogram.Size = new System.Drawing.Size(689, 292);
             this.panelRythmogram.TabIndex = 0;
             this.panelRythmogram.Paint += new System.Windows.Forms.PaintEventHandler(this.panelRythmogram_Paint);
             // 
@@ -71,9 +71,9 @@
             // 
             this.panelHisto.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelHisto.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelHisto.Location = new System.Drawing.Point(108, 170);
+            this.panelHisto.Location = new System.Drawing.Point(108, 301);
             this.panelHisto.Name = "panelHisto";
-            this.panelHisto.Size = new System.Drawing.Size(689, 161);
+            this.panelHisto.Size = new System.Drawing.Size(689, 292);
             this.panelHisto.TabIndex = 1;
             this.panelHisto.Paint += new System.Windows.Forms.PaintEventHandler(this.panelHisto_Paint);
             // 
@@ -83,9 +83,9 @@
             this.panelHRVData.Controls.Add(this.labAMo);
             this.panelHRVData.Controls.Add(this.labSDNN);
             this.panelHRVData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelHRVData.Location = new System.Drawing.Point(3, 170);
+            this.panelHRVData.Location = new System.Drawing.Point(3, 301);
             this.panelHRVData.Name = "panelHRVData";
-            this.panelHRVData.Size = new System.Drawing.Size(99, 161);
+            this.panelHRVData.Size = new System.Drawing.Size(99, 292);
             this.panelHRVData.TabIndex = 2;
             // 
             // labAMo
@@ -112,14 +112,14 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(99, 161);
+            this.panel1.Size = new System.Drawing.Size(99, 292);
             this.panel1.TabIndex = 3;
             // 
             // FormHRV
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 334);
+            this.ClientSize = new System.Drawing.Size(800, 596);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "FormHRV";
             this.Text = "Heart rate variability";
