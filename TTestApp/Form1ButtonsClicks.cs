@@ -99,12 +99,12 @@ namespace TTestApp
             if (formPatientData.ShowDialog() == DialogResult.OK)
             {
                 CurrentPatient = formPatientData.patient;
+                SaveFile();
             }
 
             PrepareData();
             BufPanel.Refresh();
             controlPanel.Refresh();
-            //            ReadFile(Cfg.DataDir + TmpDataFile);
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)
@@ -147,23 +147,19 @@ namespace TTestApp
             controlPanel.Refresh();
         }
 
-        private void butSaveFile_Click(object sender, EventArgs e)
+        private void SaveFile()
         {
-            saveFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            Cfg.DataFileNum++;
+            TTestConfig.SaveConfig(Cfg);
+            CurrentFile = Cfg.Prefix + Cfg.DataFileNum.ToString().PadLeft(5, '0') + ".txt";
+            if (File.Exists(Cfg.DataDir + CurrentFile))
             {
-                Cfg.DataDir = Path.GetDirectoryName(saveFileDialog1.FileName) + @"\";
-                TTestConfig.SaveConfig(Cfg);
-                CurrentFile = Path.GetFileName(saveFileDialog1.FileName);
-                if (File.Exists(Cfg.DataDir + CurrentFile))
-                {
-                    File.Delete(Cfg.DataDir + CurrentFile);
-                }
-                var DataStrings = File.ReadAllLines(saveFileDialog1.InitialDirectory + TmpDataFile);
-                File.WriteAllLines(Cfg.DataDir + CurrentFile, CurrentPatient.ToArray());
-                File.AppendAllLines(Cfg.DataDir + CurrentFile, DataStrings);
-                Text = "File : " + CurrentFile;
+                File.Delete(Cfg.DataDir + CurrentFile);
             }
+            var DataStrings = File.ReadAllLines(Cfg.DataDir + TmpDataFile);
+            File.WriteAllLines(Cfg.DataDir + CurrentFile, CurrentPatient.ToArray());
+            File.AppendAllLines(Cfg.DataDir + CurrentFile, DataStrings);
+            Text = "File : " + CurrentFile;
         }
 
         private void butOpenFile_Click(object sender, EventArgs e)

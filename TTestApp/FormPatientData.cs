@@ -13,7 +13,6 @@
             else
             {
                 patient = newPatient;
-                tbName.Text = patient.Name;
                 rbMale.Checked = patient.Sex;
                 numUpDownAge.Value = patient.Age;
                 rbFemale.Checked = !patient.Sex;
@@ -39,7 +38,6 @@
 
         private void butOk_Click(object sender, EventArgs e)
         {
-            patient.Name = tbName.Text;
             patient.Sex = rbMale.Checked;
             patient.Age = (int)numUpDownAge.Value;
             patient.Comment = tbComment.Text;

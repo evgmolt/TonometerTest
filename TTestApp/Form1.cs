@@ -287,13 +287,13 @@ namespace TTestApp
 
             DataProcessing.SaveArray("env_spline.txt", ys);*/
 
-            DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
+//            DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
-            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-            formHRV.ShowDialog();
-            formHRV.Dispose();
+//            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+//            formHRV.ShowDialog();
+//            formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)

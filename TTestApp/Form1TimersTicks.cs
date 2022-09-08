@@ -26,7 +26,6 @@ namespace TTestApp
             }
             butStartRecord.Enabled = !ViewMode && !Decomposer.RecordStarted!;
             butStopRecord.Enabled = Decomposer.RecordStarted;
-            butSaveFile.Enabled = ViewMode && Decomposer.PacketCounter != 0;
             butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
             panelView.Enabled = ViewMode;
             //            labDeviceIsOff.Visible = !decomposer.DeviceTurnedOn;

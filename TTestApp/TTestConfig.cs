@@ -6,6 +6,8 @@ namespace TTestApp
     {
         private const string _configFileName = "ttconfig.json";
         public string DataDir { get; set; }
+        public int DataFileNum { get; set; }
+        public string Prefix { get; set; }
         public bool Maximized { get; set; }
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
@@ -16,6 +18,8 @@ namespace TTestApp
         public TTestConfig()
         {
             DataDir = Directory.GetCurrentDirectory() + @"\Data\";
+            DataFileNum = 0;
+            Prefix = "A";
             Maximized = false;
             WindowWidth = 800;
             WindowHeight = 500;

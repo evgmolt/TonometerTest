@@ -67,7 +67,6 @@
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel3 = new System.Windows.Forms.Panel();
             this.progressBarRecord = new System.Windows.Forms.ProgressBar();
-            this.butSaveFile = new System.Windows.Forms.Button();
             this.labRecordSize = new System.Windows.Forms.Label();
             this.butStopRecord = new System.Windows.Forms.Button();
             this.butStartRecord = new System.Windows.Forms.Button();
@@ -92,7 +91,6 @@
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -299,6 +297,7 @@
             this.butOpenFile.TabIndex = 0;
             this.butOpenFile.Text = "Open file";
             this.butOpenFile.UseVisualStyleBackColor = true;
+            this.butOpenFile.Visible = false;
             this.butOpenFile.Click += new System.EventHandler(this.butOpenFile_Click);
             // 
             // panelGraph
@@ -554,7 +553,6 @@
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel3.Controls.Add(this.progressBarRecord);
-            this.panel3.Controls.Add(this.butSaveFile);
             this.panel3.Controls.Add(this.labRecordSize);
             this.panel3.Controls.Add(this.butStopRecord);
             this.panel3.Controls.Add(this.butStartRecord);
@@ -572,16 +570,6 @@
             this.progressBarRecord.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBarRecord.TabIndex = 4;
             this.progressBarRecord.Visible = false;
-            // 
-            // butSaveFile
-            // 
-            this.butSaveFile.Location = new System.Drawing.Point(22, 113);
-            this.butSaveFile.Name = "butSaveFile";
-            this.butSaveFile.Size = new System.Drawing.Size(85, 23);
-            this.butSaveFile.TabIndex = 3;
-            this.butSaveFile.Text = "Save file";
-            this.butSaveFile.UseVisualStyleBackColor = true;
-            this.butSaveFile.Click += new System.EventHandler(this.butSaveFile_Click);
             // 
             // labRecordSize
             // 
@@ -819,11 +807,6 @@
             this.timerPaint.Enabled = true;
             this.timerPaint.Tick += new System.EventHandler(this.timerPaint_Tick);
             // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -886,8 +869,6 @@
         private Label labCurrentPressure;
         private Button butFlow;
         private Label labRecordSize;
-        private Button butSaveFile;
-        private SaveFileDialog saveFileDialog1;
         private ProgressBar progressBarRecord;
         private Label labMeanPressure;
         private Label labDia;

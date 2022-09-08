@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.tbName = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
             this.numUpDownSYS = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -57,22 +55,6 @@
             this.panelResult.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tbName
-            // 
-            this.tbName.Location = new System.Drawing.Point(96, 25);
-            this.tbName.Name = "tbName";
-            this.tbName.Size = new System.Drawing.Size(100, 23);
-            this.tbName.TabIndex = 0;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(21, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(39, 15);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Name";
-            // 
             // numUpDownSYS
             // 
             this.numUpDownSYS.Location = new System.Drawing.Point(83, 38);
@@ -88,7 +70,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 40);
+            this.label2.Location = new System.Drawing.Point(9, 40);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(26, 15);
             this.label2.TabIndex = 3;
@@ -140,7 +122,7 @@
             // 
             this.gbSex.Controls.Add(this.rbFemale);
             this.gbSex.Controls.Add(this.rbMale);
-            this.gbSex.Location = new System.Drawing.Point(234, 12);
+            this.gbSex.Location = new System.Drawing.Point(22, 12);
             this.gbSex.Name = "gbSex";
             this.gbSex.Size = new System.Drawing.Size(171, 43);
             this.gbSex.TabIndex = 8;
@@ -244,7 +226,7 @@
             // 
             this.tbComment.Location = new System.Drawing.Point(96, 114);
             this.tbComment.Name = "tbComment";
-            this.tbComment.Size = new System.Drawing.Size(309, 23);
+            this.tbComment.Size = new System.Drawing.Size(208, 23);
             this.tbComment.TabIndex = 15;
             // 
             // timerStatus
@@ -255,7 +237,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(464, 515);
+            this.ClientSize = new System.Drawing.Size(364, 515);
             this.Controls.Add(this.tbComment);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.button1);
@@ -264,8 +246,6 @@
             this.Controls.Add(this.numUpDownAge);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.gbSex);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbName);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FormPatientData";
@@ -285,9 +265,6 @@
         }
 
         #endregion
-
-        private TextBox tbName;
-        private Label label1;
         private NumericUpDown numUpDownSYS;
         private Label label2;
         private Label label3;

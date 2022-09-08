@@ -8,7 +8,6 @@ namespace TTestApp
 {
     public class Patient
     {
-        public string Name { get; set; }
         public bool Sex { get; set; }
         public int Age { get; set; }
         public string Comment { get; set; }
@@ -19,7 +18,6 @@ namespace TTestApp
         public string[] ToArray()
         {
             List<string> result = new List<string>();
-            result.Add(Name);
             result.Add(Sex ? "M" : "F");
             result.Add(Age.ToString());
             result.Add(Comment);
