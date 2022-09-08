@@ -488,11 +488,11 @@ namespace TTestApp
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (currentIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " +
-                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
-                                           " Deriv : " +
+                labCurrentPressure.Text = "Current pressure, mmHG: " +
+                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString();// +
+                                           //" Deriv : " +
                                            //                                           MaxPressure.ToString();
-                                           DataA.DerivArray[currentIndex].ToString();
+                                           //DataA.DerivArray[currentIndex].ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }

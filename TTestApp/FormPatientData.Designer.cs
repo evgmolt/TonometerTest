@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.numUpDownSYS = new System.Windows.Forms.NumericUpDown();
@@ -37,21 +38,22 @@
             this.label4 = new System.Windows.Forms.Label();
             this.numUpDownPULSE = new System.Windows.Forms.NumericUpDown();
             this.gbSex = new System.Windows.Forms.GroupBox();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
+            this.rbFemale = new System.Windows.Forms.RadioButton();
             this.rbMale = new System.Windows.Forms.RadioButton();
             this.label5 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.numUpDownAge = new System.Windows.Forms.NumericUpDown();
             this.panelResult = new System.Windows.Forms.Panel();
+            this.cbArrythmia = new System.Windows.Forms.CheckBox();
             this.butOk = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.cbArrythmia = new System.Windows.Forms.CheckBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tbComment = new System.Windows.Forms.TextBox();
+            this.timerStatus = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownSYS)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownDIA)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownPULSE)).BeginInit();
             this.gbSex.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numUpDownAge)).BeginInit();
             this.panelResult.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -75,23 +77,13 @@
             // 
             this.numUpDownSYS.Location = new System.Drawing.Point(83, 38);
             this.numUpDownSYS.Maximum = new decimal(new int[] {
-            250,
-            0,
-            0,
-            0});
-            this.numUpDownSYS.Minimum = new decimal(new int[] {
-            50,
+            1000,
             0,
             0,
             0});
             this.numUpDownSYS.Name = "numUpDownSYS";
             this.numUpDownSYS.Size = new System.Drawing.Size(100, 23);
             this.numUpDownSYS.TabIndex = 2;
-            this.numUpDownSYS.Value = new decimal(new int[] {
-            120,
-            0,
-            0,
-            0});
             // 
             // label2
             // 
@@ -115,23 +107,13 @@
             // 
             this.numUpDownDIA.Location = new System.Drawing.Point(83, 91);
             this.numUpDownDIA.Maximum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
-            this.numUpDownDIA.Minimum = new decimal(new int[] {
-            30,
+            1000,
             0,
             0,
             0});
             this.numUpDownDIA.Name = "numUpDownDIA";
             this.numUpDownDIA.Size = new System.Drawing.Size(100, 23);
             this.numUpDownDIA.TabIndex = 5;
-            this.numUpDownDIA.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            0});
             // 
             // label4
             // 
@@ -146,44 +128,34 @@
             // 
             this.numUpDownPULSE.Location = new System.Drawing.Point(83, 150);
             this.numUpDownPULSE.Maximum = new decimal(new int[] {
-            150,
-            0,
-            0,
-            0});
-            this.numUpDownPULSE.Minimum = new decimal(new int[] {
-            30,
+            1000,
             0,
             0,
             0});
             this.numUpDownPULSE.Name = "numUpDownPULSE";
             this.numUpDownPULSE.Size = new System.Drawing.Size(100, 23);
             this.numUpDownPULSE.TabIndex = 7;
-            this.numUpDownPULSE.Value = new decimal(new int[] {
-            70,
-            0,
-            0,
-            0});
             // 
             // gbSex
             // 
-            this.gbSex.Controls.Add(this.radioButton2);
+            this.gbSex.Controls.Add(this.rbFemale);
             this.gbSex.Controls.Add(this.rbMale);
-            this.gbSex.Location = new System.Drawing.Point(21, 68);
+            this.gbSex.Location = new System.Drawing.Point(234, 12);
             this.gbSex.Name = "gbSex";
             this.gbSex.Size = new System.Drawing.Size(171, 43);
             this.gbSex.TabIndex = 8;
             this.gbSex.TabStop = false;
             this.gbSex.Text = "Sex";
             // 
-            // radioButton2
+            // rbFemale
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(66, 17);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(63, 19);
-            this.radioButton2.TabIndex = 1;
-            this.radioButton2.Text = "Female";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.rbFemale.AutoSize = true;
+            this.rbFemale.Location = new System.Drawing.Point(75, 17);
+            this.rbFemale.Name = "rbFemale";
+            this.rbFemale.Size = new System.Drawing.Size(63, 19);
+            this.rbFemale.TabIndex = 1;
+            this.rbFemale.Text = "Female";
+            this.rbFemale.UseVisualStyleBackColor = true;
             // 
             // rbMale
             // 
@@ -200,28 +172,18 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(22, 136);
+            this.label5.Location = new System.Drawing.Point(22, 70);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(28, 15);
             this.label5.TabIndex = 9;
             this.label5.Text = "Age";
             // 
-            // numericUpDown1
+            // numUpDownAge
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(96, 134);
-            this.numericUpDown1.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(100, 23);
-            this.numericUpDown1.TabIndex = 10;
-            this.numericUpDown1.Value = new decimal(new int[] {
-            30,
-            0,
-            0,
-            0});
+            this.numUpDownAge.Location = new System.Drawing.Point(96, 68);
+            this.numUpDownAge.Name = "numUpDownAge";
+            this.numUpDownAge.Size = new System.Drawing.Size(100, 23);
+            this.numUpDownAge.TabIndex = 10;
             // 
             // panelResult
             // 
@@ -233,30 +195,10 @@
             this.panelResult.Controls.Add(this.numUpDownDIA);
             this.panelResult.Controls.Add(this.numUpDownPULSE);
             this.panelResult.Controls.Add(this.label4);
-            this.panelResult.Location = new System.Drawing.Point(12, 231);
+            this.panelResult.Location = new System.Drawing.Point(96, 170);
             this.panelResult.Name = "panelResult";
-            this.panelResult.Size = new System.Drawing.Size(200, 257);
+            this.panelResult.Size = new System.Drawing.Size(208, 257);
             this.panelResult.TabIndex = 11;
-            // 
-            // butOk
-            // 
-            this.butOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.butOk.Location = new System.Drawing.Point(12, 513);
-            this.butOk.Name = "butOk";
-            this.butOk.Size = new System.Drawing.Size(75, 23);
-            this.butOk.TabIndex = 12;
-            this.butOk.Text = "Ok";
-            this.butOk.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button1.Location = new System.Drawing.Point(137, 513);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 13;
-            this.button1.Text = "Cancel";
-            this.button1.UseVisualStyleBackColor = true;
             // 
             // cbArrythmia
             // 
@@ -268,10 +210,31 @@
             this.cbArrythmia.Text = "Arrhythmia";
             this.cbArrythmia.UseVisualStyleBackColor = true;
             // 
+            // butOk
+            // 
+            this.butOk.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.butOk.Location = new System.Drawing.Point(96, 460);
+            this.butOk.Name = "butOk";
+            this.butOk.Size = new System.Drawing.Size(100, 23);
+            this.butOk.TabIndex = 12;
+            this.butOk.Text = "Ok";
+            this.butOk.UseVisualStyleBackColor = true;
+            this.butOk.Click += new System.EventHandler(this.butOk_Click);
+            // 
+            // button1
+            // 
+            this.button1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.button1.Location = new System.Drawing.Point(204, 460);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(100, 23);
+            this.button1.TabIndex = 13;
+            this.button1.Text = "Cancel";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(22, 186);
+            this.label6.Location = new System.Drawing.Point(22, 117);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(61, 15);
             this.label6.TabIndex = 14;
@@ -279,22 +242,26 @@
             // 
             // tbComment
             // 
-            this.tbComment.Location = new System.Drawing.Point(96, 183);
+            this.tbComment.Location = new System.Drawing.Point(96, 114);
             this.tbComment.Name = "tbComment";
-            this.tbComment.Size = new System.Drawing.Size(100, 23);
+            this.tbComment.Size = new System.Drawing.Size(309, 23);
             this.tbComment.TabIndex = 15;
+            // 
+            // timerStatus
+            // 
+            this.timerStatus.Tick += new System.EventHandler(this.timerStatus_Tick);
             // 
             // FormPatientData
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(228, 575);
+            this.ClientSize = new System.Drawing.Size(464, 515);
             this.Controls.Add(this.tbComment);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.butOk);
             this.Controls.Add(this.panelResult);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.numUpDownAge);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.gbSex);
             this.Controls.Add(this.label1);
@@ -303,13 +270,13 @@
             this.MinimizeBox = false;
             this.Name = "FormPatientData";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "New patient";
+            this.Text = "New record";
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownSYS)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownDIA)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numUpDownPULSE)).EndInit();
             this.gbSex.ResumeLayout(false);
             this.gbSex.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numUpDownAge)).EndInit();
             this.panelResult.ResumeLayout(false);
             this.panelResult.PerformLayout();
             this.ResumeLayout(false);
@@ -328,15 +295,16 @@
         private Label label4;
         private NumericUpDown numUpDownPULSE;
         private GroupBox gbSex;
-        private RadioButton radioButton2;
+        private RadioButton rbFemale;
         private RadioButton rbMale;
         private Label label5;
-        private NumericUpDown numericUpDown1;
+        private NumericUpDown numUpDownAge;
         private Panel panelResult;
         private Button butOk;
         private Button button1;
         private CheckBox cbArrythmia;
         private Label label6;
         private TextBox tbComment;
+        private System.Windows.Forms.Timer timerStatus;
     }
 }

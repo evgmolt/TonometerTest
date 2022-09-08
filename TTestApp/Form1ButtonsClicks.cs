@@ -94,6 +94,13 @@ namespace TTestApp
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
+            FormPatientData formPatientData = new FormPatientData(CurrentPatient);
+            formPatientData.SetStateAfterRecord();
+            if (formPatientData.ShowDialog() == DialogResult.OK)
+            {
+                CurrentPatient = formPatientData.patient;
+            }
+
             PrepareData();
             BufPanel.Refresh();
             controlPanel.Refresh();
@@ -102,19 +109,25 @@ namespace TTestApp
 
         private void butStartRecord_Click(object sender, EventArgs e)
         {
-            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
-            Decomposer.PacketCounter = 0;
-            Decomposer.MainIndex = 0;
-            Decomposer.RecordStarted = true;
-            progressBarRecord.Visible = true;
-            labMeanPressure.Text = "Mean : ";
-            labSys.Text = "Sys : ";
-            labDia.Text = "Dia : ";
-            labPulse.Text = "Pulse : ";
-            Detector = new WaveDetector(Decomposer.SamplingFrequency);
-            Detector.OnWaveDetected += NewWaveDetected;
-            FileNum++;
-//            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
+            FormPatientData formPatientData = new FormPatientData(null);
+            formPatientData.SetStateBeforeRecord();
+            if (formPatientData.ShowDialog() == DialogResult.OK)
+            {
+                CurrentPatient = formPatientData.patient;
+                TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+                Decomposer.PacketCounter = 0;
+                Decomposer.MainIndex = 0;
+                Decomposer.RecordStarted = true;
+                progressBarRecord.Visible = true;
+                labMeanPressure.Text = "Mean : ";
+                labSys.Text = "Sys : ";
+                labDia.Text = "Dia : ";
+                labPulse.Text = "Pulse : ";
+                Detector = new WaveDetector(Decomposer.SamplingFrequency);
+                Detector.OnWaveDetected += NewWaveDetected;
+                FileNum++;
+                //            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
+            }
         }
         private void butFlow_Click(object sender, EventArgs e)
         {
@@ -146,7 +159,9 @@ namespace TTestApp
                 {
                     File.Delete(Cfg.DataDir + CurrentFile);
                 }
-                File.Move(saveFileDialog1.InitialDirectory + TmpDataFile, Cfg.DataDir + CurrentFile);
+                var DataStrings = File.ReadAllLines(saveFileDialog1.InitialDirectory + TmpDataFile);
+                File.WriteAllLines(Cfg.DataDir + CurrentFile, CurrentPatient.ToArray());
+                File.AppendAllLines(Cfg.DataDir + CurrentFile, DataStrings);
                 Text = "File : " + CurrentFile;
             }
         }

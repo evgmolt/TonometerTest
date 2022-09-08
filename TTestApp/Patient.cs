@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TTestApp
 {
-    internal class Patient
+    public class Patient
     {
         public string Name { get; set; }
         public bool Sex { get; set; }
@@ -16,5 +16,19 @@ namespace TTestApp
         public int Dia { get; set; }
         public int Pulse { get; set; }
         public bool Arrythmia { get; set; }
+        public string[] ToArray()
+        {
+            List<string> result = new List<string>();
+            result.Add(Name);
+            result.Add(Sex ? "M" : "F");
+            result.Add(Age.ToString());
+            result.Add(Comment);
+            result.Add(Sys.ToString());
+            result.Add(Dia.ToString());
+            result.Add(Pulse.ToString());
+            result.Add(Arrythmia ? "A" : "N");
+            return result.ToArray();
+        }
     }
+
 }

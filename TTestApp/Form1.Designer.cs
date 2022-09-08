@@ -169,7 +169,6 @@
             this.label3.Size = new System.Drawing.Size(35, 15);
             this.label3.TabIndex = 12;
             this.label3.Text = "Right";
-            this.label3.Visible = false;
             // 
             // numUDRight
             // 
@@ -198,7 +197,6 @@
             0,
             0,
             131072});
-            this.numUDRight.Visible = false;
             this.numUDRight.ValueChanged += new System.EventHandler(this.numUDRight_ValueChanged);
             // 
             // panelView
@@ -263,7 +261,6 @@
             this.label2.Size = new System.Drawing.Size(27, 15);
             this.label2.TabIndex = 6;
             this.label2.Text = "Left";
-            this.label2.Visible = false;
             // 
             // numUDLeft
             // 
@@ -292,7 +289,6 @@
             0,
             0,
             131072});
-            this.numUDLeft.Visible = false;
             this.numUDLeft.ValueChanged += new System.EventHandler(this.numUDLeft_ValueChanged);
             // 
             // butOpenFile
@@ -414,7 +410,6 @@
             this.labNumOfWaves.Size = new System.Drawing.Size(142, 21);
             this.labNumOfWaves.TabIndex = 15;
             this.labNumOfWaves.Text = "Waves detected : ";
-            this.labNumOfWaves.Visible = false;
             // 
             // labY2
             // 
@@ -614,7 +609,7 @@
             this.butStartRecord.Name = "butStartRecord";
             this.butStartRecord.Size = new System.Drawing.Size(85, 23);
             this.butStartRecord.TabIndex = 0;
-            this.butStartRecord.Text = "Start record";
+            this.butStartRecord.Text = "New record";
             this.butStartRecord.UseVisualStyleBackColor = true;
             this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
             // 
