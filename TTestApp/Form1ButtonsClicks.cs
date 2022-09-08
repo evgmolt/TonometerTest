@@ -20,7 +20,6 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
             PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
-            labMeasInProgress.Visible = true;
         }
 
         private void butPressureMeasAbort_Click(object sender, EventArgs e)
@@ -33,7 +32,6 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
             USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
             PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
-            labMeasInProgress.Visible = false;
         }
 
         private void butValve1Open_Click(object sender, EventArgs e)
@@ -79,8 +77,6 @@ namespace TTestApp
         }
         private void butStopRecord_Click(object sender, EventArgs e)
         {
-            labArrythmia.Text = Detector.Arrythmia.ToString();
-            Detector.OnWaveDetected -= NewWaveDetected;
             Detector = null;
             progressBarRecord.Visible = false;
             Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
@@ -104,7 +100,6 @@ namespace TTestApp
 
             PrepareData();
             BufPanel.Refresh();
-            controlPanel.Refresh();
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)
@@ -119,12 +114,7 @@ namespace TTestApp
                 Decomposer.MainIndex = 0;
                 Decomposer.RecordStarted = true;
                 progressBarRecord.Visible = true;
-                labMeanPressure.Text = "Mean : ";
-                labSys.Text = "Sys : ";
-                labDia.Text = "Dia : ";
-                labPulse.Text = "Pulse : ";
                 Detector = new WaveDetector(Decomposer.SamplingFrequency);
-                Detector.OnWaveDetected += NewWaveDetected;
                 FileNum++;
                 //            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
             }
@@ -144,7 +134,6 @@ namespace TTestApp
         {
             PrepareData();
             BufPanel.Refresh();
-            controlPanel.Refresh();
         }
 
         private void SaveFile()
@@ -159,7 +148,7 @@ namespace TTestApp
             var DataStrings = File.ReadAllLines(Cfg.DataDir + TmpDataFile);
             File.WriteAllLines(Cfg.DataDir + CurrentFile, CurrentPatient.ToArray());
             File.AppendAllLines(Cfg.DataDir + CurrentFile, DataStrings);
-            Text = "File : " + CurrentFile;
+            Text = "Pulse wave recorder. File : " + CurrentFile;
         }
 
         private void butOpenFile_Click(object sender, EventArgs e)
