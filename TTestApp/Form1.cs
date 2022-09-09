@@ -20,7 +20,7 @@ namespace TTestApp
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
 //        int MaxValue = 200000; // Для BCI
-        int MaxValue = 400;   // Для ADS1115
+        int MaxValue = 200;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -290,9 +290,9 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
-            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-            formHRV.ShowDialog();
-            formHRV.Dispose();
+//            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+//            formHRV.ShowDialog();
+//            formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -490,7 +490,6 @@ namespace TTestApp
                 labCurrentPressure.Text = "Current : " +
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
                                            " Deriv : " +
-                                           //                                           MaxPressure.ToString();
                                            DataA.DerivArray[currentIndex].ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
