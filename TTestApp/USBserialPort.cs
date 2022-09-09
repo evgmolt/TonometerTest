@@ -22,6 +22,7 @@ namespace TTestApp
 
         private readonly int _portBufSize = 10000;
         private readonly int _baudRate;
+        private readonly string _connectString;
 
         public event Action<Exception> ConnectionFailure;
         public event Action ConnectionOk;
@@ -31,6 +32,7 @@ namespace TTestApp
         public USBserialPort(IMessageHandler messageHandler, int baudrate)
         {
             _baudRate = baudrate;
+            _connectString = "";//connectStr;
             messageHandler.WindowsMessage += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
@@ -98,7 +100,7 @@ namespace TTestApp
         private string GetUSBSerialPortName()
         {
             string portName;
-            string usbSerialString = "USB-SERIAL";
+            string usbSerialString = "CH340";
             ManagementObjectCollection collection = null;
             try
             {
@@ -128,6 +130,9 @@ namespace TTestApp
             try
             {
                 portName = list.Where(p => p.IndexOf(usbSerialString) >= 0).First();
+                int firstBraceIndex = portName.IndexOf('(');
+                int secondBraceIndex = portName.IndexOf(')');
+                portName = portName.Substring(firstBraceIndex + 1, secondBraceIndex - firstBraceIndex - 1);
             }
             catch (Exception)
             {
@@ -139,7 +144,13 @@ namespace TTestApp
 
         public void Connect()
         {
-            PortNames = GetPortsNames();
+            string portName = GetUSBSerialPortName();
+            if (portName == "")
+            {
+                return;
+            }
+            PortNames = new string[] { portName };
+//            PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Length; i++)
             {
@@ -165,11 +176,11 @@ namespace TTestApp
             }
         }
 
-        private static string[] GetPortsNames()
+        private string[] GetPortsNames()
         {
-            const string ArduinoSerialString = "Serial2";
+//            const string ArduinoSerialString = "Serial2";
             const string FTDIString = "VCP";
-            const string STMString = "VCP0";
+//            const string STMString = "VCP0";
             bool FTDI = false;
 
             RegistryKey r_hklm = Registry.LocalMachine;
@@ -187,7 +198,7 @@ namespace TTestApp
             {
                 if (FTDI)
                 {
-                    if (portvalues[i].IndexOf(STMString) >= 0)
+                    if (portvalues[i].IndexOf(FTDIString) >= 0)
                     {
                         portNames.Add((string)r_port.GetValue(portvalues[i]));
                         Ind++;
@@ -195,7 +206,7 @@ namespace TTestApp
                 }
                 else
                 {
-                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0)
+                    if (portvalues[i].IndexOf(_connectString) >= 0)
                     {
                         portNames.Add((string)r_port.GetValue(portvalues[i]));
                         Ind++;

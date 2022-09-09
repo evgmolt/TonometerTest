@@ -18,6 +18,10 @@ namespace TTestApp
         public TTestConfig()
         {
             DataDir = Directory.GetCurrentDirectory() + @"\Data\";
+            if (!Directory.Exists(DataDir))
+            {
+                Directory.CreateDirectory(DataDir);
+            }
             DataFileNum = 0;
             Prefix = "A";
             Maximized = false;

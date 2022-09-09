@@ -8,6 +8,7 @@ namespace TTestApp
 {
     public partial class Form1 : Form, IMessageHandler
     {
+        string ConnectStringFile = "connstr.txt";
         USBserialPort USBPort;
         DataArrays? DataA;
         ByteDecomposer Decomposer;
@@ -63,6 +64,7 @@ namespace TTestApp
             BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
             InitArraysForFlow();
+//            string connectStr = File.ReadAllText(ConnectStringFile);
             USBPort = new USBserialPort(this, Decomposer.BaudRate);
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
@@ -375,6 +377,11 @@ namespace TTestApp
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            USBPort.Connect();
         }
     }
 }

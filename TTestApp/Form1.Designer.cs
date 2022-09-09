@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.progressBarRecord = new System.Windows.Forms.ProgressBar();
             this.butFlow = new System.Windows.Forms.Button();
             this.labRecordSize = new System.Windows.Forms.Label();
@@ -81,6 +82,7 @@
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.progressBarRecord);
             this.panel1.Controls.Add(this.butFlow);
             this.panel1.Controls.Add(this.labRecordSize);
@@ -91,6 +93,15 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(224, 507);
             this.panel1.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(37, 328);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(38, 15);
+            this.label1.TabIndex = 5;
+            this.label1.Text = "label1";
             // 
             // progressBarRecord
             // 
@@ -213,7 +224,7 @@
             // labPort
             // 
             this.labPort.AutoSize = true;
-            this.labPort.Location = new System.Drawing.Point(3, 6);
+            this.labPort.Location = new System.Drawing.Point(3, 42);
             this.labPort.Name = "labPort";
             this.labPort.Size = new System.Drawing.Size(38, 15);
             this.labPort.TabIndex = 4;
@@ -288,5 +299,6 @@
         private Button butFlow;
         private Label labRecordSize;
         private ProgressBar progressBarRecord;
+        private Label label1;
     }
 }
