@@ -133,7 +133,15 @@ namespace TTestApp
                 MessageBox.Show("Error reading file");
                 return;
             }
-            PrepareData();
+            try
+            {
+                PrepareData();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
             BufPanel.Refresh();
         }
 
@@ -483,16 +491,19 @@ namespace TTestApp
         {
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             double CurrentPressure = e.RealTimeValue;
-            MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
+            if (Decomposer.RecordStarted)
+            {
+                MaxPressure = (int)Math.Max(DataA.DerivArray[currentIndex], MaxPressure);
+            }
             if (currentIndex > 0)
             {
                 labCurrentPressure.Text = "Current : " +
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
                                            " Deriv : " +
-                                           DataA.DerivArray[currentIndex].ToString();
+//                                           DataA.DerivArray[currentIndex].ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
-//                    MaxPressure.ToString();
+                    MaxPressure.ToString();
             }
             if (Decomposer.RecordStarted)
             {

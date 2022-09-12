@@ -53,7 +53,7 @@
             mean /= arrayOfIndexes.Length - 1;
             
             //Аналог цикла и деления выше
-            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();
+//            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();
 
             mean /= SamplingFreq;
             mean = secondPerMin / mean;

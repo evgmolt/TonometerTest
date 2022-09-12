@@ -114,7 +114,7 @@ namespace TTestApp
             Detector = new WaveDetector(Decomposer.SamplingFrequency);
             Detector.OnWaveDetected += NewWaveDetected;
             FileNum++;
-//            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
+            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
         }
         private void butFlow_Click(object sender, EventArgs e)
         {

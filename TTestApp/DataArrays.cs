@@ -5,7 +5,6 @@
         private readonly int _size;
         public double[] RealTimeArray;
         public double[] DCArray;
-        public double[] PressureArray;
         public double[] PressureViewArray;
         public double[] EnvelopeArray;
         public double[] CompressedArray;
@@ -18,7 +17,6 @@
             _size = size;
             RealTimeArray = new double[_size];
             DCArray = new double[_size];
-            PressureArray = new double[_size];
             PressureViewArray = new double[_size];
             EnvelopeArray = new double[_size];
             DerivArray = new double[_size];  
@@ -44,7 +42,7 @@
 
         public void CountViewArrays(Control panel)
         {
-            int DCArrayWindow = 100;
+            int DCArrayWindow = 60;
             DCArray = DataProcessing.GetSmoothArray(RealTimeArray, DCArrayWindow);
             int SmoothWindowSize = 60;
             int MedianWindowSize = 6;
@@ -63,13 +61,12 @@
 
             for (int i = 0; i < Size; i++)
             {
-                PressureArray[i] = PressureViewArray[i] - DCArray[i];
+                PressureViewArray[i] = PressureViewArray[i] - DCArray[i];
             }
 
-            PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
             for (uint i = 0; i < PressureViewArray.Length; i++)
             {
-                DerivArray[i] = DataProcessing.GetDerivative(PressureArray, i);
+                DerivArray[i] = DataProcessing.GetDerivative(PressureViewArray, i);
             }
 
             CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
