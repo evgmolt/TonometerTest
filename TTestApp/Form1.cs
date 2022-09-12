@@ -320,7 +320,7 @@ namespace TTestApp
             {
                 ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DerivArray);
-                ArrayList.Add(DataA.DebugArray);
+//                ArrayList.Add(DataA.DCArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
 //            ArrayList.Clear();
