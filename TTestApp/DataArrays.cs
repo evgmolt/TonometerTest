@@ -46,11 +46,11 @@
             DCArray = DataProcessing.GetSmoothArray(RealTimeArray, DCArrayWindow);
             int SmoothWindowSize = 60;
             int MedianWindowSize = 6;
-            for (int i = 0; i < RealTimeArray.Length; i++)
-            {
-                PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray, i);
-//                PressureViewArray[i] = RealTimeArray[i];
-            }
+            PressureViewArray = DataProcessing.GetSmoothArray(RealTimeArray, MedianWindowSize);
+            //for (int i = 0; i < RealTimeArray.Length; i++)
+            //{
+            //    PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray, i);
+            //}
             double max = DCArray.Max<double>();
             double lastVal = DCArray[Size - 1];
             double[] DetrendArray = new double[Size];

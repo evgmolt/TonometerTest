@@ -10,8 +10,8 @@
         public override int StopPumpingLevel => 30;
         public override int ZeroLine => 5;
 
-        private const int _queueForACSize = 6;
-        private const int _queueForDCSize = 60;
+        public const int _queueForACSize = 6;
+        public const int _queueForDCSize = 60;
 
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
