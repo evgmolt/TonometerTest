@@ -30,7 +30,7 @@
             var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
-        public static void SaveArray(string fname, float[] inputArray)
+        public static void SaveArray(string fname, double[] inputArray)
         {
             var stringsArr = inputArray.Select(s => Math.Round(s).ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);

@@ -49,7 +49,7 @@
             return listResult.ToArray();
         }
 
-        public static void BCISetup(USBserialPort usbPort)
+        public static void BCISetup(USBSerialPort usbPort)
         {
             CountCheckSum(ref CommandSetADC);
             usbPort.WriteBuf(CommandSetADC);

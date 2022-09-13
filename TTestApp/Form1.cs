@@ -8,7 +8,7 @@ namespace TTestApp
 {
     public partial class Form1 : Form, IMessageHandler
     {
-        USBserialPort USBPort;
+        USBSerialPort USBPort;
         DataArrays? DataA;
         ByteDecomposer Decomposer;
         WaveDetector? Detector;
@@ -66,7 +66,7 @@ namespace TTestApp
             VisirList = new List<int[]>();
             DataProcessing.CompressionChanged += OnCompressionChanged;
             InitArraysForFlow();
-            USBPort = new USBserialPort(this, Decomposer.BaudRate);
+            USBPort = new USBSerialPort(this, Decomposer.BaudRate);
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
@@ -139,8 +139,6 @@ namespace TTestApp
             }
             catch (Exception)
             {
-
-                throw;
             }
             BufPanel.Refresh();
         }
@@ -148,7 +146,6 @@ namespace TTestApp
         private void PrepareData()
         {
             DataA.CountViewArrays(BufPanel);
-//            return;
             //Детектор - обнаружение пульсовых волн по производной
             WaveDetector WD = new(Decomposer.SamplingFrequency);
             WD.Reset();
@@ -318,6 +315,7 @@ namespace TTestApp
                     ArrayList.Add(DataA.DerivArray);
                     ArrayList.Add(DataA.DebugArray);
                     ArrayList.Add(DataA.EnvelopeArray);
+//                    ArrayList.Add(DataA.DiffArray);
                 }
                 else //fit
                 {

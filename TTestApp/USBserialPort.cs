@@ -9,7 +9,7 @@ namespace TTestApp
         event Action<Message> WindowsMessage;
     }
 
-    public class USBserialPort: IMessageHandler
+    public class USBSerialPort: IMessageHandler
     {
         private const int _USBTimerInterval = 25;
         public SerialPort PortHandle;
@@ -28,7 +28,7 @@ namespace TTestApp
         public event Action<Message> WindowsMessage;
 
         
-        public USBserialPort(IMessageHandler messageHandler, int baudrate)
+        public USBSerialPort(IMessageHandler messageHandler, int baudrate)
         {
             _baudRate = baudrate;
             messageHandler.WindowsMessage += OnMessage;

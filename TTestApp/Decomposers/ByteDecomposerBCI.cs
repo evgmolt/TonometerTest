@@ -33,7 +33,7 @@ namespace TTestApp.Decomposers
         {
         }
 
-        public override int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
+        public override int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
         {
             int bytes = usbport.BytesRead;
             if (bytes == 0)

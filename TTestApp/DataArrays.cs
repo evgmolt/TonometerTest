@@ -10,6 +10,7 @@
         public double[] CompressedArray;
         public double[] DerivArray;
         public double[] DebugArray;
+        public double[] DiffArray;
 
         public int Size { get { return _size; } }
         public DataArrays(int size)
@@ -21,6 +22,7 @@
             EnvelopeArray = new double[_size];
             DerivArray = new double[_size];  
             DebugArray = new double[_size];
+            DiffArray = new double[_size];
         }
 
         public static DataArrays? CreateDataFromLines(string[] lines)
@@ -43,21 +45,9 @@
         public void CountViewArrays(Control panel)
         {
             int DCArrayWindow = 60;
+            int ACArrayWindow = 6;
             DCArray = DataProcessing.GetSmoothArray(RealTimeArray, DCArrayWindow);
-            int SmoothWindowSize = 60;
-            int MedianWindowSize = 6;
-            PressureViewArray = DataProcessing.GetSmoothArray(RealTimeArray, MedianWindowSize);
-            //for (int i = 0; i < RealTimeArray.Length; i++)
-            //{
-            //    PressureViewArray[i] = Filter.Median(MedianWindowSize, RealTimeArray, i);
-            //}
-            double max = DCArray.Max<double>();
-            double lastVal = DCArray[Size - 1];
-            double[] DetrendArray = new double[Size];
-            for (int i = 0; i < Size; i++)
-            {
-                DetrendArray[i] = max - i * (max - lastVal) / Size;
-            }
+            PressureViewArray = DataProcessing.GetSmoothArray(RealTimeArray, ACArrayWindow);
 
             for (int i = 0; i < Size; i++)
             {
@@ -69,6 +59,25 @@
                 DerivArray[i] = DataProcessing.GetDerivative(PressureViewArray, i);
             }
 
+            int DiffWinSize = 6;
+
+            for (int i = DiffWinSize; i < PressureViewArray.Length; i++)
+            {
+                double[] WindowArr = new double[DiffWinSize];
+                for (int j = 0; j < DiffWinSize; j++)
+                {
+                    WindowArr[j] = DerivArray[i - j];
+                }
+                double aver = WindowArr.Average();
+                double[] WindowArr2 = new double[DiffWinSize];
+                for (int j = 0; j < DiffWinSize; j++)
+                {
+                    WindowArr2[j] = (WindowArr[j] - aver) * (WindowArr[j] - aver);
+                }
+                DiffArray[i] = Math.Sqrt(WindowArr2.Sum() / DiffWinSize) * 10;
+
+//                DiffArray[i] = Math.Abs(DerivArray[i - 1] - DerivArray[i]) * 10;
+            }
             CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }
 

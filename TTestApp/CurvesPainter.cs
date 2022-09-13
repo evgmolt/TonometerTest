@@ -6,7 +6,7 @@ namespace TTestApp
     {
         private readonly Control _control;
         private readonly ByteDecomposer _decomposer;
-        private readonly Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Brown };
+        private readonly Color[] curveColors = { Color.Red, Color.Blue, Color.Green, Color.Brown, Color.Aquamarine };
         private readonly Color[] visirsColors = { Color.LightGray, Color.Brown, Color.Chocolate };
 
         public CurvesPainter(Control control, ByteDecomposer decomposer)

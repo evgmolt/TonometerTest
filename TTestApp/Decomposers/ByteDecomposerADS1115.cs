@@ -6,9 +6,9 @@
         public override int BaudRate => 115200;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
-        public override int StartSearchMaxLevel => 20;
-        public override int StopPumpingLevel => 30;
-        public override int ZeroLine => 5;
+        public override int StartSearchMaxLevel => 10;
+        public override int StopPumpingLevel => 10;
+        public override int ZeroLine => 17;
 
         public const int _queueForACSize = 6;
         public const int _queueForDCSize = 60;
@@ -17,7 +17,7 @@
         {
         }
 
-        public override int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
+        public override int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
         {
             int bytes = usbport.BytesRead;
             if (bytes == 0)
