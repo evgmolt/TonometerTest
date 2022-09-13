@@ -32,8 +32,8 @@ namespace TTestApp.Decomposers
         protected int byteNum;
 
         //Очереди для усреднения скользящим окном
-        protected Queue<int> QueueForDC;
-        protected Queue<int> QueueForAC;
+        protected Queue<double> QueueForDC;
+        protected Queue<double> QueueForAC;
 
         public ByteDecomposer(DataArrays data, int sizeQForDC, int sizeQForAC)
         {
@@ -43,8 +43,8 @@ namespace TTestApp.Decomposers
             MainIndex = 0;
             noDataCounter = 0;
             byteNum = 0;
-            QueueForDC = new Queue<int>(sizeQForDC);
-            QueueForAC = new Queue<int>(sizeQForAC);
+            QueueForDC = new Queue<double>(sizeQForDC);
+            QueueForAC = new Queue<double>(sizeQForAC);
         }
 
         protected virtual void OnDecomposeLineEvent()

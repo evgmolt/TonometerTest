@@ -72,17 +72,17 @@
                         //Массив исходных данный - смещение
                         Data.RealTimeArray[MainIndex] = tmpValue;
                         //Массив постоянной составляющей
-                        Data.DCArray[MainIndex] = (int)QueueForDC.Average();
+                        Data.DCArray[MainIndex] = QueueForDC.Average();
 
                         //Очередь - переменная составляющая
-                        QueueForAC.Enqueue(tmpValue - (int)QueueForDC.Average());
+                        QueueForAC.Enqueue(tmpValue - QueueForDC.Average());
                         if (QueueForAC.Count > _queueForACSize)
                         {
                             QueueForAC.Dequeue();
                         }
 
                         //Массив переменной составляющей
-                        Data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+                        Data.PressureViewArray[MainIndex] = QueueForAC.Average();
 
                         byteNum = 0;
 
