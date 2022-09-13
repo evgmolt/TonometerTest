@@ -61,7 +61,7 @@
                         {
                             tmpValue -= 0x10000;
                         }
-
+                        tmpValue -= ZeroLine;
                         //Очередь для выделения постоянной составляющей
                         QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueForDCSize)
@@ -70,7 +70,7 @@
                         }
 
                         //Массив исходных данный - смещение
-                        Data.RealTimeArray[MainIndex] = tmpValue - ZeroLine;
+                        Data.RealTimeArray[MainIndex] = tmpValue;
                         //Массив постоянной составляющей
                         Data.DCArray[MainIndex] = (int)QueueForDC.Average();
 
@@ -83,7 +83,6 @@
 
                         //Массив переменной составляющей
                         Data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
-//                        Data.DerivArray[MainIndex] = DataProcessing.GetDerivative(Data.PressureViewArray, MainIndex);
 
                         byteNum = 0;
 

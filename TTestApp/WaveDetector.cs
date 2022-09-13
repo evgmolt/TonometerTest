@@ -19,6 +19,7 @@
         private const int MaxNumOfIntervalsForAver = 10;
         public List<int> FiltredPoints;
         private readonly int _samplingFrequency;
+        private int _currentInterval;
 
         private double CurrentValue;
         public EventHandler<WaveDetectorEventArgs>? OnWaveDetected;
@@ -38,7 +39,8 @@
             WaveDetectorEventArgs args = new()
             {
                 WaveCount = FiltredPoints.Count,
-                Value = CurrentValue,
+                Amplitude = CurrentValue,
+                Interval = _currentInterval,
                 Arrithmia = Arrythmia
             };
             OnWaveDetected?.Invoke(this, args);
@@ -114,6 +116,7 @@
                     if (Filter25percent(tmpNN))
                     {
                         NNArray[NNIndex] = tmpNN;
+                        _currentInterval = tmpNN;
                         NNIndex++;
                         NumOfIntervalsForAver++;
                         NumOfIntervalsForAver = Math.Min(NumOfIntervalsForAver, MaxNumOfIntervalsForAver);
