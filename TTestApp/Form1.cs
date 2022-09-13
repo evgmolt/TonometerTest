@@ -496,11 +496,10 @@ namespace TTestApp
             }
             if (currentIndex > 0)
             {
-                labCurrentPressure.Text = "Current : " +
+                labCurrentPressure.Text = "Current : " + 
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
                                            " Deriv : " +
-//                                           DataA.DerivArray[currentIndex].ToString();
-//                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
+                                           DataA.DerivArray[currentIndex].ToString() + " " +
                     MaxPressure.ToString();
             }
             if (Decomposer.RecordStarted)

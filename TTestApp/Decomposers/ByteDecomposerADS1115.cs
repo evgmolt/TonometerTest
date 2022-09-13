@@ -7,7 +7,7 @@
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
         public override int StartSearchMaxLevel => 10;
-        public override int StopPumpingLevel => 10;
+        public override int StopPumpingLevel => 5;
         public override int ZeroLine => 17;
 
         public const int _queueForACSize = 6;
@@ -83,6 +83,7 @@
 
                         //Массив переменной составляющей
                         Data.PressureViewArray[MainIndex] = (int)QueueForAC.Average();
+//                        Data.DerivArray[MainIndex] = DataProcessing.GetDerivative(Data.PressureViewArray, MainIndex);
 
                         byteNum = 0;
 
