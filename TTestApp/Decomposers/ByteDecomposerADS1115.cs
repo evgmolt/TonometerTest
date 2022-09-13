@@ -8,7 +8,7 @@
         public override int MaxNoDataCounter => 10;
         public override int StartSearchMaxLevel => 20;
         public override int StopPumpingLevel => 30;
-        public override int ZeroLine => 5;
+        public override int ZeroLine => 17;
 
         private const int _queueForACSize = 6;
         private const int _queueForDCSize = 60;
