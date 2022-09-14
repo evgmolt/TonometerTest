@@ -34,7 +34,7 @@
             _samplingFrequency = samplingFrequency;
         }
 
-        protected virtual void WaveDetected()
+        protected virtual void NewWaveDetected()
         {
             WaveDetectorEventArgs args = new()
             {
@@ -122,7 +122,7 @@
                         NumOfIntervalsForAver = Math.Min(NumOfIntervalsForAver, MaxNumOfIntervalsForAver);
                         FiltredPoints.Add(Ind - 1);
                         LockInterval = tmpNN / 2;
-                        WaveDetected();
+                        NewWaveDetected();
                     }
                     CurrentInterval = 0;
                     NNPointIndex++;

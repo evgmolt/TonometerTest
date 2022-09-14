@@ -65,6 +65,11 @@ namespace TTestApp
             BufPanel.Refresh();
         }
 
-
+        private void timerDetectRate_Tick(object sender, EventArgs e)
+        {
+            Decomposer.SamplingFrequency = Decomposer.PacketCounter / 10;
+            timerDetectRate.Enabled = false;
+            labelRate.Text = "Sample rate : " + Decomposer.SamplingFrequency.ToString();
+        }
     }
 }

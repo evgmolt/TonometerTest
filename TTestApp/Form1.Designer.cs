@@ -62,7 +62,6 @@
             this.labMeanPressure = new System.Windows.Forms.Label();
             this.labCurrentPressure = new System.Windows.Forms.Label();
             this.labPort = new System.Windows.Forms.Label();
-            this.labCompressionRatio = new System.Windows.Forms.Label();
             this.labelX = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
@@ -340,7 +339,6 @@
             this.panelBottom.Controls.Add(this.labMeanPressure);
             this.panelBottom.Controls.Add(this.labCurrentPressure);
             this.panelBottom.Controls.Add(this.labPort);
-            this.panelBottom.Controls.Add(this.labCompressionRatio);
             this.panelBottom.Controls.Add(this.labelX);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBottom.Location = new System.Drawing.Point(233, 409);
@@ -513,15 +511,6 @@
             this.labPort.Size = new System.Drawing.Size(38, 15);
             this.labPort.TabIndex = 4;
             this.labPort.Text = "Port : ";
-            // 
-            // labCompressionRatio
-            // 
-            this.labCompressionRatio.AutoSize = true;
-            this.labCompressionRatio.Location = new System.Drawing.Point(13, 25);
-            this.labCompressionRatio.Name = "labCompressionRatio";
-            this.labCompressionRatio.Size = new System.Drawing.Size(92, 15);
-            this.labCompressionRatio.TabIndex = 3;
-            this.labCompressionRatio.Text = "Compression : 1";
             // 
             // labelX
             // 
@@ -875,7 +864,6 @@
         private System.Windows.Forms.Timer timerRead;
         private Label labelX;
         private Panel panelBottom;
-        private Label labCompressionRatio;
         private Label label1;
         private TrackBar trackBarAmp;
         private Label label2;

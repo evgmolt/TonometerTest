@@ -32,7 +32,6 @@ namespace TTestApp
         double MaxTimeAfterMaxFound = 2.5; //sec
 
         double MaxPressure = 0;
-        double MinPressure = 300;
 
         double MaxDerivValue;
 
@@ -64,18 +63,12 @@ namespace TTestApp
             BufPanel.Dock = DockStyle.Fill;
             BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
-            DataProcessing.CompressionChanged += OnCompressionChanged;
             InitArraysForFlow();
             USBPort = new USBSerialPort(this, Decomposer.BaudRate);
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
             GigaDevStatus = new GigaDeviceStatus();
-        }
-
-        private void OnCompressionChanged(object? sender, EventArgs e)
-        {
-            labCompressionRatio.Text = DataProcessing.CompressionRatio.ToString();
         }
 
         private void InitArraysForFlow()
@@ -373,9 +366,8 @@ namespace TTestApp
             {
                 return;
             }
-            int compressionMult = Compression ? DataProcessing.CompressionRatio : 1;
 
-            int index = e.X * compressionMult + ViewShift;
+            int index = e.X + ViewShift;
             double sec = index / Decomposer.SamplingFrequency;
             labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
@@ -390,7 +382,7 @@ namespace TTestApp
             double StopMeasCoeff = 0.7;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
-            string text = e.WaveCount.ToString() + " " + (e.Interval).ToString() + " " + e.Amplitude.ToString();
+            string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
             labNumOfWaves.Text = "Waves detected: " + text;
 
             labPumpStatus.Text = "Pump : " + PumpStatus switch
@@ -446,7 +438,10 @@ namespace TTestApp
                         case (int)PumpingStatus.MaximumFound:
                             int Index = (int)Decomposer.MainIndex;
                             bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
-                            if (timeout) label5.Text = "Timeout";
+                            if (timeout)
+                            {
+                                label5.Text = "Timeout";
+                            }
                             if (e.Amplitude < Decomposer.StopPumpingLevel || timeout)
                             {
                                 File.AppendAllText(fileName, "Stop pumping\t\t" + text + Environment.NewLine);
@@ -454,6 +449,7 @@ namespace TTestApp
                                 Decomposer.PacketCounter = 0;
                                 Decomposer.MainIndex = 0;
                                 MaxDerivValue = 0;
+                                Detector?.Reset();
                                 //USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
                                 //USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
                                 PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
@@ -501,13 +497,6 @@ namespace TTestApp
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
-        }
-
-        private void timerDetectRate_Tick(object sender, EventArgs e)
-        {
-            Decomposer.SamplingFrequency = Decomposer.PacketCounter / 10;
-            timerDetectRate.Enabled = false;
-            labelRate.Text = "Sample rate : " + Decomposer.SamplingFrequency.ToString();
         }
     }
 }

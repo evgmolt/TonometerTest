@@ -2,14 +2,12 @@
 {
     internal static class DataProcessing
     {
-        public static int CompressionRatio;
-        public static event EventHandler? CompressionChanged;
         public static int DerivativeShift = 13;
         public static int DerivativeAverageWidth = 4;
 
         public static int ValueToMmhG(double value)
         {
-            double zero = 5;
+            double zero = 17;
             double pressure = 143;
             double val = 2961;
             return (int)((value - zero) * pressure / (val - zero));
@@ -165,14 +163,10 @@
         {
             double min = inputArray.Min();
             double[] result = new double[panel.Width];
-            CompressionRatio = inputArray.Length / panel.Width;
+            double CompressionRatio = inputArray.Length / panel.Width;
             for (int i = 0; i < panel.Width; i++)
             {
-                result[i] = inputArray[i * CompressionRatio] - min;
-            }
-            if (CompressionChanged != null)
-            {
-                CompressionChanged.Invoke(null, EventArgs.Empty);
+                result[i] = inputArray[(int)(i * CompressionRatio)] - min;
             }
             return result;
         }
