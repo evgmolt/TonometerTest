@@ -14,8 +14,6 @@ namespace TTestApp.Decomposers
 
         public override int StopPumpingLevel => 8000;
 
-        public override int ZeroLine => 273500;
-
         private const byte _markerBCI0 = 0xAA;
         private const byte _markerBCI1 = 0x55;
         private const byte _markerBCI2 = 0x66;
@@ -30,6 +28,7 @@ namespace TTestApp.Decomposers
         public ByteDecomposerBCI(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
             _samplingFrequency = 250;
+            _zeroLine = 273500;
         }
 
         public override int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)

@@ -46,12 +46,8 @@
         {
             int DCArrayWindow = 60;
             int ACArrayWindow = 6;
-            for (int i = 0; i < _size; i++)
+            for (int i = DCArrayWindow; i < _size; i++)
             {
-                if (i < DCArrayWindow)
-                {
-                    continue;
-                }
                 double DCLevel = 0;
                 for (int j = 0; j < DCArrayWindow; j++)
                 {
@@ -68,21 +64,10 @@
                 PressureViewArray[i] = ACLevel - DCLevel;
             }
 
-
-            //DCArray = DataProcessing.GetSmoothArray(RealTimeArray, DCArrayWindow);
-            //PressureViewArray = DataProcessing.GetSmoothArray(RealTimeArray, ACArrayWindow);
-
-            //for (int i = 0; i < Size; i++)
-            //{
-            //    PressureViewArray[i] = PressureViewArray[i] - DCArray[i];
-            //}
-
             for (uint i = 0; i < PressureViewArray.Length; i++)
             {
                 DerivArray[i] = DataProcessing.GetDerivative(PressureViewArray, i);
             }
-
-            int DiffWinSize = 6;
 
             CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }

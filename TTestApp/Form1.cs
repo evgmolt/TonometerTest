@@ -379,7 +379,7 @@ namespace TTestApp
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
-            double StopMeasCoeff = 0.7;
+            double StopMeasCoeff = 0.65;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
@@ -404,10 +404,6 @@ namespace TTestApp
 
             switch (PressureMeasStatus)
             {
-                case (int)PressureMeasurementStatus.Calibration:
-                    //Вызов метода калибровки
-                    PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
-                    break;
                 case (int)PressureMeasurementStatus.Pumping:
                     switch (PumpStatus)
                     {
@@ -494,6 +490,11 @@ namespace TTestApp
             }
             if (Decomposer.RecordStarted)
             {
+                if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
+                {
+                    Decomposer.ZeroLine = Decomposer.tmpZero;
+                    PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
+                }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }

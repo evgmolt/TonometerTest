@@ -5,11 +5,19 @@ namespace TTestApp.Decomposers
     abstract class ByteDecomposer
     {
         protected int _samplingFrequency;
+        protected int _zeroLine;
 
         public const int DataArrSize = 0x100000;
-        public abstract int ZeroLine { get; }
         public abstract int StartSearchMaxLevel { get; } // Для алгоритма управления накачкой
         public abstract int StopPumpingLevel { get; }    // Для алгоритма управления накачкой
+
+        public int tmpZero;
+
+        public int ZeroLine 
+        { 
+            get { return _zeroLine; }
+            set { _zeroLine = value; }
+        }
         public int SamplingFrequency
         {
             get { return _samplingFrequency; }
@@ -42,7 +50,9 @@ namespace TTestApp.Decomposers
         //Очереди для усреднения скользящим окном
         protected Queue<double> QueueForDC;
         protected Queue<double> QueueForAC;
+        protected Queue<int> QueueForZero;
 
+        protected int sizeQForZero = 10;
         public ByteDecomposer(DataArrays data, int sizeQForDC, int sizeQForAC)
         {
             Data = data;
@@ -53,6 +63,7 @@ namespace TTestApp.Decomposers
             byteNum = 0;
             QueueForDC = new Queue<double>(sizeQForDC);
             QueueForAC = new Queue<double>(sizeQForAC);
+            QueueForZero = new Queue<int>(sizeQForZero);
         }
 
         protected virtual void OnDecomposeLineEvent()
