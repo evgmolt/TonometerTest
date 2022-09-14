@@ -58,6 +58,7 @@
                     DCLevel += RealTimeArray[i - j];
                 }
                 DCLevel /= DCArrayWindow;
+                DCArray[i] = DCLevel;
                 double ACLevel = 0;
                 for (int j = 0; j < ACArrayWindow; j++)
                 {

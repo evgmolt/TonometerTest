@@ -4,8 +4,6 @@ namespace TTestApp.Decomposers
 {
     sealed class ByteDecomposerBCI : ByteDecomposer
     {
-        public override int SamplingFrequency => 250;
-
         public override int BaudRate => 460800;
 
         public override int BytesInPacket => 65;
@@ -31,6 +29,7 @@ namespace TTestApp.Decomposers
         private const int _queueForDCSize = 100;
         public ByteDecomposerBCI(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
+            _samplingFrequency = 250;
         }
 
         public override int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)

@@ -4,11 +4,17 @@ namespace TTestApp.Decomposers
 {
     abstract class ByteDecomposer
     {
+        protected int _samplingFrequency;
+
         public const int DataArrSize = 0x100000;
         public abstract int ZeroLine { get; }
         public abstract int StartSearchMaxLevel { get; } // Для алгоритма управления накачкой
         public abstract int StopPumpingLevel { get; }    // Для алгоритма управления накачкой
-        public abstract int SamplingFrequency { get; }
+        public int SamplingFrequency
+        {
+            get { return _samplingFrequency; }
+            set { _samplingFrequency = value; }
+        }
         public abstract int BaudRate { get; }
         public abstract int BytesInPacket { get; } // Размер посылки
         public abstract int MaxNoDataCounter { get; }
@@ -30,6 +36,8 @@ namespace TTestApp.Decomposers
         protected int noDataCounter;
 
         protected int byteNum;
+        
+        protected bool RateDetection = true;
 
         //Очереди для усреднения скользящим окном
         protected Queue<double> QueueForDC;

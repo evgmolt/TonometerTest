@@ -45,6 +45,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labelRate = new System.Windows.Forms.Label();
             this.labArrythmia = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.labMeasStatus = new System.Windows.Forms.Label();
@@ -93,6 +94,7 @@
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.timerDetectRate = new System.Windows.Forms.Timer(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -321,6 +323,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labelRate);
             this.panelBottom.Controls.Add(this.labArrythmia);
             this.panelBottom.Controls.Add(this.label5);
             this.panelBottom.Controls.Add(this.labMeasStatus);
@@ -344,6 +347,15 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labelRate
+            // 
+            this.labelRate.AutoSize = true;
+            this.labelRate.Location = new System.Drawing.Point(13, 6);
+            this.labelRate.Name = "labelRate";
+            this.labelRate.Size = new System.Drawing.Size(38, 15);
+            this.labelRate.TabIndex = 22;
+            this.labelRate.Text = "label6";
             // 
             // labArrythmia
             // 
@@ -811,6 +823,11 @@
             this.saveFileDialog1.DefaultExt = "txt";
             this.saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             // 
+            // timerDetectRate
+            // 
+            this.timerDetectRate.Interval = 10000;
+            this.timerDetectRate.Tick += new System.EventHandler(this.timerDetectRate_Tick);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -911,5 +928,7 @@
         private Label labMeasStatus;
         private Label label5;
         private Label labArrythmia;
+        private System.Windows.Forms.Timer timerDetectRate;
+        private Label labelRate;
     }
 }

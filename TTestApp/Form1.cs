@@ -133,13 +133,7 @@ namespace TTestApp
                 MessageBox.Show("Error reading file");
                 return;
             }
-            try
-            {
-                PrepareData();
-            }
-            catch (Exception)
-            {
-            }
+            PrepareData();
             BufPanel.Refresh();
         }
 
@@ -163,7 +157,7 @@ namespace TTestApp
 
             int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length];
             //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
-            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
+            for (int i = 0; i < ArrayOfWaveIndexes.Length - 1; i++)
             {
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
             }
@@ -295,9 +289,9 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
-            FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-            formHRV.ShowDialog();
-            formHRV.Dispose();
+            //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+            //formHRV.ShowDialog();
+            //formHRV.Dispose();
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
@@ -499,7 +493,7 @@ namespace TTestApp
                 labCurrentPressure.Text = "Current : " + 
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
                                            " Deriv : " +
-                                           DataA.DerivArray[currentIndex].ToString() + " " +
+                                           DataA.DerivArray[currentIndex].ToString("0.0").PadLeft(6, ' ') + " " +
                     MaxPressure.ToString();
             }
             if (Decomposer.RecordStarted)
@@ -507,6 +501,13 @@ namespace TTestApp
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
+        }
+
+        private void timerDetectRate_Tick(object sender, EventArgs e)
+        {
+            Decomposer.SamplingFrequency = Decomposer.PacketCounter / 10;
+            timerDetectRate.Enabled = false;
+            labelRate.Text = "Sample rate : " + Decomposer.SamplingFrequency.ToString();
         }
     }
 }
