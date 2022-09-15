@@ -98,7 +98,7 @@ namespace TTestApp
                 SaveFile();
             }
 
-            PrepareData();
+//            PrepareData();
             BufPanel.Refresh();
         }
 

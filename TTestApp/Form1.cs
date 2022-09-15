@@ -22,7 +22,7 @@ namespace TTestApp
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
 //        int MaxValue = 200000; // Для BCI
-        int MaxValue = 400;   // Для ADS1115
+        int MaxValue = 200;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
@@ -288,9 +288,9 @@ namespace TTestApp
             if (ViewMode)
             {
                     ArrayList.Add(DataA.PressureViewArray);
-                    ArrayList.Add(DataA.DerivArray);
-                    ArrayList.Add(DataA.DebugArray);
-                    ArrayList.Add(DataA.EnvelopeArray);
+//                    ArrayList.Add(DataA.DerivArray);
+//                    ArrayList.Add(DataA.DebugArray);
+//                    ArrayList.Add(DataA.EnvelopeArray);
             }
             else
             {
