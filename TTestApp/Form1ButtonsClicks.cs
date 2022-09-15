@@ -86,18 +86,17 @@ namespace TTestApp
             Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
             Decomposer.RecordStarted = false;
             TextWriter?.Dispose();
-            ViewMode = true;
-            timerPaint.Enabled = !ViewMode;
-            timerRead.Enabled = false;
 
             CurrentFileSize = Decomposer.PacketCounter;
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
-
+            PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
             PrepareData();
             BufPanel.Refresh();
             controlPanel.Refresh();
-            //            ReadFile(Cfg.DataDir + TmpDataFile);
+            ViewMode = true;
+            timerPaint.Enabled = !ViewMode;
+            timerRead.Enabled = false;
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)

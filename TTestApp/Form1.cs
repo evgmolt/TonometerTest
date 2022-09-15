@@ -385,29 +385,12 @@ namespace TTestApp
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
             labNumOfWaves.Text = "Waves detected: " + text;
 
-            labPumpStatus.Text = "Pump : " + PumpStatus switch
-            {
-                (int)PumpingStatus.Ready         => "Ready",
-                (int)PumpingStatus.MaximumSearch => "Maximum search",
-                (int)PumpingStatus.MaximumFound  => "Maximum found",
-                _ => "Ready",
-            };
-
-            labMeasStatus.Text = "Measurement : " + PressureMeasStatus switch
-            {
-                (int)PressureMeasurementStatus.Ready       => "Ready",
-                (int)PressureMeasurementStatus.Calibration => "Calibration",
-                (int)PressureMeasurementStatus.Pumping     => "Pumping",
-                (int)PressureMeasurementStatus.Measurement => "Measurement",
-                _ => "Ready",
-            };
-
             switch (PressureMeasStatus)
             {
                 case (int)PressureMeasurementStatus.Pumping:
                     switch (PumpStatus)
                     {
-                        case (int)PumpingStatus.Ready:
+                        case (int)PumpingStatus.Pumping:
                             if (e.Amplitude > Decomposer.StartSearchMaxLevel)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumSearch;
@@ -473,6 +456,24 @@ namespace TTestApp
         }
         private void OnPacketReceived(object? sender, PacketEventArgs e)
         {
+            labPumpStatus.Text = "Pumping status : " + PumpStatus switch
+            {
+                (int)PumpingStatus.Ready         => "Ready",
+                (int)PumpingStatus.Pumping       => "Pumping",
+                (int)PumpingStatus.MaximumSearch => "Maximum search",
+                (int)PumpingStatus.MaximumFound  => "Maximum found",
+                _ => "Ready",
+            };
+
+            labMeasStatus.Text = "Measurement : " + PressureMeasStatus switch
+            {
+                (int)PressureMeasurementStatus.Ready       => "Ready",
+                (int)PressureMeasurementStatus.Calibration => "Calibration",
+                (int)PressureMeasurementStatus.Pumping     => "Pumping",
+                (int)PressureMeasurementStatus.Measurement => "Measurement",
+                _ => "Ready",
+            };
+
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             double CurrentPressure = e.RealTimeValue;
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
@@ -494,6 +495,7 @@ namespace TTestApp
                 {
                     Decomposer.ZeroLine = Decomposer.tmpZero;
                     PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
+                    PumpStatus = (int)PumpingStatus.Pumping;
                 }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);

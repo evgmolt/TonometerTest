@@ -379,21 +379,21 @@
             // 
             this.labMeasStatus.AutoSize = true;
             this.labMeasStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labMeasStatus.Location = new System.Drawing.Point(449, 50);
+            this.labMeasStatus.Location = new System.Drawing.Point(445, 50);
             this.labMeasStatus.Name = "labMeasStatus";
-            this.labMeasStatus.Size = new System.Drawing.Size(170, 21);
+            this.labMeasStatus.Size = new System.Drawing.Size(174, 21);
             this.labMeasStatus.TabIndex = 19;
-            this.labMeasStatus.Text = "Measurement: Ready";
+            this.labMeasStatus.Text = "Measurement : Ready";
             // 
             // labPumpStatus
             // 
             this.labPumpStatus.AutoSize = true;
             this.labPumpStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labPumpStatus.Location = new System.Drawing.Point(509, 29);
+            this.labPumpStatus.Location = new System.Drawing.Point(431, 29);
             this.labPumpStatus.Name = "labPumpStatus";
-            this.labPumpStatus.Size = new System.Drawing.Size(110, 21);
+            this.labPumpStatus.Size = new System.Drawing.Size(188, 21);
             this.labPumpStatus.TabIndex = 18;
-            this.labPumpStatus.Text = "Pump: Ready";
+            this.labPumpStatus.Text = "Pumping status : Ready";
             // 
             // labDeviceIsOff
             // 
