@@ -91,6 +91,7 @@ namespace TTestApp
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
             PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+            PumpStatus = (int)PumpingStatus.Ready;
             PrepareData();
             BufPanel.Refresh();
             controlPanel.Refresh();

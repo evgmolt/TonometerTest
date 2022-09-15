@@ -5,7 +5,7 @@
         public static int DerivativeShift = 13;
         public static int DerivativeAverageWidth = 4;
 
-        public static int ValueToMmhG(double value)
+        public static int ValueToMmHg(double value)
         {
             double zero = 17;
             double pressure = 143;

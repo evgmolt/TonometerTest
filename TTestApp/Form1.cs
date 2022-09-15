@@ -258,7 +258,7 @@ namespace TTestApp
                     break;
                 }
                 envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
-                envelopeMmhGArray[i] = DataProcessing.ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
+                envelopeMmhGArray[i] = DataProcessing.ValueToMmHg(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
 
 /*            int UpsampleFactor = 10;
@@ -279,9 +279,9 @@ namespace TTestApp
             DataProcessing.SaveArray("env_spline.txt", ys);*/
 
             DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
-            labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmhG(MeanPress).ToString();
-            labSys.Text = "Sys : " + DataProcessing.ValueToMmhG(P1).ToString();
-            labDia.Text = "Dia : " + DataProcessing.ValueToMmhG(P2).ToString();
+            labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmHg(MeanPress).ToString();
+            labSys.Text = "Sys : " + DataProcessing.ValueToMmHg(P1).ToString();
+            labDia.Text = "Dia : " + DataProcessing.ValueToMmHg(P2).ToString();
             //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
             //formHRV.ShowDialog();
             //formHRV.Dispose();
@@ -373,13 +373,13 @@ namespace TTestApp
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
             labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
             labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]) + "  " +
-                         DataProcessing.ValueToMmhG(DataA.DCArray[index]).ToString();
+                         DataProcessing.ValueToMmHg(DataA.DCArray[index]).ToString();
         }
 
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
-            double StopMeasCoeff = 0.65;
+            double StopMeasCoeff = 0.60;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
@@ -390,7 +390,7 @@ namespace TTestApp
                 case (int)PressureMeasurementStatus.Pumping:
                     switch (PumpStatus)
                     {
-                        case (int)PumpingStatus.Pumping:
+                        case (int)PumpingStatus.SearchLevelWaiting:
                             if (e.Amplitude > Decomposer.StartSearchMaxLevel)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumSearch;
@@ -459,13 +459,13 @@ namespace TTestApp
             labPumpStatus.Text = "Pumping status : " + PumpStatus switch
             {
                 (int)PumpingStatus.Ready         => "Ready",
-                (int)PumpingStatus.Pumping       => "Pumping",
+                (int)PumpingStatus.SearchLevelWaiting => "SearchLevel waiting",
                 (int)PumpingStatus.MaximumSearch => "Maximum search",
                 (int)PumpingStatus.MaximumFound  => "Maximum found",
                 _ => "Ready",
             };
 
-            labMeasStatus.Text = "Measurement : " + PressureMeasStatus switch
+            labMeasStatus.Text = "Measurement status : " + PressureMeasStatus switch
             {
                 (int)PressureMeasurementStatus.Ready       => "Ready",
                 (int)PressureMeasurementStatus.Calibration => "Calibration",
@@ -484,7 +484,7 @@ namespace TTestApp
             if (currentIndex > 0)
             {
                 labCurrentPressure.Text = "Current : " + 
-                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString() +
+                                           DataProcessing.ValueToMmHg(CurrentPressure).ToString() +
                                            " Deriv : " +
                                            DataA.DerivArray[currentIndex].ToString("0.0").PadLeft(6, ' ') + " " +
                     MaxPressure.ToString();
@@ -495,7 +495,7 @@ namespace TTestApp
                 {
                     Decomposer.ZeroLine = Decomposer.tmpZero;
                     PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
-                    PumpStatus = (int)PumpingStatus.Pumping;
+                    PumpStatus = (int)PumpingStatus.SearchLevelWaiting;
                 }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);

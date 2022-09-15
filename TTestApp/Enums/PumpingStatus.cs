@@ -9,7 +9,7 @@ namespace TTestApp.Enums
     internal enum PumpingStatus
     {
         Ready,
-        Pumping,
+        SearchLevelWaiting,
         MaximumSearch,
         MaximumFound
     }
