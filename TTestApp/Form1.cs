@@ -374,6 +374,11 @@ namespace TTestApp
             }
             if (Decomposer.RecordStarted)
             {
+                if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
+                {
+                    Decomposer.ZeroLine = Decomposer.tmpZero;
+                    PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+                }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }

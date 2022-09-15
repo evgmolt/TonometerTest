@@ -8,13 +8,13 @@
         public override int MaxNoDataCounter => 10;
         public override int StartSearchMaxLevel => 20;
         public override int StopPumpingLevel => 30;
-        public override int ZeroLine => 17;
 
         private const int _queueForACSize = 6;
         private const int _queueForDCSize = 60;
 
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
+            ZeroLine = 18;
         }
 
         public override int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
@@ -62,6 +62,14 @@
                             tmpValue -= 0x10000;
                         }
 
+                        QueueForZero.Enqueue(tmpValue);
+                        if (QueueForZero.Count > sizeQForZero)
+                        {
+                            QueueForZero.Dequeue();
+                            tmpZero = (int)QueueForZero.Average();
+                        }
+
+                        tmpValue -= ZeroLine;
                         //Очередь для выделения постоянной составляющей
                         QueueForDC.Enqueue(tmpValue);
                         if (QueueForDC.Count > _queueForDCSize)
@@ -70,7 +78,7 @@
                         }
 
                         //Массив исходных данный - смещение
-                        Data.RealTimeArray[MainIndex] = tmpValue - ZeroLine;
+                        Data.RealTimeArray[MainIndex] = tmpValue;
                         //Массив постоянной составляющей
                         Data.DCArray[MainIndex] = (int)QueueForDC.Average();
 

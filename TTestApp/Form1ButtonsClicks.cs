@@ -116,7 +116,7 @@ namespace TTestApp
                 progressBarRecord.Visible = true;
                 Detector = new WaveDetector(Decomposer.SamplingFrequency);
                 FileNum++;
-                //            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
+                PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
             }
         }
         private void butFlow_Click(object sender, EventArgs e)
