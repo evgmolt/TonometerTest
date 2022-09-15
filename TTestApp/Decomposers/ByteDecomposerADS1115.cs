@@ -2,7 +2,7 @@
 {
     internal class ByteDecomposerADS1115 : ByteDecomposer
     {
-        public override int SamplingFrequency => 250;
+        public override int SamplingFrequency => 240;
         public override int BaudRate => 115200;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
