@@ -97,14 +97,14 @@ namespace TTestApp
                 CurrentPatient = formPatientData.patient;
                 SaveFile();
             }
-
+            formPatientData.Dispose();
 //            PrepareData();
             BufPanel.Refresh();
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)
         {
-            FormPatientData formPatientData = new FormPatientData(null);
+            FormPatientData formPatientData = new(null);
             formPatientData.SetStateBeforeRecord();
             if (formPatientData.ShowDialog() == DialogResult.OK)
             {
@@ -118,6 +118,7 @@ namespace TTestApp
                 FileNum++;
                 PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
             }
+            formPatientData.Dispose();
         }
         private void butFlow_Click(object sender, EventArgs e)
         {

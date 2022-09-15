@@ -17,14 +17,16 @@ namespace TTestApp
         public bool Arrythmia { get; set; }
         public string[] ToArray()
         {
-            List<string> result = new List<string>();
-            result.Add(Sex ? "M" : "F");
-            result.Add(Age.ToString());
-            result.Add(Comment);
-            result.Add(Sys.ToString());
-            result.Add(Dia.ToString());
-            result.Add(Pulse.ToString());
-            result.Add(Arrythmia ? "A" : "N");
+            List<string> result = new()
+            {
+                Sex ? "M" : "F",
+                Age.ToString(),
+                Comment,
+                Sys.ToString(),
+                Dia.ToString(),
+                Pulse.ToString(),
+                Arrythmia ? "A" : "N"
+            };
             return result.ToArray();
         }
     }

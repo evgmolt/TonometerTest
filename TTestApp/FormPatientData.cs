@@ -20,17 +20,26 @@
             }
         }
 
+        private void numUDEnable(bool enable)
+        {
+            numUpDownSYS.Enabled = enable;
+            numUpDownDIA.Enabled = enable;
+            numUpDownPULSE.Enabled = enable;
+            cbArrythmia.Enabled = enable;
+        }
+
         public void SetStateAfterRecord()
         {
-            panelResult.Enabled = true;
+            numUDEnable(true);
             butOk.Text = "Ok";
             butOk.ForeColor = SystemColors.ControlText;
             timerStatus.Enabled = true;
+            TabIndex = numUpDownSYS.TabIndex;
         }
 
         public void SetStateBeforeRecord()
         {
-            panelResult.Enabled = false;
+            numUDEnable(false);
             butOk.Text = "Start record";
             butOk.ForeColor = Color.Red;
             timerStatus.Enabled = false;
@@ -53,6 +62,26 @@
                             numUpDownDIA.Value != 0 &&
                             numUpDownSYS.Value != 0 &&
                             numUpDownPULSE.Value != 0;
+        }
+
+        private void numUpDownSYS_Enter(object sender, EventArgs e)
+        {
+            numUpDownSYS.Select(0, numUpDownSYS.Text.Length);
+        }
+
+        private void numUpDownDIA_Enter(object sender, EventArgs e)
+        {
+            numUpDownDIA.Select(0, numUpDownDIA.Text.Length);
+        }
+
+        private void numUpDownPULSE_Enter(object sender, EventArgs e)
+        {
+            numUpDownPULSE.Select(0, numUpDownPULSE.Text.Length);
+        }
+
+        private void numUpDownAge_Enter(object sender, EventArgs e)
+        {
+            numUpDownAge.Select(0, numUpDownAge.Text.Length);
         }
     }
 }
