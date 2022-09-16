@@ -256,24 +256,6 @@ namespace TTestApp
                 envelopeMmhGArray[i] = DataProcessing.ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
             }
 
-/*            int UpsampleFactor = 10;
-            int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
-            float[] xs = new float[InterpolatedLength];
-            for (int i = 0; i < InterpolatedLength; i++)
-            {
-                xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
-            }
-            int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
-            float[] x = new float[xint.Length];
-            for (int i = 0; i < xint.Length; i++)
-            {
-                x[i] = (float)xint[i];
-            }
-            float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
-
-            DataProcessing.SaveArray("env_spline.txt", ys);*/
-
-//            DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
         }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
