@@ -5,11 +5,12 @@
         public override int BaudRate => 115200;
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
-        public override int StartSearchMaxLevel => 10;
-        public override int StopPumpingLevel => 5;
+        public override int StartSearchMaxLevel => 8;
+        public override int StopPumpingLevel => 8;
 
         public const int _queueForACSize = 6;
         public const int _queueForDCSize = 60;
+
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
             _samplingFrequency = 240;

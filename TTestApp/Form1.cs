@@ -379,7 +379,7 @@ namespace TTestApp
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
-            double StopMeasCoeff = 0.60;
+            double StopMeasCoeff = 0.70;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
@@ -421,7 +421,7 @@ namespace TTestApp
                             {
                                 label5.Text = "Timeout";
                             }
-                            if (e.Amplitude < Decomposer.StopPumpingLevel || timeout)
+                            if (/*e.Amplitude < Decomposer.StopPumpingLevel ||*/ timeout)
                             {
                                 File.AppendAllText(fileName, "Stop pumping\t\t" + text + Environment.NewLine);
                                 PumpStatus = (int)PumpingStatus.Ready;

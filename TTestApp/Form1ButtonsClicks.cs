@@ -92,12 +92,12 @@ namespace TTestApp
             UpdateScrollBar(CurrentFileSize);
             PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
             PumpStatus = (int)PumpingStatus.Ready;
-            PrepareData();
-            BufPanel.Refresh();
-            controlPanel.Refresh();
             ViewMode = true;
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;
+            PrepareData();
+            BufPanel.Refresh();
+            controlPanel.Refresh();
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)
