@@ -144,13 +144,13 @@ namespace TTestApp
 
         public void Connect()
         {
-            string portName = GetUSBSerialPortName();
-            if (portName == "")
-            {
-                return;
-            }
-            PortNames = new string[] { portName };
-//            PortNames = GetPortsNames();
+            //string portName = GetUSBSerialPortName();
+            //if (portName == "")
+            //{
+            //    return;
+            //}
+            //PortNames = new string[] { portName };
+            PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Length; i++)
             {
@@ -181,7 +181,7 @@ namespace TTestApp
 //            const string ArduinoSerialString = "Serial2";
             const string FTDIString = "VCP";
 //            const string STMString = "VCP0";
-            bool FTDI = false;
+            bool FTDI = true;
 
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
