@@ -55,7 +55,6 @@
             this.labY2 = new System.Windows.Forms.Label();
             this.labY1 = new System.Windows.Forms.Label();
             this.labY0 = new System.Windows.Forms.Label();
-            this.labMaxSize = new System.Windows.Forms.Label();
             this.labPulse = new System.Windows.Forms.Label();
             this.labDia = new System.Windows.Forms.Label();
             this.labSys = new System.Windows.Forms.Label();
@@ -332,7 +331,6 @@
             this.panelBottom.Controls.Add(this.labY2);
             this.panelBottom.Controls.Add(this.labY1);
             this.panelBottom.Controls.Add(this.labY0);
-            this.panelBottom.Controls.Add(this.labMaxSize);
             this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.labDia);
             this.panelBottom.Controls.Add(this.labSys);
@@ -442,15 +440,6 @@
             this.labY0.Size = new System.Drawing.Size(110, 15);
             this.labY0.TabIndex = 12;
             this.labY0.Text = "PressureViewArray :";
-            // 
-            // labMaxSize
-            // 
-            this.labMaxSize.AutoSize = true;
-            this.labMaxSize.Location = new System.Drawing.Point(13, 137);
-            this.labMaxSize.Name = "labMaxSize";
-            this.labMaxSize.Size = new System.Drawing.Size(38, 15);
-            this.labMaxSize.TabIndex = 11;
-            this.labMaxSize.Text = "label4";
             // 
             // labPulse
             // 
@@ -886,7 +875,6 @@
         private Label labSys;
         private Label labPulse;
         private Panel panelView;
-        private Label labMaxSize;
         private Label labY0;
         private Label labY1;
         private Label labY2;

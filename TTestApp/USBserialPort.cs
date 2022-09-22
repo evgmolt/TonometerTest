@@ -167,7 +167,7 @@ namespace TTestApp
 
         private static string[] GetPortsNames()
         {
-            const string ArduinoSerialString = "Serial2";
+            const string ArduinoSerialString = "Serial19";
             const string FTDIString = "VCP";
             const string STMString = "VCP0";
             bool FTDI = false;

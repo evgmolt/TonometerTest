@@ -35,7 +35,7 @@ namespace TTestApp
 
         double MaxDerivValue;
 
-        GigaDeviceStatus GigaDevStatus;
+        DeviceStatus DevStatus;
 
         public event Action<Message> WindowsMessage;
 
@@ -68,7 +68,7 @@ namespace TTestApp
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
-            GigaDevStatus = new GigaDeviceStatus();
+            DevStatus = new DeviceStatus();
         }
 
         private void InitArraysForFlow()
@@ -302,7 +302,6 @@ namespace TTestApp
                     ArrayList.Add(DataA.DerivArray);
                     ArrayList.Add(DataA.DebugArray);
                     ArrayList.Add(DataA.EnvelopeArray);
-//                    ArrayList.Add(DataA.DiffArray);
                 }
                 else //fit
                 {
@@ -379,7 +378,7 @@ namespace TTestApp
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
-            double StopMeasCoeff = 0.5;
+            double StopMeasCoeff = 0.55;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
@@ -390,7 +389,7 @@ namespace TTestApp
                 case (int)PressureMeasurementStatus.Pumping:
                     switch (PumpStatus)
                     {
-                        case (int)PumpingStatus.SearchLevelWaiting:
+                        case (int)PumpingStatus.WaitingForLevel:
                             if (e.Amplitude > Decomposer.StartSearchMaxLevel)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumSearch;
@@ -458,10 +457,10 @@ namespace TTestApp
         {
             labPumpStatus.Text = "Pumping status : " + PumpStatus switch
             {
-                (int)PumpingStatus.Ready         => "Ready",
-                (int)PumpingStatus.SearchLevelWaiting => "SearchLevel waiting",
-                (int)PumpingStatus.MaximumSearch => "Maximum search",
-                (int)PumpingStatus.MaximumFound  => "Maximum found",
+                (int)PumpingStatus.Ready           => "Ready",
+                (int)PumpingStatus.WaitingForLevel => "Waiting for level",
+                (int)PumpingStatus.MaximumSearch   => "Maximum search",
+                (int)PumpingStatus.MaximumFound    => "Maximum found",
                 _ => "Ready",
             };
 
@@ -487,7 +486,7 @@ namespace TTestApp
                                            DataProcessing.ValueToMmHg(CurrentPressure).ToString() +
                                            " Deriv : " +
                                            DataA.DerivArray[currentIndex].ToString("0.0").PadLeft(6, ' ') + " " +
-                    MaxPressure.ToString();
+                                           MaxPressure.ToString();
             }
             if (Decomposer.RecordStarted)
             {
@@ -495,7 +494,7 @@ namespace TTestApp
                 {
                     Decomposer.ZeroLine = Decomposer.tmpZero;
                     PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
-                    PumpStatus = (int)PumpingStatus.SearchLevelWaiting;
+                    PumpStatus = (int)PumpingStatus.WaitingForLevel;
                 }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
