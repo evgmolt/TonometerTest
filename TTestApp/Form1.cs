@@ -379,7 +379,7 @@ namespace TTestApp
         int FileNum = 0;
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
-            double StopMeasCoeff = 0.70;
+            double StopMeasCoeff = 0.5;
 
             string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
