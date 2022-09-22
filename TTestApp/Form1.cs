@@ -416,20 +416,17 @@ namespace TTestApp
                         case (int)PumpingStatus.MaximumFound:
                             int Index = (int)Decomposer.MainIndex;
                             bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
-                            if (timeout)
-                            {
-                                label5.Text = "Timeout";
-                            }
                             if (/*e.Amplitude < Decomposer.StopPumpingLevel ||*/ timeout)
                             {
+                                label5.Text = "Timeout";
                                 File.AppendAllText(fileName, "Stop pumping\t\t" + text + Environment.NewLine);
                                 PumpStatus = (int)PumpingStatus.Ready;
                                 Decomposer.PacketCounter = 0;
                                 Decomposer.MainIndex = 0;
                                 MaxDerivValue = 0;
                                 Detector?.Reset();
-                                //USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
-                                //USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
+                                USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
+                                USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
                                 PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
                                 //Останавливаем накачку
                             }
@@ -445,6 +442,7 @@ namespace TTestApp
 
                     if (e.Amplitude < MaxDerivValue * StopMeasCoeff)
                     {
+                        USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
                         PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
                         butStopRecord_Click(this, EventArgs.Empty);
                     }
@@ -493,6 +491,9 @@ namespace TTestApp
                 if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
                 {
                     Decomposer.ZeroLine = Decomposer.tmpZero;
+                    USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
+                    USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
+                    USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
                     PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
                     PumpStatus = (int)PumpingStatus.WaitingForLevel;
                 }

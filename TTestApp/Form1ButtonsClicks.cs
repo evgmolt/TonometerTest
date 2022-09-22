@@ -16,9 +16,6 @@ namespace TTestApp
             DevStatus.Valve2IsClosed = true;
             DevStatus.PumpIsOn = true;
             PumpStatus = (int)PumpingStatus.MaximumSearch;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
             PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
             labMeasInProgress.Visible = true;
         }
@@ -29,9 +26,9 @@ namespace TTestApp
             DevStatus.Valve2IsClosed = false;
             DevStatus.PumpIsOn = false;
             PumpStatus = (int)PumpingStatus.Ready;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
+            USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
             PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
             labMeasInProgress.Visible = false;
         }
@@ -39,44 +36,39 @@ namespace TTestApp
         private void butValve1Open_Click(object sender, EventArgs e)
         {
             DevStatus.Valve1IsClosed = false;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Open);
+            USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
         }
 
         private void butValve1Close_Click(object sender, EventArgs e)
         {
             DevStatus.Valve1IsClosed = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1Close);
+            USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
         }
 
         private void butValve2Open_Click(object sender, EventArgs e)
         {
             DevStatus.Valve2IsClosed = false;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Open);
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
         }
 
         private void butValve2Close_Click(object sender, EventArgs e)
         {
             DevStatus.Valve2IsClosed = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve2Close);
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
         }
 
         private void butPumpOn_Click(object sender, EventArgs e)
         {
             DevStatus.PumpIsOn = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOn);
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
         }
 
         private void butPumpOff_Click(object sender, EventArgs e)
         {
             DevStatus.PumpIsOn = false;
-            USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
         }
 
-        private void butValve1PWM_Click(object sender, EventArgs e)
-        {
-            DevStatus.Valve1PWM = true;
-            USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
-        }
         private void butStopRecord_Click(object sender, EventArgs e)
         {
             labArrythmia.Text = Detector.Arrythmia.ToString();

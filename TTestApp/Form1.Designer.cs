@@ -72,7 +72,6 @@
             this.butStartRecord = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.controlPanel = new System.Windows.Forms.Panel();
-            this.butValve1PWM = new System.Windows.Forms.Button();
             this.butPumpOff = new System.Windows.Forms.Button();
             this.butPumpOn = new System.Windows.Forms.Button();
             this.labPump = new System.Windows.Forms.Label();
@@ -604,7 +603,6 @@
             // 
             // controlPanel
             // 
-            this.controlPanel.Controls.Add(this.butValve1PWM);
             this.controlPanel.Controls.Add(this.butPumpOff);
             this.controlPanel.Controls.Add(this.butPumpOn);
             this.controlPanel.Controls.Add(this.labPump);
@@ -619,16 +617,6 @@
             this.controlPanel.Name = "controlPanel";
             this.controlPanel.Size = new System.Drawing.Size(1012, 93);
             this.controlPanel.TabIndex = 17;
-            // 
-            // butValve1PWM
-            // 
-            this.butValve1PWM.Location = new System.Drawing.Point(280, 13);
-            this.butValve1PWM.Name = "butValve1PWM";
-            this.butValve1PWM.Size = new System.Drawing.Size(75, 23);
-            this.butValve1PWM.TabIndex = 7;
-            this.butValve1PWM.Text = "PWM";
-            this.butValve1PWM.UseVisualStyleBackColor = true;
-            this.butValve1PWM.Click += new System.EventHandler(this.butValve1PWM_Click);
             // 
             // butPumpOff
             // 
@@ -890,7 +878,6 @@
         private Label label4;
         private Label labMeasInProgress;
         private Panel controlPanel;
-        private Button butValve1PWM;
         private Button butPumpOff;
         private Button butPumpOn;
         private Label labPump;
