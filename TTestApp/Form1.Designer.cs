@@ -47,7 +47,7 @@
             this.panelBottom = new System.Windows.Forms.Panel();
             this.labelRate = new System.Windows.Forms.Label();
             this.labArrythmia = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
+            this.labStopPumpingReason = new System.Windows.Forms.Label();
             this.labMeasStatus = new System.Windows.Forms.Label();
             this.labPumpStatus = new System.Windows.Forms.Label();
             this.labDeviceIsOff = new System.Windows.Forms.Label();
@@ -82,6 +82,8 @@
             this.labValve2 = new System.Windows.Forms.Label();
             this.labValve1 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.labMeasInProgress = new System.Windows.Forms.Label();
             this.butPressureMeasAbort = new System.Windows.Forms.Button();
             this.butPressureMeasStart = new System.Windows.Forms.Button();
@@ -322,7 +324,7 @@
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelBottom.Controls.Add(this.labelRate);
             this.panelBottom.Controls.Add(this.labArrythmia);
-            this.panelBottom.Controls.Add(this.label5);
+            this.panelBottom.Controls.Add(this.labStopPumpingReason);
             this.panelBottom.Controls.Add(this.labMeasStatus);
             this.panelBottom.Controls.Add(this.labPumpStatus);
             this.panelBottom.Controls.Add(this.labDeviceIsOff);
@@ -348,15 +350,15 @@
             this.labelRate.AutoSize = true;
             this.labelRate.Location = new System.Drawing.Point(13, 6);
             this.labelRate.Name = "labelRate";
-            this.labelRate.Size = new System.Drawing.Size(38, 15);
+            this.labelRate.Size = new System.Drawing.Size(55, 15);
             this.labelRate.TabIndex = 22;
-            this.labelRate.Text = "label6";
+            this.labelRate.Text = "labelRate";
             // 
             // labArrythmia
             // 
             this.labArrythmia.AutoSize = true;
             this.labArrythmia.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labArrythmia.Location = new System.Drawing.Point(938, 8);
+            this.labArrythmia.Location = new System.Drawing.Point(981, 15);
             this.labArrythmia.Name = "labArrythmia";
             this.labArrythmia.Size = new System.Drawing.Size(19, 21);
             this.labArrythmia.TabIndex = 21;
@@ -364,13 +366,13 @@
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(782, 15);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(38, 21);
-            this.label5.TabIndex = 20;
-            this.label5.Text = "test";
+            this.labStopPumpingReason.AutoSize = true;
+            this.labStopPumpingReason.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labStopPumpingReason.Location = new System.Drawing.Point(772, 50);
+            this.labStopPumpingReason.Name = "label5";
+            this.labStopPumpingReason.Size = new System.Drawing.Size(38, 21);
+            this.labStopPumpingReason.TabIndex = 20;
+            this.labStopPumpingReason.Text = "test";
             // 
             // labMeasStatus
             // 
@@ -649,7 +651,7 @@
             // 
             // butValve2Close
             // 
-            this.butValve2Close.Location = new System.Drawing.Point(199, 40);
+            this.butValve2Close.Location = new System.Drawing.Point(201, 20);
             this.butValve2Close.Name = "butValve2Close";
             this.butValve2Close.Size = new System.Drawing.Size(75, 23);
             this.butValve2Close.TabIndex = 5;
@@ -659,7 +661,7 @@
             // 
             // butValve2Open
             // 
-            this.butValve2Open.Location = new System.Drawing.Point(118, 40);
+            this.butValve2Open.Location = new System.Drawing.Point(120, 20);
             this.butValve2Open.Name = "butValve2Open";
             this.butValve2Open.Size = new System.Drawing.Size(75, 23);
             this.butValve2Open.TabIndex = 4;
@@ -669,7 +671,7 @@
             // 
             // butValve1Close
             // 
-            this.butValve1Close.Location = new System.Drawing.Point(199, 13);
+            this.butValve1Close.Location = new System.Drawing.Point(201, 47);
             this.butValve1Close.Name = "butValve1Close";
             this.butValve1Close.Size = new System.Drawing.Size(75, 23);
             this.butValve1Close.TabIndex = 3;
@@ -679,7 +681,7 @@
             // 
             // butValve1Open
             // 
-            this.butValve1Open.Location = new System.Drawing.Point(118, 13);
+            this.butValve1Open.Location = new System.Drawing.Point(120, 47);
             this.butValve1Open.Name = "butValve1Open";
             this.butValve1Open.Size = new System.Drawing.Size(75, 23);
             this.butValve1Open.TabIndex = 2;
@@ -690,7 +692,7 @@
             // labValve2
             // 
             this.labValve2.AutoSize = true;
-            this.labValve2.Location = new System.Drawing.Point(13, 48);
+            this.labValve2.Location = new System.Drawing.Point(15, 55);
             this.labValve2.Name = "labValve2";
             this.labValve2.Size = new System.Drawing.Size(52, 15);
             this.labValve2.TabIndex = 1;
@@ -699,7 +701,7 @@
             // labValve1
             // 
             this.labValve1.AutoSize = true;
-            this.labValve1.Location = new System.Drawing.Point(13, 21);
+            this.labValve1.Location = new System.Drawing.Point(15, 25);
             this.labValve1.Name = "labValve1";
             this.labValve1.Size = new System.Drawing.Size(52, 15);
             this.labValve1.TabIndex = 0;
@@ -707,6 +709,8 @@
             // 
             // panel5
             // 
+            this.panel5.Controls.Add(this.button2);
+            this.panel5.Controls.Add(this.button1);
             this.panel5.Controls.Add(this.labMeasInProgress);
             this.panel5.Controls.Add(this.butPressureMeasAbort);
             this.panel5.Controls.Add(this.butPressureMeasStart);
@@ -717,6 +721,26 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(224, 97);
             this.panel5.TabIndex = 8;
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(130, 51);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Stop read";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(130, 22);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Start read";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // labMeasInProgress
             // 
@@ -889,9 +913,11 @@
         private Label labValve1;
         private Label labPumpStatus;
         private Label labMeasStatus;
-        private Label label5;
+        private Label labStopPumpingReason;
         private Label labArrythmia;
         private System.Windows.Forms.Timer timerDetectRate;
         private Label labelRate;
+        private Button button1;
+        private Button button2;
     }
 }

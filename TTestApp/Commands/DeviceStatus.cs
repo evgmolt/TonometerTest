@@ -9,7 +9,6 @@ namespace TTestApp.Commands
     internal struct DeviceStatus
     {
         public bool Valve1IsClosed;
-        public bool Valve1PWM;
         public bool Valve2IsClosed;
         public bool PumpIsOn;
     }

@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TTestApp.Commands
 {
-    //Управление макетом GigaDevice осуществляется передачей ему команд от компьютера.
-    //В ответ на каждую команду макет GigaDevice посылает пакет длиной 3 байта, содержащий значение давления.
+    //Управление макетом осуществляется передачей ему команд от компьютера.
+    //В ответ на каждую команду макет посылает пакет длиной 3 байта, содержащий значение давления.
     //Параметры интерфейса: скорость 115200, 8 бит, контроля четности нет, 1 стоп бит.
     internal enum CmdDevice : byte
     {
@@ -17,14 +17,12 @@ namespace TTestApp.Commands
         PumpToPressure = 0x12,  //Накачать до давления (второй байт - требуемое давление)
 
         //Управление клапанами
-        ValveFastClose  = 0x20,
-        ValveFastOpen   = 0x21,
-        //Valve1PWMOn  = 0x22,    //Включение ШИМ. Второй байт - скважность
-        //Valve1PWMOff = 0x23,    //Выключение ШИМ. 
-        ValveSlowClose  = 0x24,
-        ValveSlowOpen   = 0x25,
+        ValveSlowClose  = 0x20,
+        ValveSlowOpen   = 0x21,
+        ValveFastClose  = 0x24,
+        ValveFastOpen   = 0x25,
 
-        //Запрос значения давления
-        GetValue     = 0x30
+        StartReading    = 0x30,
+        StopReading     = 0x31
     }
 }
