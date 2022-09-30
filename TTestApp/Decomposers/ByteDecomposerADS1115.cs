@@ -6,7 +6,7 @@
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
         public override int StartSearchMaxLevel => 8;
-        public override int StopPumpingLevel => 10;
+        public override int StopPumpingLevel => 7;
 
         public const int _queueForACSize = 6;
         public const int _queueForDCSize = 60;

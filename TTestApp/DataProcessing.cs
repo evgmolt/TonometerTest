@@ -8,8 +8,8 @@
         public static int ValueToMmHg(double value)
         {
             double zero = 17;
-            double pressure = 143;
-            double val = 2961;
+            double pressure = 220;
+            double val = 4082;
             return (int)((value - zero) * pressure / (val - zero));
         }
 
@@ -156,18 +156,6 @@
                 }
             }    
             int[] result = inputArray.Skip(startSeqIndex).ToArray();
-            return result;
-        }
-
-        public static double[] GetCompressedArray(Control panel, double[] inputArray)
-        {
-            double min = inputArray.Min();
-            double[] result = new double[panel.Width];
-            double CompressionRatio = inputArray.Length / panel.Width;
-            for (int i = 0; i < panel.Width; i++)
-            {
-                result[i] = inputArray[(int)(i * CompressionRatio)] - min;
-            }
             return result;
         }
 

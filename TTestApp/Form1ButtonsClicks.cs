@@ -19,20 +19,11 @@ namespace TTestApp
         {
             USBPort.WriteByte((byte)CmdDevice.StopReading);
         }
-        private void butPressureMeasStart_Click(object sender, EventArgs e)
-        {
-            DevStatus.Valve1IsClosed = true;
-            DevStatus.Valve2IsClosed = true;
-            DevStatus.PumpIsOn = true;
-            PumpStatus = (int)PumpingStatus.WaitingForLevel;
-            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
-            labMeasInProgress.Visible = true;
-        }
 
         private void butPressureMeasAbort_Click(object sender, EventArgs e)
         {
-            DevStatus.Valve1IsClosed = false;
-            DevStatus.Valve2IsClosed = false;
+            DevStatus.ValveSlowClosed = false;
+            DevStatus.ValveFastClosed = false;
             DevStatus.PumpIsOn = false;
             PumpStatus = (int)PumpingStatus.Ready;
             USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
@@ -40,29 +31,30 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
             PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
             labMeasInProgress.Visible = false;
+            butStopRecord_Click(butPressureMeasAbort, e);
         }
 
         private void butValve2Open_Click(object sender, EventArgs e)
         {
-            DevStatus.Valve2IsClosed = false;
+            DevStatus.ValveFastClosed = false;
             USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
         }
 
         private void butValve2Close_Click(object sender, EventArgs e)
         {
-            DevStatus.Valve2IsClosed = true;
+            DevStatus.ValveFastClosed = true;
             USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
         }
 
         private void butValve1Open_Click(object sender, EventArgs e)
         {
-            DevStatus.Valve1IsClosed = false;
+            DevStatus.ValveSlowClosed = false;
             USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
         }
 
         private void butValve1Close_Click(object sender, EventArgs e)
         {
-            DevStatus.Valve1IsClosed = true;
+            DevStatus.ValveSlowClosed = true;
             USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
         }
 
@@ -80,7 +72,7 @@ namespace TTestApp
 
         private void butStopRecord_Click(object sender, EventArgs e)
         {
-            labArrythmia.Text = Detector.Arrythmia.ToString();
+            labArrythmia.Text = Detector?.Arrythmia.ToString();
             Detector.OnWaveDetected -= NewWaveDetected;
             Detector = null;
             progressBarRecord.Visible = false;
@@ -114,17 +106,16 @@ namespace TTestApp
             labPulse.Text = "Pulse : ";
             Detector = new WaveDetector(Decomposer.SamplingFrequency);
             Detector.OnWaveDetected += NewWaveDetected;
-            FileNum++;
 
-            DevStatus.Valve1IsClosed = true;
-            DevStatus.Valve2IsClosed = true;
+            DevStatus.ValveSlowClosed = true;
+            DevStatus.ValveFastClosed = true;
             DevStatus.PumpIsOn = true;
             PumpStatus = (int)PumpingStatus.WaitingForLevel;
             PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
             labMeasInProgress.Visible = true;
             USBPort.WriteByte((byte)CmdDevice.StartReading);
-
         }
+
         private void butFlow_Click(object sender, EventArgs e)
         {
             ViewMode = !ViewMode;
@@ -136,6 +127,7 @@ namespace TTestApp
                 hScrollBar1.Visible = false;
             }
         }
+
         private void butRefresh_Click(object sender, EventArgs e)
         {
             PrepareData();

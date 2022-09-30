@@ -7,7 +7,6 @@
         public double[] DCArray;
         public double[] PressureViewArray;
         public double[] EnvelopeArray;
-        public double[] CompressedArray;
         public double[] DerivArray;
         public double[] DebugArray;
         public double[] DiffArray;
@@ -68,8 +67,6 @@
             {
                 DerivArray[i] = DataProcessing.GetDerivative(PressureViewArray, i);
             }
-
-            CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }
 
         public String GetDataString(uint index)

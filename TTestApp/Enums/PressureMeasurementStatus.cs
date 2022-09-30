@@ -11,6 +11,7 @@ namespace TTestApp.Enums
         Ready,
         Calibration,
         Pumping,
+        Delay,
         Measurement
     }
 }
