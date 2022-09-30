@@ -34,7 +34,7 @@ namespace TTestApp
         double MaxTimeAfterMaxFound = 3; //sec
         int DelayCounter;
         int DelayValue;
-        const int DelayInSeconds = 2;
+        const int DelayInSeconds = 1;
         int HeartVisibleDelay = 50;
         int HeartVisibleCounter;
 
@@ -118,7 +118,7 @@ namespace TTestApp
             }
             base.WndProc(ref m);
         }
-        
+
         private void ReadFile(string fileName)
         {
             string[] lines = File.ReadAllLines(fileName);
@@ -428,6 +428,7 @@ namespace TTestApp
                     break;
             }
         }
+
         private void OnPacketReceived(object? sender, PacketEventArgs e)
         {
             labHeart.Visible = HeartVisibleCounter != 0;
@@ -514,7 +515,6 @@ namespace TTestApp
             DevStatus.ValveSlowClosed = false;
             labStopPumpingReason.Text = mess;
             PumpStatus = (int)PumpingStatus.Ready;
-            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
             USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
             PressureMeasStatus = (int)PressureMeasurementStatus.Delay;
             DelayCounter = 0;
@@ -529,6 +529,7 @@ namespace TTestApp
             Decomposer.MainIndex = 0;
             MaxDerivValue = 0;
             Detector?.Reset();
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
             PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
             timerDetectRate.Enabled = true;
         }
