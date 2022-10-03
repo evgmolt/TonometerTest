@@ -30,8 +30,10 @@ namespace TTestApp
         double CurrentPressure;
         double MaxAllowablePressure = 180;
         double MinPressure = 120;
-        double MaxFoundMoment;
+        double MomentMaxFound;
         double MaxTimeAfterMaxFound = 3; //sec
+        double MomentStartPumping;
+        double MaxTimeStartPumping = 3; //sec
         int DelayCounter;
         int DelayValue;
         const int DelayInSeconds = 1;
@@ -401,7 +403,7 @@ namespace TTestApp
                             if (MaxDerivValue > e.Amplitude)
                             {
                                 PumpStatus = (int)PumpingStatus.MaximumFound;
-                                MaxFoundMoment = (int)Decomposer.MainIndex;
+                                MomentMaxFound = (int)Decomposer.MainIndex;
                             }
                             break;
                         case (int)PumpingStatus.MaximumFound:
@@ -491,7 +493,7 @@ namespace TTestApp
                 if (PumpStatus == (int)PumpingStatus.MaximumFound)
                 {
                     int Index = (int)Decomposer.MainIndex;
-                    bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
+                    bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
                     if (timeout && CurrentPressure > MinPressure)
                     {
                         StopPumping("Timeout");
