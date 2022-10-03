@@ -25,15 +25,15 @@ namespace TTestApp
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
-        int PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
-        int PumpStatus = (int)PumpingStatus.Ready;
+        PressureMeasurementStatus PressureMeasStatus = PressureMeasurementStatus.Ready;
+        PumpingStatus PumpStatus = PumpingStatus.Ready;
         double CurrentPressure;
         double MaxAllowablePressure = 180;
         double MinPressure = 120;
         double MomentMaxFound;
-        double MaxTimeAfterMaxFound = 3; //sec
         double MomentStartPumping;
-        double MaxTimeStartPumping = 3; //sec
+        double MaxTimeAfterMaxFound = 3; //sec
+        double MaxTimeAfterStartPumping = 4; //sec
         int DelayCounter;
         int DelayValue;
         const int DelayInSeconds = 1;
@@ -389,24 +389,24 @@ namespace TTestApp
 
             switch (PressureMeasStatus)
             {
-                case (int)PressureMeasurementStatus.Pumping:
+                case PressureMeasurementStatus.Pumping:
                     switch (PumpStatus)
                     {
-                        case (int)PumpingStatus.WaitingForLevel:
+                        case PumpingStatus.WaitingForLevel:
                             if (e.Amplitude > Decomposer.StartSearchMaxLevel)
                             {
-                                PumpStatus = (int)PumpingStatus.MaximumSearch;
+                                PumpStatus = PumpingStatus.MaximumSearch;
                             }
                             break;
-                        case (int)PumpingStatus.MaximumSearch:
+                        case PumpingStatus.MaximumSearch:
                             MaxDerivValue = Math.Max(MaxDerivValue, e.Amplitude);
                             if (MaxDerivValue > e.Amplitude)
                             {
-                                PumpStatus = (int)PumpingStatus.MaximumFound;
+                                PumpStatus = PumpingStatus.MaximumFound;
                                 MomentMaxFound = (int)Decomposer.MainIndex;
                             }
                             break;
-                        case (int)PumpingStatus.MaximumFound:
+                        case PumpingStatus.MaximumFound:
                             if (e.Amplitude < Decomposer.StopPumpingLevel && CurrentPressure > MinPressure)
                             {
                                 StopPumping("Stop Pumping Level reached");
@@ -414,7 +414,7 @@ namespace TTestApp
                             break;
                     }
                     break;
-                case (int)PressureMeasurementStatus.Measurement:
+                case PressureMeasurementStatus.Measurement:
                     MaxDerivValue = Math.Max(e.Amplitude, MaxDerivValue);
                     if (e.Amplitude < MaxDerivValue * StopMeasCoeff)
                     {
@@ -440,20 +440,20 @@ namespace TTestApp
             }
             labPumpStatus.Text = "Pumping status : " + PumpStatus switch
             {
-                (int)PumpingStatus.Ready           => "Ready",
-                (int)PumpingStatus.WaitingForLevel => "Waiting for level",
-                (int)PumpingStatus.MaximumSearch   => "Maximum search",
-                (int)PumpingStatus.MaximumFound    => "Maximum found",
+                PumpingStatus.Ready           => "Ready",
+                PumpingStatus.WaitingForLevel => "Waiting for level",
+                PumpingStatus.MaximumSearch   => "Maximum search",
+                PumpingStatus.MaximumFound    => "Maximum found",
                 _ => "Ready",
             };
 
             labMeasStatus.Text = "Measurement status : " + PressureMeasStatus switch
             {
-                (int)PressureMeasurementStatus.Ready       => "Ready",
-                (int)PressureMeasurementStatus.Calibration => "Calibration",
-                (int)PressureMeasurementStatus.Pumping     => "Pumping",
-                (int)PressureMeasurementStatus.Delay       => "Delay",
-                (int)PressureMeasurementStatus.Measurement => "Measurement",
+                PressureMeasurementStatus.Ready       => "Ready",
+                PressureMeasurementStatus.Calibration => "Calibration",
+                PressureMeasurementStatus.Pumping     => "Pumping",
+                PressureMeasurementStatus.Delay       => "Delay",
+                PressureMeasurementStatus.Measurement => "Measurement",
                 _ => "Ready",
             };
 
@@ -475,14 +475,14 @@ namespace TTestApp
             }
             if (Decomposer.RecordStarted)
             {
-                if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
+                if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
                 {
                     Decomposer.ZeroLine = Decomposer.tmpZero;
                     USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
                     USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
                     USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
-                    PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
-                    PumpStatus = (int)PumpingStatus.WaitingForLevel;
+                    PressureMeasStatus = PressureMeasurementStatus.Pumping;
+                    PumpStatus = PumpingStatus.WaitingForLevel;
                 }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
@@ -490,7 +490,18 @@ namespace TTestApp
                 { 
                     StopPumping("Max Allowable Pressure");
                 }
-                if (PumpStatus == (int)PumpingStatus.MaximumFound)
+                if (PumpStatus == PumpingStatus.WaitingForLevel)
+                {
+                    bool timeout = (e.PacketCounter - MomentStartPumping) / Decomposer.SamplingFrequency > MaxTimeAfterStartPumping;
+                    if (timeout)
+                    {
+                        Decomposer.RecordStarted = false;
+                        PumpStatus = (int)PumpingStatus.Ready;
+                        ShowError(BPMError.AirLeak);
+
+                    }
+                }
+                if (PumpStatus == PumpingStatus.MaximumFound)
                 {
                     int Index = (int)Decomposer.MainIndex;
                     bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
@@ -499,12 +510,12 @@ namespace TTestApp
                         StopPumping("Timeout");
                     }
                 }
-                if (PressureMeasStatus == (int)PressureMeasurementStatus.Delay)
+                if (PressureMeasStatus == PressureMeasurementStatus.Delay)
                 {
                     DelayCounter++;
                     if (DelayCounter > DelayValue)
                     {
-                        PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
+                        PressureMeasStatus = PressureMeasurementStatus.Measurement;
                         AfterDelay();
                     }
                 }
@@ -518,7 +529,7 @@ namespace TTestApp
             labStopPumpingReason.Text = mess;
             PumpStatus = (int)PumpingStatus.Ready;
             USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
-            PressureMeasStatus = (int)PressureMeasurementStatus.Delay;
+            PressureMeasStatus = PressureMeasurementStatus.Delay;
             DelayCounter = 0;
             DelayValue = Decomposer.SamplingFrequency * DelayInSeconds;
         }
@@ -532,8 +543,19 @@ namespace TTestApp
             MaxDerivValue = 0;
             Detector?.Reset();
             USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
-            PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
+            PressureMeasStatus = PressureMeasurementStatus.Measurement;
             timerDetectRate.Enabled = true;
+        }
+
+        private void ShowError(BPMError error)
+        {
+            butPressureMeasAbort_Click(this, EventArgs.Empty);
+            string errorText = error switch
+            {
+                (int)BPMError.AirLeak => "Air leak",
+                _ => "",
+            };
+            MessageBox.Show(errorText);
         }
     }
 }

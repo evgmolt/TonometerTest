@@ -110,8 +110,8 @@ namespace TTestApp
             DevStatus.ValveSlowClosed = true;
             DevStatus.ValveFastClosed = true;
             DevStatus.PumpIsOn = true;
-            PumpStatus = (int)PumpingStatus.WaitingForLevel;
-            PressureMeasStatus = (int)PressureMeasurementStatus.Calibration;
+            PumpStatus = PumpingStatus.WaitingForLevel;
+            PressureMeasStatus = PressureMeasurementStatus.Calibration;
             labMeasInProgress.Visible = true;
             USBPort.WriteByte((byte)CmdDevice.StartReading);
         }

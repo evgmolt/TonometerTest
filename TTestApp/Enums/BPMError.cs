@@ -8,6 +8,6 @@ namespace TTestApp.Enums
 {
     internal enum BPMError
     {
-
+        AirLeak
     }
 }
