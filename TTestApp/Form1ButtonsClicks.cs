@@ -25,12 +25,13 @@ namespace TTestApp
             DevStatus.ValveSlowClosed = false;
             DevStatus.ValveFastClosed = false;
             DevStatus.PumpIsOn = false;
-            PumpStatus = (int)PumpingStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
             USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
             USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
             USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
-            PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+            PressureMeasStatus = PressureMeasurementStatus.Ready;
             labMeasInProgress.Visible = false;
+            PumpStatus = PumpingStatus.Ready;
             butStopRecord_Click(butPressureMeasAbort, e);
         }
 
@@ -83,8 +84,8 @@ namespace TTestApp
             CurrentFileSize = Decomposer.PacketCounter;
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
-            PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
-            PumpStatus = (int)PumpingStatus.Ready;
+            PressureMeasStatus = PressureMeasurementStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
             ViewMode = true;
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;

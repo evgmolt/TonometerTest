@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace TTestApp.Enums
 {
+    //Blood pressure measurement errors
     internal enum BPMError
     {
         AirLeak

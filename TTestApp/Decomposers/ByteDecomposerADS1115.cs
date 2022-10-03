@@ -6,7 +6,7 @@
         public override int BytesInPacket => 3;
         public override int MaxNoDataCounter => 10;
         public override int StartSearchMaxLevel => 8;
-        public override int StopPumpingLevel => 7;
+        public override int StopPumpingLevel => 6;
 
         public const int _queueForACSize = 6;
         public const int _queueForDCSize = 60;
@@ -76,7 +76,7 @@
                             QueueForDC.Dequeue();
                         }
 
-                        //Массив исходных данный - смещение
+                        //Массив исходных данных - смещение
                         Data.RealTimeArray[MainIndex] = tmpValue;
                         //Массив постоянной составляющей
                         Data.DCArray[MainIndex] = QueueForDC.Average();

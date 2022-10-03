@@ -31,12 +31,11 @@ namespace TTestApp
         double MaxAllowablePressure = 180;
         double MinPressure = 120;
         double MomentMaxFound;
-        double MomentStartPumping;
         double MaxTimeAfterMaxFound = 3; //sec
-        double MaxTimeAfterStartPumping = 4; //sec
+        double MaxTimeAfterStartPumping = 15; //sec
         int DelayCounter;
         int DelayValue;
-        const int DelayInSeconds = 1;
+        const int DelayInSeconds = 1; //sec
         int HeartVisibleDelay = 50;
         int HeartVisibleCounter;
 
@@ -421,7 +420,7 @@ namespace TTestApp
                         DevStatus.ValveSlowClosed = false; 
                         DevStatus.ValveFastClosed = false;
                         USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
-                        PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+                        PressureMeasStatus = PressureMeasurementStatus.Ready;
                         USBPort.WriteByte((byte)CmdDevice.StopReading);
                         butStopRecord_Click(this, EventArgs.Empty);
                     }
@@ -477,7 +476,7 @@ namespace TTestApp
             {
                 if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
                 {
-                    Decomposer.ZeroLine = Decomposer.tmpZero;
+//                    Decomposer.ZeroLine = Decomposer.tmpZero;
                     USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
                     USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
                     USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
@@ -492,18 +491,16 @@ namespace TTestApp
                 }
                 if (PumpStatus == PumpingStatus.WaitingForLevel)
                 {
-                    bool timeout = (e.PacketCounter - MomentStartPumping) / Decomposer.SamplingFrequency > MaxTimeAfterStartPumping;
+                    bool timeout = e.PacketCounter / Decomposer.SamplingFrequency > MaxTimeAfterStartPumping;
                     if (timeout)
                     {
-                        Decomposer.RecordStarted = false;
-                        PumpStatus = (int)PumpingStatus.Ready;
                         ShowError(BPMError.AirLeak);
 
                     }
                 }
                 if (PumpStatus == PumpingStatus.MaximumFound)
                 {
-                    int Index = (int)Decomposer.MainIndex;
+                    int Index = e.PacketCounter;
                     bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
                     if (timeout && CurrentPressure > MinPressure)
                     {
@@ -527,7 +524,7 @@ namespace TTestApp
             DevStatus.PumpIsOn = false;
             DevStatus.ValveSlowClosed = false;
             labStopPumpingReason.Text = mess;
-            PumpStatus = (int)PumpingStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
             USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
             PressureMeasStatus = PressureMeasurementStatus.Delay;
             DelayCounter = 0;
@@ -536,7 +533,7 @@ namespace TTestApp
 
         private void AfterDelay()
         {
-            PumpStatus = (int)PumpingStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
             Decomposer.PacketCounter = 0;
             timerDetectRate.Enabled = true;
             Decomposer.MainIndex = 0;
@@ -552,10 +549,10 @@ namespace TTestApp
             butPressureMeasAbort_Click(this, EventArgs.Empty);
             string errorText = error switch
             {
-                (int)BPMError.AirLeak => "Air leak",
+                BPMError.AirLeak => "Air leak",
                 _ => "",
             };
-            MessageBox.Show(errorText);
+            MessageBox.Show(errorText, "Error");
         }
     }
 }
