@@ -32,7 +32,7 @@ namespace TTestApp
         public USBserialPort(IMessageHandler messageHandler, int baudrate)
         {
             _baudRate = baudrate;
-            _connectString = "";//connectStr;
+            _connectString = "USB";//connectStr;
             messageHandler.WindowsMessage += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
@@ -181,7 +181,7 @@ namespace TTestApp
 //            const string ArduinoSerialString = "Serial2";
             const string FTDIString = "VCP";
 //            const string STMString = "VCP0";
-            bool FTDI = true;
+            bool FTDI = false;
 
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
