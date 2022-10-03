@@ -32,7 +32,7 @@ namespace TTestApp
         public USBserialPort(IMessageHandler messageHandler, int baudrate)
         {
             _baudRate = baudrate;
-            _connectString = "USB";//connectStr;
+            _connectString = "USBSER";//connectStr;
             messageHandler.WindowsMessage += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
