@@ -64,7 +64,7 @@ namespace TTestApp
             InitArraysForFlow();
 //            string connectStr = File.ReadAllText(ConnectStringFile);
             USBPort = new USBserialPort(this, Decomposer.BaudRate);
-            USBPort.ConnectionFailure += OnConnectionFailure;
+//            USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
             GigaDevStatus = new GigaDeviceStatus();
