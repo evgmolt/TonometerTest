@@ -35,7 +35,7 @@ namespace TTestApp
         double MaxTimeAfterStartPumping = 15; //sec
         int DelayCounter;
         int DelayValue;
-        const int DelayInSeconds = 1; //sec
+        const double DelayInSeconds = 0.2; //sec
         int HeartVisibleDelay = 50;
         int HeartVisibleCounter;
 
@@ -528,7 +528,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
             PressureMeasStatus = PressureMeasurementStatus.Delay;
             DelayCounter = 0;
-            DelayValue = Decomposer.SamplingFrequency * DelayInSeconds;
+            DelayValue = (int)(Decomposer.SamplingFrequency * DelayInSeconds);
         }
 
         private void AfterDelay()
