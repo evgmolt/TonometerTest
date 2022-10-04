@@ -19,6 +19,7 @@
         private const int MaxNumOfIntervalsForAver = 10;
         public List<int> FiltredPoints;
         private readonly int _samplingFrequency;
+        private const double _detectLevelCoeff = 0.7;
         private int _currentInterval;
 
         private double CurrentValue;
@@ -126,7 +127,7 @@
                     }
                     CurrentInterval = 0;
                     NNPointIndex++;
-                    DetectLevel = MaxD / 2;
+                    DetectLevel = MaxD * _detectLevelCoeff;
                     MaxD = 0;
                 }
             }
