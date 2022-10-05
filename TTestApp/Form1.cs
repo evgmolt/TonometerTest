@@ -18,7 +18,6 @@ namespace TTestApp
         Patient CurrentPatient;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
-//        int MaxValue = 200000; // Для BCI
         int MaxValue = 200;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
@@ -57,9 +56,7 @@ namespace TTestApp
             BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
             InitArraysForFlow();
-//            string connectStr = File.ReadAllText(ConnectStringFile);
             USBPort = new USBserialPort(this, Decomposer.BaudRate);
-//            USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
             GigaDevStatus = new GigaDeviceStatus();
