@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using System.IO.Ports;
-using System.Management;
 
 namespace TTestApp
 {
@@ -32,7 +31,7 @@ namespace TTestApp
         public USBserialPort(IMessageHandler messageHandler, int baudrate)
         {
             _baudRate = baudrate;
-            _connectString = "USBSER";//connectStr;
+            _connectString = "USBSER";
             messageHandler.WindowsMessage += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
@@ -96,60 +95,9 @@ namespace TTestApp
                 return false;
             }
         }
-
-        private string GetUSBSerialPortName()
-        {
-            string portName;
-            string usbSerialString = "CH340";
-            ManagementObjectCollection collection = null;
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher(
-                        "root\\CIMV2",
-                        @"Select Caption,DeviceID,PnpClass From Win32_PnpEntity WHERE DeviceID like '%USB%'")) 
-                    collection = searcher.Get();
-            }
-            catch (Exception)
-            {
-                portName = "";
-            }
-            List<string> list = new();
-            if (collection != null)
-            {
-                foreach (var device in collection)
-                {
-                    foreach (var p in device.Properties)
-                    {
-                        if (p.Value != null)
-                        {
-                            list.Add(p.Value.ToString());
-                        }
-                    }
-                }
-            }
-            try
-            {
-                portName = list.Where(p => p.IndexOf(usbSerialString) >= 0).First();
-                int firstBraceIndex = portName.IndexOf('(');
-                int secondBraceIndex = portName.IndexOf(')');
-                portName = portName.Substring(firstBraceIndex + 1, secondBraceIndex - firstBraceIndex - 1);
-            }
-            catch (Exception)
-            {
-
-                portName = "";
-            }
-            return portName;
-        }
-
+       
         public void Connect()
         {
-            //string portName = GetUSBSerialPortName();
-            //if (portName == "")
-            //{
-            //    return;
-            //}
-            //PortNames = new string[] { portName };
             PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Length; i++)
@@ -178,11 +126,6 @@ namespace TTestApp
 
         private string[] GetPortsNames()
         {
-//            const string ArduinoSerialString = "Serial2";
-            const string FTDIString = "VCP";
-//            const string STMString = "VCP0";
-            bool FTDI = false;
-
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
             RegistryKey r_device = r_hard.OpenSubKey("DEVICEMAP");
@@ -196,21 +139,10 @@ namespace TTestApp
             int Ind = 0;
             for (int i = 0; i < portvalues.Length; i++)
             {
-                if (FTDI)
+                if (portvalues[i].IndexOf(_connectString) >= 0)
                 {
-                    if (portvalues[i].IndexOf(FTDIString) >= 0)
-                    {
-                        portNames.Add((string)r_port.GetValue(portvalues[i]));
-                        Ind++;
-                    }
-                }
-                else
-                {
-                    if (portvalues[i].IndexOf(_connectString) >= 0)
-                    {
-                        portNames.Add((string)r_port.GetValue(portvalues[i]));
-                        Ind++;
-                    }
+                    portNames.Add((string)r_port.GetValue(portvalues[i]));
+                    Ind++;
                 }
             }
             return portNames.ToArray();

@@ -6,7 +6,6 @@ namespace TTestApp
 {
     public partial class Form1 : Form, IMessageHandler
     {
-        string ConnectStringFile = "connstr.txt";
         USBserialPort USBPort;
         DataArrays? DataA;
         ByteDecomposer Decomposer;
@@ -25,11 +24,7 @@ namespace TTestApp
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
-        bool Compression;
         int PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
-        int PumpStatus = (int)PumpingStatus.Ready;
-        double MaxFoundMoment;
-        double MaxTimeAfterMaxFound = 2.5; //sec
 
         double MaxPressure = 0;
         double MinPressure = 300;
@@ -86,14 +81,6 @@ namespace TTestApp
             }
         }
 
-        private void OnConnectionFailure(Exception obj)
-        {
-            MessageBoxButtons but = MessageBoxButtons.OK;
-            MessageBoxIcon icon = MessageBoxIcon.Error;
-            MessageBox.Show("Connection failure", "Error", but, icon);
-            ViewMode = true;
-        }
-
         protected override void WndProc(ref Message m)
         {
             const int WM_DEVICECHANGE = 0x0219;
@@ -106,157 +93,7 @@ namespace TTestApp
             }
             base.WndProc(ref m);
         }
-        
-        private void ReadFile(string fileName)
-        {
-            string[] lines = File.ReadAllLines(fileName);
-            CurrentFileSize = lines.Length;
-            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
-            UpdateScrollBar(CurrentFileSize);
 
-            if (CurrentFileSize == 0)
-            {
-                MessageBox.Show("Error reading file " + fileName);
-                return;
-            }
-            DataA = DataArrays.CreateDataFromLines(lines);
-            if (DataA == null)
-            {
-                MessageBox.Show("Error reading file");
-                return;
-            }
-//            PrepareData();
-            BufPanel.Refresh();
-        }
-
-        private void PrepareData()
-        {
-            DataA.CountViewArrays(BufPanel);
-            //Детектор - обнаружение пульсовых волн по производной
-            WaveDetector WD = new(Decomposer.SamplingFrequency);
-            WD.Reset();
-            for (int i = 0; i < CurrentFileSize; i++)
-            {
-                DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i);
-            }
-
-            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); //Используем только интервалы, прошедшие фильтр 25%
-            if (ArrayOfWaveIndexesDerivative.Length == 0)
-            {
-                return;
-            }
-
-            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length];
-            //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
-            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
-            }
-//            Array.Copy(ArrayOfWaveIndexesDerivative, ArrayOfWaveIndexes, ArrayOfWaveIndexes.Length);
-
-            VisirList.Clear();
-            VisirList.Add(ArrayOfWaveIndexes);
-
-            //Поиск пульсовой волны с максимальной амплитудой
-            double max = -1000000;
-            int XMax = default;
-            int XMaxIndex = 0;
-            for (int i = 0; i < ArrayOfWaveIndexes.Length - 4; i++)
-            {
-                if (ArrayOfWaveIndexes[i] > DataA.Size)
-                {
-                    break;
-                }
-                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] > max)
-                {
-                    max = DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
-                    XMax = ArrayOfWaveIndexes[i];
-                    XMaxIndex = i;
-                }
-            }
-
-            int[] ArrayLeft = new int[XMaxIndex];
-            int[] ArrayRight = new int[ArrayOfWaveIndexes.Length - XMaxIndex];
-            Array.Copy(ArrayOfWaveIndexes, ArrayLeft, ArrayLeft.Length);
-            Array.Copy(ArrayOfWaveIndexes, XMaxIndex, ArrayRight, 0, ArrayRight.Length);
-            double[] ArrayLeftValues = ArrayLeft.Select(x => DataA.PressureViewArray[x]).ToArray();
-            double[] ArrayRightValues = ArrayRight.Select(x => DataA.PressureViewArray[x]).ToArray();
-            double[] ArrLeftSorted = ArrayLeftValues.OrderBy(x => x).ToArray();
-//            double[] ArrRightSorted = ArrayRightValues.OrderByDescending(x => x).ToArray();
-            double[] ArrValues = ArrLeftSorted.Concat(ArrayRightValues).ToArray();
-
-            //Построение огибающей максимумов пульсаций давления
-            for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                int x1 = ArrayOfWaveIndexes[i - 1];
-                int x2 = ArrayOfWaveIndexes[i];
-                double y1 = ArrValues[i-1];
-                double y2 = ArrValues[i];
-                double coeff = (y2 - y1) / (x2 - x1);
-                for (int j = x1 - 1; j < x2; j++)
-                {
-                    DataA.EnvelopeArray[i + j] = y1 + coeff * (j - x1);
-                }
-            }
-
-            //Вычисление пульса 
-            int DecreaseSize = 3; //Количество отбрасываемых интервалов справа и слева
-            int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
-            int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
-
-            double P1 = 0;
-            double P2 = 0;
-            int indexP1 = 0;
-            int indexP2 = 0;
-            //Среднее давление
-            int MeanPress = (int)DataA.DCArray[XMax];
-            double V1 = max * (double)Cfg.CoeffLeft;
-            double V2 = max * (double)Cfg.CoeffRight;
-
-            //Определение систолического давления (влево от Max)
-            for (int i = XMaxIndex; i > 0; i--)
-            {
-                if (ArrValues[i] < V1)
-                {
-                    int x1 = ArrayOfWaveIndexes[i];
-                    int x2 = ArrayOfWaveIndexes[i + 1];
-                    double y1 = ArrValues[i];
-                    double y2 = ArrValues[i + 1];
-                    indexP1 = (int)(x1 + (x2 - x1) * (V1 - y1) / (y2 - y1));
-                    P1 = DataA.DCArray[indexP1];
-                    break;
-                }
-            }
-            //Определение диастолического давления (вправо от Max)
-            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length - 1; i++)
-            {
-                if (ArrValues[i] < V2)
-                {
-                    int x2 = ArrayOfWaveIndexes[i];
-                    int x1 = ArrayOfWaveIndexes[i - 1];
-                    double y2 = ArrValues[i];
-                    double y1 = ArrValues[i - 1];
-                    indexP2 = (int)(x2 - (x1 - x2) * (V1 - y2) / (y1 - x2));
-                    P2 = DataA.DCArray[indexP2];
-                    break;
-                }
-            }
-            int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
-            VisirList.Add(ArrayOfPoints);
-
-            float[] envelopeArray = new float[ArrayOfWaveIndexes.Length];
-            int[] envelopeMmhGArray = new int[ArrayOfWaveIndexes.Length];
-            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                if (ArrayOfWaveIndexes[i] > DataA.RealTimeArray.Length - 1)
-                {
-                    break;
-                }
-                envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
-                envelopeMmhGArray[i] = DataProcessing.ValueToMmhG(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
-            }
-
-        }
 
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
         {
@@ -329,9 +166,8 @@ namespace TTestApp
             {
                 return;
             }
-            int compressionMult = Compression ? DataProcessing.CompressionRatio : 1;
 
-            int index = e.X * compressionMult + ViewShift;
+            int index = e.X + ViewShift;
             double sec = index / Decomposer.SamplingFrequency;
         }
 
@@ -362,11 +198,6 @@ namespace TTestApp
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            USBPort.Connect();
         }
     }
 }
