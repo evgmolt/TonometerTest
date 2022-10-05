@@ -72,7 +72,16 @@ namespace TTestApp
             BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
             InitArraysForFlow();
-            USBPort = new USBSerialPort(this, Decomposer.BaudRate);
+            string ConnectionString;
+            try
+            {
+                ConnectionString = File.ReadAllText("conectstr.txt");
+            }
+            catch (Exception)
+            {
+                ConnectionString = String.Empty;
+            }
+            USBPort = new USBSerialPort(this, Decomposer.BaudRate, ConnectionString);
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();

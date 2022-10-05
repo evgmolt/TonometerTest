@@ -27,14 +27,16 @@ namespace TTestApp
         public event Action ConnectionOk;
         public event Action<Message> WindowsMessage;
 
-        
-        public USBSerialPort(IMessageHandler messageHandler, int baudrate)
+        private readonly string _connectionString;
+
+        public USBSerialPort(IMessageHandler messageHandler, int baudrate, string connectionString)
         {
             _baudRate = baudrate;
             messageHandler.WindowsMessage += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
             ReadTimer = new System.Threading.Timer(ReadPort, null, 0, Timeout.Infinite);
+            _connectionString = connectionString;
         }
 
         private void ReadPort(object state)
@@ -165,13 +167,9 @@ namespace TTestApp
             }
         }
 
-        private static string[] GetPortsNames()
+        private string[] GetPortsNames()
         {
             const string ArduinoSerialString0 = "Serial0";
-            const string ArduinoSerialString = "Serial";
-            const string FTDIString = "VCP";
-            const string STMString = "VCP0";
-            bool FTDI = false;
 
             RegistryKey r_hklm = Registry.LocalMachine;
             RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
@@ -183,24 +181,11 @@ namespace TTestApp
             }
             string[] portvalues = r_port.GetValueNames();
             List<string> portNames = new List<string>();
-            int Ind = 0;
             for (int i = 0; i < portvalues.Length; i++)
             {
-                if (FTDI)
+                if (portvalues[i].IndexOf(_connectionString) >= 0 && portvalues[i].IndexOf(ArduinoSerialString0) < 0)
                 {
-                    if (portvalues[i].IndexOf(STMString) >= 0)
-                    {
-                        portNames.Add((string)r_port.GetValue(portvalues[i]));
-                        Ind++;
-                    }
-                }
-                else
-                {
-                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0 && portvalues[i].IndexOf(ArduinoSerialString0) < 0)
-                    {
-                        portNames.Add((string)r_port.GetValue(portvalues[i]));
-                        Ind++;
-                    }
+                    portNames.Add((string)r_port.GetValue(portvalues[i]));
                 }
             }
             return portNames.ToArray();
