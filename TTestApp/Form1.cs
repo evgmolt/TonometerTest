@@ -35,7 +35,7 @@ namespace TTestApp
         double MaxTimeAfterStartPumping = 15; //sec
         int DelayCounter;
         int DelayValue;
-        const double DelayInSeconds = 0.2; //sec
+        const double DelayInSeconds = 0.3; //sec
         int HeartVisibleDelay = 50;
         int HeartVisibleCounter;
 
@@ -243,6 +243,10 @@ namespace TTestApp
                     break;
                 }
             }
+            //if (P1 == 0)
+            //{
+            //    P1 = DataA.DCArray[1];
+            //}
             //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length - 1; i++)
             {

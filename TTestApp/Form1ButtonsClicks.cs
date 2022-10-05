@@ -74,7 +74,7 @@ namespace TTestApp
         private void butStopRecord_Click(object sender, EventArgs e)
         {
             labArrythmia.Text = Detector?.Arrythmia.ToString();
-            Detector.OnWaveDetected -= NewWaveDetected;
+//            Detector.OnWaveDetected -= NewWaveDetected;
             Detector = null;
             progressBarRecord.Visible = false;
             Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
