@@ -102,10 +102,6 @@ namespace TTestApp
             {
                 CommandsBCI.BCISetup(USBPort);
             }
-            else
-            {
-                USBPort.WriteByte((byte)CmdDevice.StartReading);
-            }
         }
 
         private void OnConnectionFailure(Exception obj)
@@ -394,7 +390,7 @@ namespace TTestApp
 
         private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
         {
-            double StopMeasCoeff = 0.55;
+            double StopMeasCoeff = 0.5;
             HeartVisibleCounter = HeartVisibleDelay;
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
             labNumOfWaves.Text = "Waves detected: " + text;

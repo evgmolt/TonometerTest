@@ -29,14 +29,14 @@ namespace TTestApp
 
         private readonly string _connectionString;
 
-        public USBSerialPort(IMessageHandler messageHandler, int baudrate, string connectionString)
+        public USBSerialPort(IMessageHandler messageHandler, int baudRate, string connectionString)
         {
-            _baudRate = baudrate;
+            _baudRate = baudRate;
+            _connectionString = connectionString;
             messageHandler.WindowsMessage += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
             ReadTimer = new System.Threading.Timer(ReadPort, null, 0, Timeout.Infinite);
-            _connectionString = connectionString;
         }
 
         private void ReadPort(object state)
@@ -68,10 +68,7 @@ namespace TTestApp
         {
             try
             {
-                if (PortHandle != null)
-                {
-                    PortHandle.Write(buf, 0, buf.Length);
-                }
+                PortHandle?.Write(buf, 0, buf.Length);
                 return true;
             }
             catch (Exception)
@@ -85,10 +82,7 @@ namespace TTestApp
             byte[] buf = { b }; // new byte[1];
             try
             {
-                if (PortHandle != null)
-                {
-                    PortHandle.Write(buf, 0, 1);
-                }
+                PortHandle?.Write(buf, 0, 1);
                 return true;
             }
             catch (Exception)
@@ -167,14 +161,14 @@ namespace TTestApp
             }
         }
 
-        private string[] GetPortsNames()
+        private string[]? GetPortsNames()
         {
             const string ArduinoSerialString0 = "Serial0";
 
-            RegistryKey r_hklm = Registry.LocalMachine;
-            RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
+            RegistryKey r_hklm   = Registry.LocalMachine;
+            RegistryKey r_hard   = r_hklm.OpenSubKey("HARDWARE");
             RegistryKey r_device = r_hard.OpenSubKey("DEVICEMAP");
-            RegistryKey r_port = r_device.OpenSubKey("SERIALCOMM");
+            RegistryKey r_port   = r_device.OpenSubKey("SERIALCOMM");
             if (r_port == null) 
             {
                 return null;
