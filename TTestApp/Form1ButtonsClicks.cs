@@ -20,7 +20,7 @@ namespace TTestApp
             ViewMode = true;
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;
-
+            PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
             CurrentFileSize = Decomposer.PacketCounter;
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
@@ -46,7 +46,6 @@ namespace TTestApp
                 TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
                 Decomposer.PacketCounter = 0;
                 Decomposer.MainIndex = 0;
-                Decomposer.RecordStarted = true;
                 progressBarRecord.Visible = true;
                 Detector = new WaveDetector(Decomposer.SamplingFrequency);
                 FileNum++;

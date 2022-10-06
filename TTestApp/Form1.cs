@@ -185,13 +185,14 @@ namespace TTestApp
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }
+            if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
+            {
+                Decomposer.ZeroLine = Decomposer.tmpZero;
+                Decomposer.RecordStarted = true;
+                PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
+            }
             if (Decomposer.RecordStarted)
             {
-                if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
-                {
-                    Decomposer.ZeroLine = Decomposer.tmpZero;
-                    PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
-                }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
