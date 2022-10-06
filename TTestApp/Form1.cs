@@ -235,7 +235,7 @@ namespace TTestApp
             double V2 = max * (double)Cfg.CoeffRight;
 
             //Определение систолического давления (влево от Max)
-            for (int i = XMaxIndex; i > 0; i--)
+            for (int i = XMaxIndex; i >= 0; i--)
             {
                 if (ArrValues[i] < V1)
                 {
@@ -253,7 +253,7 @@ namespace TTestApp
             //    P1 = DataA.DCArray[1];
             //}
             //Определение диастолического давления (вправо от Max)
-            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length - 1; i++)
+            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
                 if (ArrValues[i] < V2)
                 {
