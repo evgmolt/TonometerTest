@@ -13,6 +13,16 @@
             return (int)((value - zero) * pressure / (val - zero));
         }
 
+        //Для BCI
+        //public static int ValueToMmHg(double value)
+        //{
+        //    double zero = 465;
+        //    double pressure = 142;
+        //    double val = 2503287;
+        //    return (int)((value - zero) * pressure / (val - zero));
+        //}
+
+
         public static int GetMaxIndexInRegion(double[] sourceArray, int index)
         {
             int range = 60;
