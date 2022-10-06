@@ -1,5 +1,4 @@
-﻿using TTestApp.Commands;
-using TTestApp.Decomposers;
+﻿using TTestApp.Decomposers;
 using TTestApp.Enums;
 
 namespace TTestApp
@@ -9,7 +8,6 @@ namespace TTestApp
         USBserialPort USBPort;
         DataArrays? DataA;
         ByteDecomposer Decomposer;
-        WaveDetector? Detector;
         CurvesPainter Painter;
         BufferedPanel BufPanel;
         TTestConfig Cfg;
@@ -23,14 +21,12 @@ namespace TTestApp
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
-        int PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+        PressureMeasurementStatus PressureMeasStatus = PressureMeasurementStatus.Ready;
 
         double MaxPressure = 0;
         double MinPressure = 300;
 
         double MaxDerivValue;
-
-        GigaDeviceStatus GigaDevStatus;
 
         public event Action<Message> WindowsMessage;
 
@@ -59,7 +55,6 @@ namespace TTestApp
             USBPort = new USBserialPort(this, Decomposer.BaudRate);
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
-            GigaDevStatus = new GigaDeviceStatus();
         }
 
         private void InitArraysForFlow()
@@ -72,10 +67,6 @@ namespace TTestApp
 
         private void OnConnectionOk()
         {
-            if (Decomposer is ByteDecomposerBCI)
-            {
-                CommandsBCI.BCISetup(USBPort);
-            }
         }
 
         protected override void WndProc(ref Message m)
@@ -92,6 +83,83 @@ namespace TTestApp
         }
 
 
+        private void butStopRecord_Click(object sender, EventArgs e)
+        {
+            progressBarRecord.Visible = false;
+            Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
+            Decomposer.RecordStarted = false;
+            TextWriter?.Dispose();
+            ViewMode = true;
+            timerPaint.Enabled = !ViewMode;
+            timerRead.Enabled = false;
+            PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+            CurrentFileSize = Decomposer.PacketCounter;
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
+            UpdateScrollBar(CurrentFileSize);
+
+            FormPatientData formPatientData = new FormPatientData(CurrentPatient);
+            formPatientData.SetStateAfterRecord();
+            if (formPatientData.ShowDialog() == DialogResult.OK)
+            {
+                CurrentPatient = formPatientData.patient;
+                SaveFile();
+            }
+            formPatientData.Dispose();
+            BufPanel.Refresh();
+        }
+
+        private void butStartRecord_Click(object sender, EventArgs e)
+        {
+            FormPatientData formPatientData = new(null);
+            formPatientData.SetStateBeforeRecord();
+            if (formPatientData.ShowDialog() == DialogResult.OK)
+            {
+                CurrentPatient = formPatientData.patient;
+                TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+                Decomposer.PacketCounter = 0;
+                Decomposer.MainIndex = 0;
+                progressBarRecord.Visible = true;
+                FileNum++;
+                PressureMeasStatus = PressureMeasurementStatus.Calibration;
+            }
+            formPatientData.Dispose();
+        }
+        private void butFlow_Click(object sender, EventArgs e)
+        {
+            ViewMode = !ViewMode;
+            timerRead.Enabled = !ViewMode;
+            timerPaint.Enabled = !ViewMode;
+            if (!ViewMode)
+            {
+                InitArraysForFlow();
+                hScrollBar1.Visible = false;
+            }
+        }
+        private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
+        {
+            ViewShift = hScrollBar1.Value;
+            BufPanel.Refresh();
+        }
+        private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
+        {
+            double a = trackBarAmp.Value;
+            ScaleY = Math.Pow(2, a / 2);
+            BufPanel.Refresh();
+        }
+        private void SaveFile()
+        {
+            Cfg.DataFileNum++;
+            TTestConfig.SaveConfig(Cfg);
+            CurrentFile = Cfg.Prefix + Cfg.DataFileNum.ToString().PadLeft(5, '0') + ".txt";
+            if (File.Exists(Cfg.DataDir + CurrentFile))
+            {
+                File.Delete(Cfg.DataDir + CurrentFile);
+            }
+            var DataStrings = File.ReadAllLines(Cfg.DataDir + TmpDataFile);
+            File.WriteAllLines(Cfg.DataDir + CurrentFile, CurrentPatient.ToArray());
+            File.AppendAllLines(Cfg.DataDir + CurrentFile, DataStrings);
+            Text = "Pulse wave recorder. File : " + CurrentFile;
+        }
         private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
         {
             if (DataA == null)
@@ -174,7 +242,6 @@ namespace TTestApp
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             double CurrentPressure = e.RealTimeValue;
             MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
-            DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (currentIndex > 0)
             {
                 labCurrentPressure.Text = "Current pressure, mmHG: " +
@@ -185,17 +252,18 @@ namespace TTestApp
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }
-            if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
+            if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
             {
                 Decomposer.ZeroLine = Decomposer.tmpZero;
                 Decomposer.RecordStarted = true;
-                PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
+                PressureMeasStatus = PressureMeasurementStatus.Measurement;
             }
             if (Decomposer.RecordStarted)
             {
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
-                DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
             }
         }
+
+
     }
 }

@@ -7,10 +7,6 @@
         public double[] DCArray;
         public double[] PressureArray;
         public double[] PressureViewArray;
-        public double[] EnvelopeArray;
-        public double[] CompressedArray;
-        public double[] DerivArray;
-        public double[] DebugArray;
 
         public int Size { get { return _size; } }
         public DataArrays(int size)
@@ -20,26 +16,6 @@
             DCArray = new double[_size];
             PressureArray = new double[_size];
             PressureViewArray = new double[_size];
-            EnvelopeArray = new double[_size];
-            DerivArray = new double[_size];  
-            DebugArray = new double[_size];
-        }
-
-        public static DataArrays? CreateDataFromLines(string[] lines)
-        {
-            DataArrays a = new(lines.Length);
-            try
-            {
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    a.RealTimeArray[i] = Convert.ToInt32(lines[i]);
-                }
-                return a;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
         }
 
         public void CountViewArrays(Control panel)
@@ -67,12 +43,6 @@
             }
 
             PressureViewArray = DataProcessing.GetSmoothArray(PressureArray, SmoothWindowSize);
-            for (uint i = 0; i < PressureViewArray.Length; i++)
-            {
-                DerivArray[i] = DataProcessing.GetDerivative(PressureArray, i);
-            }
-
-            CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
         }
 
         public String GetDataString(uint index)
