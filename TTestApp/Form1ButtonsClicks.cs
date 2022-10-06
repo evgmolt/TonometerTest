@@ -30,7 +30,6 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
             USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
             PressureMeasStatus = PressureMeasurementStatus.Ready;
-            labMeasInProgress.Visible = false;
             PumpStatus = PumpingStatus.Ready;
             butStopRecord_Click(butPressureMeasAbort, e);
         }
@@ -113,7 +112,6 @@ namespace TTestApp
             DevStatus.PumpIsOn = true;
             PumpStatus = PumpingStatus.WaitingForLevel;
             PressureMeasStatus = PressureMeasurementStatus.Calibration;
-            labMeasInProgress.Visible = true;
             USBPort.WriteByte((byte)CmdDevice.StartReading);
         }
 

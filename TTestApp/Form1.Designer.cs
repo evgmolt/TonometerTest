@@ -80,7 +80,6 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
-            this.labMeasInProgress = new System.Windows.Forms.Label();
             this.butPressureMeasAbort = new System.Windows.Forms.Button();
             this.butStartRecord = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
@@ -663,7 +662,6 @@
             // 
             this.panel5.Controls.Add(this.button2);
             this.panel5.Controls.Add(this.button1);
-            this.panel5.Controls.Add(this.labMeasInProgress);
             this.panel5.Controls.Add(this.butPressureMeasAbort);
             this.panel5.Controls.Add(this.butStartRecord);
             this.panel5.Controls.Add(this.label4);
@@ -693,18 +691,6 @@
             this.button1.Text = "Start read";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // labMeasInProgress
-            // 
-            this.labMeasInProgress.AutoSize = true;
-            this.labMeasInProgress.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labMeasInProgress.ForeColor = System.Drawing.Color.Red;
-            this.labMeasInProgress.Location = new System.Drawing.Point(24, 74);
-            this.labMeasInProgress.Name = "labMeasInProgress";
-            this.labMeasInProgress.Size = new System.Drawing.Size(149, 15);
-            this.labMeasInProgress.TabIndex = 3;
-            this.labMeasInProgress.Text = "Measurement in progress";
-            this.labMeasInProgress.Visible = false;
             // 
             // butPressureMeasAbort
             // 
@@ -845,7 +831,6 @@
         private Panel panel5;
         private Button butPressureMeasAbort;
         private Label label4;
-        private Label labMeasInProgress;
         private Panel controlPanel;
         private Button butPumpOff;
         private Button butPumpOn;

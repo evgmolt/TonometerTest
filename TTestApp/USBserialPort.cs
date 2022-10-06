@@ -18,7 +18,7 @@ namespace TTestApp
         public int CurrentPort;
         public int BytesRead;
         public Boolean ReadEnabled;
-        readonly System.Threading.Timer ReadTimer;
+        private readonly System.Threading.Timer ReadTimer;
 
         private readonly int _portBufSize = 10000;
         private readonly int _baudRate;

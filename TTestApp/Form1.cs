@@ -127,7 +127,10 @@ namespace TTestApp
 
         private void ReadFile(string fileName)
         {
+            int PatientDataCount = 7;
+
             string[] lines = File.ReadAllLines(fileName);
+            lines = lines.Skip(PatientDataCount).ToArray();
             CurrentFileSize = lines.Length;
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
@@ -169,6 +172,7 @@ namespace TTestApp
             //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
             for (int i = 0; i < ArrayOfWaveIndexes.Length - 1; i++)
             {
+//                ArrayOfWaveIndexes[i] = ArrayOfWaveIndexesDerivative[i] + 9;
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
             }
 
@@ -269,36 +273,7 @@ namespace TTestApp
             int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
             VisirList.Add(ArrayOfPoints);
 
-            float[] envelopeArray = new float[ArrayOfWaveIndexes.Length];
-            int[] envelopeMmhGArray = new int[ArrayOfWaveIndexes.Length];
-            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                if (ArrayOfWaveIndexes[i] > DataA.RealTimeArray.Length - 1)
-                {
-                    break;
-                }
-                envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
-                envelopeMmhGArray[i] = DataProcessing.ValueToMmHg(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
-            }
 
-/*            int UpsampleFactor = 10;
-            int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
-            float[] xs = new float[InterpolatedLength];
-            for (int i = 0; i < InterpolatedLength; i++)
-            {
-                xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
-            }
-            int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
-            float[] x = new float[xint.Length];
-            for (int i = 0; i < xint.Length; i++)
-            {
-                x[i] = (float)xint[i];
-            }
-            float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
-
-            DataProcessing.SaveArray("env_spline.txt", ys);*/
-
-            DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmHg(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmHg(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmHg(P2).ToString();
