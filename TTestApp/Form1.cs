@@ -252,10 +252,11 @@ namespace TTestApp
                     break;
                 }
             }
-            //if (P1 == 0)
-            //{
-            //    P1 = DataA.DCArray[1];
-            //}
+            if (P1 == 0)
+            {
+                P1 = DataA.DCArray[ArrayOfWaveIndexes[0]];
+                MessageBox.Show("SYS Error");
+            }
             //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
             {
@@ -270,9 +271,13 @@ namespace TTestApp
                     break;
                 }
             }
+            if (P1 == 0)
+            {
+                P1 = DataA.DCArray[ArrayOfWaveIndexes[ArrayOfWaveIndexes.Length - 1]];
+                MessageBox.Show("DIA Error");
+            }
             int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
             VisirList.Add(ArrayOfPoints);
-
 
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmHg(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmHg(P1).ToString();

@@ -34,6 +34,18 @@ namespace TTestApp
             butStopRecord_Click(butPressureMeasAbort, e);
         }
 
+        private void butValvesOpen_Click(object sender, EventArgs e)
+        {
+            butValve1Open_Click(this, EventArgs.Empty);
+            butValve2Open_Click(this, EventArgs.Empty);
+        }
+
+        private void butValvesClose_Click(object sender, EventArgs e)
+        {
+            butValve1Close_Click(this, EventArgs.Empty);
+            butValve2Close_Click(this, EventArgs.Empty);
+        }
+
         private void butValve2Open_Click(object sender, EventArgs e)
         {
             DevStatus.ValveFastClosed = false;
@@ -85,6 +97,7 @@ namespace TTestApp
             UpdateScrollBar(CurrentFileSize);
             PressureMeasStatus = PressureMeasurementStatus.Ready;
             PumpStatus = PumpingStatus.Ready;
+            butValvesOpen_Click(sender, EventArgs.Empty);
             ViewMode = true;
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;
@@ -93,7 +106,7 @@ namespace TTestApp
             controlPanel.Refresh();
         }
 
-        private void butStartRecord_Click(object sender, EventArgs e)
+        private void butStartMeas_Click(object sender, EventArgs e)
         {
             TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
             Decomposer.PacketCounter = 0;
@@ -113,6 +126,17 @@ namespace TTestApp
             PumpStatus = PumpingStatus.WaitingForLevel;
             PressureMeasStatus = PressureMeasurementStatus.Calibration;
             USBPort.WriteByte((byte)CmdDevice.StartReading);
+        }
+
+        private void butStartRecord_Click(object sender, EventArgs e)
+        {
+            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            Decomposer.PacketCounter = 0;
+            Decomposer.MainIndex = 0;
+            Decomposer.RecordStarted = true;
+            progressBarRecord.Visible = true;
+            Detector = new WaveDetector(Decomposer.SamplingFrequency);
+            Detector.OnWaveDetected += NewWaveDetected;
         }
 
         private void butFlow_Click(object sender, EventArgs e)

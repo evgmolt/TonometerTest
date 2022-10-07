@@ -62,12 +62,15 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.butStartRecord = new System.Windows.Forms.Button();
             this.progressBarRecord = new System.Windows.Forms.ProgressBar();
             this.butSaveFile = new System.Windows.Forms.Button();
             this.labRecordSize = new System.Windows.Forms.Label();
             this.butStopRecord = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.controlPanel = new System.Windows.Forms.Panel();
+            this.butValvesClose = new System.Windows.Forms.Button();
+            this.butValvesOpen = new System.Windows.Forms.Button();
             this.butPumpOff = new System.Windows.Forms.Button();
             this.butPumpOn = new System.Windows.Forms.Button();
             this.labPump = new System.Windows.Forms.Label();
@@ -81,7 +84,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.butPressureMeasAbort = new System.Windows.Forms.Button();
-            this.butStartRecord = new System.Windows.Forms.Button();
+            this.butStartMeas = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timerRead = new System.Windows.Forms.Timer(this.components);
@@ -496,6 +499,7 @@
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Controls.Add(this.progressBarRecord);
             this.panel3.Controls.Add(this.butSaveFile);
             this.panel3.Controls.Add(this.labRecordSize);
@@ -506,9 +510,19 @@
             this.panel3.Size = new System.Drawing.Size(224, 203);
             this.panel3.TabIndex = 6;
             // 
+            // butStartRecord
+            // 
+            this.butStartRecord.Location = new System.Drawing.Point(22, 16);
+            this.butStartRecord.Name = "butStartRecord";
+            this.butStartRecord.Size = new System.Drawing.Size(107, 23);
+            this.butStartRecord.TabIndex = 5;
+            this.butStartRecord.Text = "Start record HRV";
+            this.butStartRecord.UseVisualStyleBackColor = true;
+            this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
+            // 
             // progressBarRecord
             // 
-            this.progressBarRecord.Location = new System.Drawing.Point(22, 69);
+            this.progressBarRecord.Location = new System.Drawing.Point(22, 85);
             this.progressBarRecord.Name = "progressBarRecord";
             this.progressBarRecord.Size = new System.Drawing.Size(85, 23);
             this.progressBarRecord.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
@@ -517,7 +531,7 @@
             // 
             // butSaveFile
             // 
-            this.butSaveFile.Location = new System.Drawing.Point(22, 113);
+            this.butSaveFile.Location = new System.Drawing.Point(22, 129);
             this.butSaveFile.Name = "butSaveFile";
             this.butSaveFile.Size = new System.Drawing.Size(85, 23);
             this.butSaveFile.TabIndex = 3;
@@ -528,7 +542,7 @@
             // labRecordSize
             // 
             this.labRecordSize.AutoSize = true;
-            this.labRecordSize.Location = new System.Drawing.Point(24, 95);
+            this.labRecordSize.Location = new System.Drawing.Point(24, 111);
             this.labRecordSize.Name = "labRecordSize";
             this.labRecordSize.Size = new System.Drawing.Size(72, 15);
             this.labRecordSize.TabIndex = 2;
@@ -536,7 +550,7 @@
             // 
             // butStopRecord
             // 
-            this.butStopRecord.Location = new System.Drawing.Point(22, 35);
+            this.butStopRecord.Location = new System.Drawing.Point(22, 51);
             this.butStopRecord.Name = "butStopRecord";
             this.butStopRecord.Size = new System.Drawing.Size(85, 23);
             this.butStopRecord.TabIndex = 1;
@@ -556,6 +570,8 @@
             // 
             // controlPanel
             // 
+            this.controlPanel.Controls.Add(this.butValvesClose);
+            this.controlPanel.Controls.Add(this.butValvesOpen);
             this.controlPanel.Controls.Add(this.butPumpOff);
             this.controlPanel.Controls.Add(this.butPumpOn);
             this.controlPanel.Controls.Add(this.labPump);
@@ -571,9 +587,29 @@
             this.controlPanel.Size = new System.Drawing.Size(1012, 93);
             this.controlPanel.TabIndex = 17;
             // 
+            // butValvesClose
+            // 
+            this.butValvesClose.Location = new System.Drawing.Point(379, 28);
+            this.butValvesClose.Name = "butValvesClose";
+            this.butValvesClose.Size = new System.Drawing.Size(45, 52);
+            this.butValvesClose.TabIndex = 11;
+            this.butValvesClose.Text = "Close";
+            this.butValvesClose.UseVisualStyleBackColor = true;
+            this.butValvesClose.Click += new System.EventHandler(this.butValvesClose_Click);
+            // 
+            // butValvesOpen
+            // 
+            this.butValvesOpen.Location = new System.Drawing.Point(247, 27);
+            this.butValvesOpen.Name = "butValvesOpen";
+            this.butValvesOpen.Size = new System.Drawing.Size(45, 52);
+            this.butValvesOpen.TabIndex = 10;
+            this.butValvesOpen.Text = "Open";
+            this.butValvesOpen.UseVisualStyleBackColor = true;
+            this.butValvesOpen.Click += new System.EventHandler(this.butValvesOpen_Click);
+            // 
             // butPumpOff
             // 
-            this.butPumpOff.Location = new System.Drawing.Point(643, 21);
+            this.butPumpOff.Location = new System.Drawing.Point(827, 27);
             this.butPumpOff.Name = "butPumpOff";
             this.butPumpOff.Size = new System.Drawing.Size(75, 23);
             this.butPumpOff.TabIndex = 9;
@@ -583,7 +619,7 @@
             // 
             // butPumpOn
             // 
-            this.butPumpOn.Location = new System.Drawing.Point(562, 21);
+            this.butPumpOn.Location = new System.Drawing.Point(746, 27);
             this.butPumpOn.Name = "butPumpOn";
             this.butPumpOn.Size = new System.Drawing.Size(75, 23);
             this.butPumpOn.TabIndex = 8;
@@ -594,7 +630,7 @@
             // labPump
             // 
             this.labPump.AutoSize = true;
-            this.labPump.Location = new System.Drawing.Point(460, 25);
+            this.labPump.Location = new System.Drawing.Point(644, 31);
             this.labPump.Name = "labPump";
             this.labPump.Size = new System.Drawing.Size(48, 15);
             this.labPump.TabIndex = 6;
@@ -602,7 +638,7 @@
             // 
             // butValveFastClose
             // 
-            this.butValveFastClose.Location = new System.Drawing.Point(259, 50);
+            this.butValveFastClose.Location = new System.Drawing.Point(298, 55);
             this.butValveFastClose.Name = "butValveFastClose";
             this.butValveFastClose.Size = new System.Drawing.Size(75, 23);
             this.butValveFastClose.TabIndex = 5;
@@ -612,7 +648,7 @@
             // 
             // butValveFastOpen
             // 
-            this.butValveFastOpen.Location = new System.Drawing.Point(178, 50);
+            this.butValveFastOpen.Location = new System.Drawing.Point(166, 56);
             this.butValveFastOpen.Name = "butValveFastOpen";
             this.butValveFastOpen.Size = new System.Drawing.Size(75, 23);
             this.butValveFastOpen.TabIndex = 4;
@@ -622,7 +658,7 @@
             // 
             // butValveSlowClose
             // 
-            this.butValveSlowClose.Location = new System.Drawing.Point(259, 21);
+            this.butValveSlowClose.Location = new System.Drawing.Point(298, 26);
             this.butValveSlowClose.Name = "butValveSlowClose";
             this.butValveSlowClose.Size = new System.Drawing.Size(75, 23);
             this.butValveSlowClose.TabIndex = 3;
@@ -632,7 +668,7 @@
             // 
             // butValveSlowOpen
             // 
-            this.butValveSlowOpen.Location = new System.Drawing.Point(178, 21);
+            this.butValveSlowOpen.Location = new System.Drawing.Point(166, 27);
             this.butValveSlowOpen.Name = "butValveSlowOpen";
             this.butValveSlowOpen.Size = new System.Drawing.Size(75, 23);
             this.butValveSlowOpen.TabIndex = 2;
@@ -663,7 +699,7 @@
             this.panel5.Controls.Add(this.button2);
             this.panel5.Controls.Add(this.button1);
             this.panel5.Controls.Add(this.butPressureMeasAbort);
-            this.panel5.Controls.Add(this.butStartRecord);
+            this.panel5.Controls.Add(this.butStartMeas);
             this.panel5.Controls.Add(this.label4);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(3, 307);
@@ -674,7 +710,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(130, 51);
+            this.button2.Location = new System.Drawing.Point(130, 58);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 5;
@@ -684,7 +720,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(130, 22);
+            this.button1.Location = new System.Drawing.Point(130, 29);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 4;
@@ -694,7 +730,7 @@
             // 
             // butPressureMeasAbort
             // 
-            this.butPressureMeasAbort.Location = new System.Drawing.Point(23, 50);
+            this.butPressureMeasAbort.Location = new System.Drawing.Point(23, 57);
             this.butPressureMeasAbort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.butPressureMeasAbort.Name = "butPressureMeasAbort";
             this.butPressureMeasAbort.Size = new System.Drawing.Size(85, 22);
@@ -703,16 +739,16 @@
             this.butPressureMeasAbort.UseVisualStyleBackColor = true;
             this.butPressureMeasAbort.Click += new System.EventHandler(this.butPressureMeasAbort_Click);
             // 
-            // butStartRecord
+            // butStartMeas
             // 
-            this.butStartRecord.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.butStartRecord.Location = new System.Drawing.Point(23, 23);
-            this.butStartRecord.Name = "butStartRecord";
-            this.butStartRecord.Size = new System.Drawing.Size(85, 23);
-            this.butStartRecord.TabIndex = 0;
-            this.butStartRecord.Text = "Start";
-            this.butStartRecord.UseVisualStyleBackColor = true;
-            this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
+            this.butStartMeas.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.butStartMeas.Location = new System.Drawing.Point(23, 30);
+            this.butStartMeas.Name = "butStartMeas";
+            this.butStartMeas.Size = new System.Drawing.Size(85, 23);
+            this.butStartMeas.TabIndex = 0;
+            this.butStartMeas.Text = "Start";
+            this.butStartMeas.UseVisualStyleBackColor = true;
+            this.butStartMeas.Click += new System.EventHandler(this.butStartMeas_Click);
             // 
             // label4
             // 
@@ -805,7 +841,7 @@
         private Panel panel2;
         private Panel panel3;
         private Button butStopRecord;
-        private Button butStartRecord;
+        private Button butStartMeas;
         private Label labPort;
         private System.Windows.Forms.Timer timerStatus;
         private System.Windows.Forms.Timer timerPaint;
@@ -850,5 +886,8 @@
         private Button button1;
         private Button button2;
         private Label labHeart;
+        private Button butStartRecord;
+        private Button butValvesClose;
+        private Button butValvesOpen;
     }
 }
