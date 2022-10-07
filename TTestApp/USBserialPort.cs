@@ -27,6 +27,8 @@ namespace TTestApp
         public event Action ConnectionOk;
         public event Action<Message> WindowsMessage;
 
+        private string logFile = "log.txt";
+
         
         public USBserialPort(IMessageHandler messageHandler, int baudrate)
         {
@@ -98,10 +100,12 @@ namespace TTestApp
        
         public void Connect()
         {
+            File.WriteAllLines(logFile, new string[1] { "Start connect"});
             PortNames = GetPortsNames();
             if (PortNames == null) return;
             for (int i = 0; i < PortNames.Length; i++)
             {
+                File.AppendAllLines(logFile, new string[1] { "new Serial port" });
                 PortHandle = new SerialPort(PortNames[i], _baudRate)
                 {
                     DataBits = 8,
@@ -134,6 +138,7 @@ namespace TTestApp
             {
                 return null;
             }
+            File.AppendAllLines(logFile, new string[1] { "port.GetValueNames" });
             string[] portvalues = r_port.GetValueNames();
             List<string> portNames = new List<string>();
             int Ind = 0;
