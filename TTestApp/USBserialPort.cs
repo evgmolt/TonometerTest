@@ -150,6 +150,7 @@ namespace TTestApp
                     Ind++;
                 }
             }
+//            File.AppendAllLines(logFile, new string[1] { portNames[0].ToString() });
             return portNames.ToArray();
         }
 
