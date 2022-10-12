@@ -18,6 +18,9 @@ namespace TTestApp
             butValveSlowOpen.Enabled = DevStatus.ValveSlowClosed;
             butValveFastClose.Enabled = !DevStatus.ValveFastClosed;
             butValveFastOpen.Enabled = DevStatus.ValveFastClosed;
+            butValvesOpen.Enabled = DevStatus.ValveFastClosed || DevStatus.ValveSlowClosed;
+            butValvesClose.Enabled = !DevStatus.ValveFastClosed || !DevStatus.ValveSlowClosed;
+
             butPumpOn.Enabled = !DevStatus.PumpIsOn;
             butPumpOff.Enabled = DevStatus.PumpIsOn;
 

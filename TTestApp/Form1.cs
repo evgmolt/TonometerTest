@@ -138,6 +138,7 @@ namespace TTestApp
 
             if (CurrentFileSize == 0)
             {
+                ShowError(BPMError.ReadingFile);
                 MessageBox.Show("Error reading file " + fileName);
                 return;
             }
@@ -421,8 +422,9 @@ namespace TTestApp
             }
         }
 
-        private void OnPacketReceived(object? sender, PacketEventArgs e)
+        private void OnPacketReceived(object sender, PacketEventArgs e)
         {
+            labZero.Text = "Zero : " + Decomposer.ZeroLine.ToString();
             labHeart.Visible = HeartVisibleCounter != 0;
             if (HeartVisibleCounter != 0)
             {
@@ -544,6 +546,7 @@ namespace TTestApp
             string errorText = error switch
             {
                 BPMError.AirLeak => "Air leak",
+                BPMError.ReadingFile => "Reading file error",
                 _ => "",
             };
             MessageBox.Show(errorText, "Error");

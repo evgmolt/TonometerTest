@@ -9,6 +9,9 @@ namespace TTestApp.Enums
     //Blood pressure measurement errors
     internal enum BPMError
     {
-        AirLeak
+        AirLeak,
+        Sys,
+        Dia,
+        ReadingFile
     }
 }

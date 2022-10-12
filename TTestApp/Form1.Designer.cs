@@ -96,6 +96,7 @@
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timerDetectRate = new System.Windows.Forms.Timer(this.components);
+            this.labZero = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -575,6 +576,7 @@
             // 
             // controlPanel
             // 
+            this.controlPanel.Controls.Add(this.labZero);
             this.controlPanel.Controls.Add(this.butCalibr);
             this.controlPanel.Controls.Add(this.label1);
             this.controlPanel.Controls.Add(this.butStartToPressure);
@@ -852,6 +854,15 @@
             this.timerDetectRate.Interval = 10000;
             this.timerDetectRate.Tick += new System.EventHandler(this.timerDetectRate_Tick);
             // 
+            // labZero
+            // 
+            this.labZero.AutoSize = true;
+            this.labZero.Location = new System.Drawing.Point(816, 62);
+            this.labZero.Name = "labZero";
+            this.labZero.Size = new System.Drawing.Size(40, 15);
+            this.labZero.TabIndex = 28;
+            this.labZero.Text = "Zero : ";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -954,5 +965,6 @@
         private Button butStartToPressure;
         private NumericUpDown numUDpressure;
         private Button butCalibr;
+        private Label labZero;
     }
 }
