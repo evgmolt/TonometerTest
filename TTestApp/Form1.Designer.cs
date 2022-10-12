@@ -69,6 +69,9 @@
             this.butStopRecord = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.controlPanel = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.butStartToPressure = new System.Windows.Forms.Button();
+            this.numUDpressure = new System.Windows.Forms.NumericUpDown();
             this.butValvesClose = new System.Windows.Forms.Button();
             this.butValvesOpen = new System.Windows.Forms.Button();
             this.butPumpOff = new System.Windows.Forms.Button();
@@ -102,6 +105,7 @@
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.controlPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDpressure)).BeginInit();
             this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -570,6 +574,9 @@
             // 
             // controlPanel
             // 
+            this.controlPanel.Controls.Add(this.label1);
+            this.controlPanel.Controls.Add(this.butStartToPressure);
+            this.controlPanel.Controls.Add(this.numUDpressure);
             this.controlPanel.Controls.Add(this.butValvesClose);
             this.controlPanel.Controls.Add(this.butValvesOpen);
             this.controlPanel.Controls.Add(this.butPumpOff);
@@ -586,6 +593,47 @@
             this.controlPanel.Name = "controlPanel";
             this.controlPanel.Size = new System.Drawing.Size(1012, 93);
             this.controlPanel.TabIndex = 17;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(893, 8);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(86, 15);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "Target pressure";
+            // 
+            // butStartToPressure
+            // 
+            this.butStartToPressure.Location = new System.Drawing.Point(812, 25);
+            this.butStartToPressure.Name = "butStartToPressure";
+            this.butStartToPressure.Size = new System.Drawing.Size(75, 23);
+            this.butStartToPressure.TabIndex = 25;
+            this.butStartToPressure.Text = "Start";
+            this.butStartToPressure.UseVisualStyleBackColor = true;
+            this.butStartToPressure.Click += new System.EventHandler(this.butStartToPressure_Click);
+            // 
+            // numUDpressure
+            // 
+            this.numUDpressure.Location = new System.Drawing.Point(893, 26);
+            this.numUDpressure.Maximum = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.numUDpressure.Minimum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.numUDpressure.Name = "numUDpressure";
+            this.numUDpressure.Size = new System.Drawing.Size(80, 23);
+            this.numUDpressure.TabIndex = 24;
+            this.numUDpressure.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
             // 
             // butValvesClose
             // 
@@ -609,7 +657,7 @@
             // 
             // butPumpOff
             // 
-            this.butPumpOff.Location = new System.Drawing.Point(827, 27);
+            this.butPumpOff.Location = new System.Drawing.Point(643, 25);
             this.butPumpOff.Name = "butPumpOff";
             this.butPumpOff.Size = new System.Drawing.Size(75, 23);
             this.butPumpOff.TabIndex = 9;
@@ -619,7 +667,7 @@
             // 
             // butPumpOn
             // 
-            this.butPumpOn.Location = new System.Drawing.Point(746, 27);
+            this.butPumpOn.Location = new System.Drawing.Point(562, 25);
             this.butPumpOn.Name = "butPumpOn";
             this.butPumpOn.Size = new System.Drawing.Size(75, 23);
             this.butPumpOn.TabIndex = 8;
@@ -630,7 +678,7 @@
             // labPump
             // 
             this.labPump.AutoSize = true;
-            this.labPump.Location = new System.Drawing.Point(644, 31);
+            this.labPump.Location = new System.Drawing.Point(460, 29);
             this.labPump.Name = "labPump";
             this.labPump.Size = new System.Drawing.Size(48, 15);
             this.labPump.TabIndex = 6;
@@ -818,6 +866,7 @@
             this.panel4.ResumeLayout(false);
             this.controlPanel.ResumeLayout(false);
             this.controlPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDpressure)).EndInit();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.ResumeLayout(false);
@@ -889,5 +938,8 @@
         private Button butStartRecord;
         private Button butValvesClose;
         private Button butValvesOpen;
+        private Label label1;
+        private Button butStartToPressure;
+        private NumericUpDown numUDpressure;
     }
 }

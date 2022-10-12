@@ -30,6 +30,7 @@ namespace TTestApp
         double CurrentPressure;
         double MaxAllowablePressure = 180;
         double MinPressure = 120;
+        double ToPressure;
         double MomentMaxFound;
         double MaxTimeAfterMaxFound = 3; //sec
         double MaxTimeAfterStartPumping = 15; //sec
@@ -323,6 +324,7 @@ namespace TTestApp
 
         private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
         {
+            butValvesOpen_Click(this, EventArgs.Empty);
             Cfg.Maximized = WindowState == FormWindowState.Maximized;
             Cfg.WindowWidth = Width;
             Cfg.WindowHeight = Height;
@@ -437,16 +439,26 @@ namespace TTestApp
 
             labMeasStatus.Text = "Measurement status : " + PressureMeasStatus switch
             {
-                PressureMeasurementStatus.Ready       => "Ready",
-                PressureMeasurementStatus.Calibration => "Calibration",
-                PressureMeasurementStatus.Pumping     => "Pumping",
-                PressureMeasurementStatus.Delay       => "Delay",
-                PressureMeasurementStatus.Measurement => "Measurement",
+                PressureMeasurementStatus.Ready          => "Ready",
+                PressureMeasurementStatus.Calibration    => "Calibration",
+                PressureMeasurementStatus.Pumping        => "Pumping",
+                PressureMeasurementStatus.Delay          => "Delay",
+                PressureMeasurementStatus.Measurement    => "Measurement",
+                PressureMeasurementStatus.PumpingToLevel => "PumpingToLevel",
                 _ => "Ready",
             };
-
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             CurrentPressure = DataProcessing.ValueToMmHg(e.RealTimeValue);
+
+            if (PressureMeasStatus == PressureMeasurementStatus.PumpingToLevel)
+            {
+                if (CurrentPressure >= ToPressure)
+                {
+                    PressureMeasStatus = PressureMeasurementStatus.Ready;
+                    butPumpOff_Click(this, EventArgs.Empty);
+                }
+            }
+
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             if (Decomposer.RecordStarted)
             {
@@ -542,6 +554,14 @@ namespace TTestApp
                 _ => "",
             };
             MessageBox.Show(errorText, "Error");
+        }
+
+        private void butStartToPressure_Click(object sender, EventArgs e)
+        {
+            ToPressure = (double)numUDpressure.Value;
+            butValvesClose_Click(this, EventArgs.Empty);
+            butPumpOn_Click(this, EventArgs.Empty);
+            PressureMeasStatus = PressureMeasurementStatus.PumpingToLevel;
         }
     }
 }

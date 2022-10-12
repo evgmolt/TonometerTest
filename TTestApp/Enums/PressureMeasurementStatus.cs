@@ -12,6 +12,7 @@ namespace TTestApp.Enums
         Calibration,
         Pumping,
         Delay,
-        Measurement
+        Measurement,
+        PumpingToLevel
     }
 }
