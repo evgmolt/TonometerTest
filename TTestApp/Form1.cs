@@ -460,24 +460,17 @@ namespace TTestApp
             }
 
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
-            if (Decomposer.RecordStarted)
-            {
-                MaxPressure = (int)Math.Max(DataA.DerivArray[currentIndex], MaxPressure);
-            }
-            if (currentIndex > 0)
-            {
-                labCurrentPressure.Text = "Current : " +
-                                           CurrentPressure.ToString() +
-                                           " RealTime : " +
-                                           DataA.RealTimeArray[currentIndex].ToString();
-//                                           DataA.DerivArray[currentIndex].ToString("0.0").PadLeft(6, ' ') + " " +
-//                                           MaxPressure.ToString();
-            }
+            MaxPressure = (int)Math.Max(DataA.RealTimeArray[currentIndex], MaxPressure);
+            labCurrentPressure.Text = "Current : " +
+                                        CurrentPressure.ToString() +
+                                        " RealTime : " +
+                                        DataA.RealTimeArray[currentIndex].ToString();// + " " +
+//                                        MaxPressure.ToString();
             if (Decomposer.RecordStarted)
             {
                 if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
                 {
-//                    Decomposer.ZeroLine = Decomposer.tmpZero;
+                    Decomposer.ZeroLine = Decomposer.tmpZero;
                     USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
                     USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
                     USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
@@ -562,6 +555,11 @@ namespace TTestApp
             butValvesClose_Click(this, EventArgs.Empty);
             butPumpOn_Click(this, EventArgs.Empty);
             PressureMeasStatus = PressureMeasurementStatus.PumpingToLevel;
+        }
+
+        private void butCalibr_Click(object sender, EventArgs e)
+        {
+            Decomposer.ZeroLine = Decomposer.tmpZero;
         }
     }
 }

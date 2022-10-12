@@ -69,6 +69,7 @@
             this.butStopRecord = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.controlPanel = new System.Windows.Forms.Panel();
+            this.butCalibr = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.butStartToPressure = new System.Windows.Forms.Button();
             this.numUDpressure = new System.Windows.Forms.NumericUpDown();
@@ -574,6 +575,7 @@
             // 
             // controlPanel
             // 
+            this.controlPanel.Controls.Add(this.butCalibr);
             this.controlPanel.Controls.Add(this.label1);
             this.controlPanel.Controls.Add(this.butStartToPressure);
             this.controlPanel.Controls.Add(this.numUDpressure);
@@ -593,6 +595,16 @@
             this.controlPanel.Name = "controlPanel";
             this.controlPanel.Size = new System.Drawing.Size(1012, 93);
             this.controlPanel.TabIndex = 17;
+            // 
+            // butCalibr
+            // 
+            this.butCalibr.Location = new System.Drawing.Point(735, 57);
+            this.butCalibr.Name = "butCalibr";
+            this.butCalibr.Size = new System.Drawing.Size(75, 23);
+            this.butCalibr.TabIndex = 27;
+            this.butCalibr.Text = "Calibration";
+            this.butCalibr.UseVisualStyleBackColor = true;
+            this.butCalibr.Click += new System.EventHandler(this.butCalibr_Click);
             // 
             // label1
             // 
@@ -941,5 +953,6 @@
         private Label label1;
         private Button butStartToPressure;
         private NumericUpDown numUDpressure;
+        private Button butCalibr;
     }
 }
