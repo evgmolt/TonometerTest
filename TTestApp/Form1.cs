@@ -32,7 +32,7 @@ namespace TTestApp
         double MinPressure = 120;
         double ToPressure;
         double MomentMaxFound;
-        double MaxTimeAfterMaxFound = 3; //sec
+        double MaxTimeAfterMaxFound = 4; //sec
         double MaxTimeAfterStartPumping = 15; //sec
         int DelayCounter;
         int DelayValue;
@@ -256,7 +256,7 @@ namespace TTestApp
             if (P1 == 0)
             {
                 P1 = DataA.DCArray[ArrayOfWaveIndexes[0]];
-                MessageBox.Show("SYS Error");
+//                MessageBox.Show("SYS Error");
             }
             //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
@@ -275,7 +275,7 @@ namespace TTestApp
             if (P1 == 0)
             {
                 P1 = DataA.DCArray[ArrayOfWaveIndexes[ArrayOfWaveIndexes.Length - 1]];
-                MessageBox.Show("DIA Error");
+//                MessageBox.Show("DIA Error");
             }
             int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
             VisirList.Add(ArrayOfPoints);
@@ -399,7 +399,7 @@ namespace TTestApp
                         case PumpingStatus.MaximumFound:
                             if (e.Amplitude < Decomposer.StopPumpingLevel && CurrentPressure > MinPressure)
                             {
-                                StopPumping("Stop Pumping Level reached");
+                                StopPumping("Stop pumping level reached");
                             }
                             break;
                     }

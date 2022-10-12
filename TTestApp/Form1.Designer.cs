@@ -307,11 +307,11 @@
             // labHeart
             // 
             this.labHeart.AutoSize = true;
-            this.labHeart.Font = new System.Drawing.Font("Segoe UI", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labHeart.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.labHeart.ForeColor = System.Drawing.Color.Red;
-            this.labHeart.Location = new System.Drawing.Point(967, 119);
+            this.labHeart.Location = new System.Drawing.Point(959, 142);
             this.labHeart.Name = "labHeart";
-            this.labHeart.Size = new System.Drawing.Size(42, 45);
+            this.labHeart.Size = new System.Drawing.Size(50, 54);
             this.labHeart.TabIndex = 23;
             this.labHeart.Text = "♥";
             this.labHeart.Visible = false;
@@ -339,7 +339,7 @@
             // 
             this.labStopPumpingReason.AutoSize = true;
             this.labStopPumpingReason.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labStopPumpingReason.Location = new System.Drawing.Point(772, 50);
+            this.labStopPumpingReason.Location = new System.Drawing.Point(812, 29);
             this.labStopPumpingReason.Name = "labStopPumpingReason";
             this.labStopPumpingReason.Size = new System.Drawing.Size(38, 21);
             this.labStopPumpingReason.TabIndex = 20;

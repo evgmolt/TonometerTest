@@ -7,10 +7,9 @@
 
         public static int ValueToMmHg(double value)
         {
-            double zero = 17;
             double pressure = 220;
             double val = 4082;
-            return (int)((value - zero) * pressure / (val - zero));
+            return (int)(value * pressure / val);
         }
 
         //Для BCI
