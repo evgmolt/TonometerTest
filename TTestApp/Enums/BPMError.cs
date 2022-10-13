@@ -12,6 +12,7 @@ namespace TTestApp.Enums
         AirLeak,
         Sys,
         Dia,
-        ReadingFile
+        ReadingFile,
+        Connection
     }
 }

@@ -30,7 +30,6 @@ namespace TTestApp
         double CurrentPressure;
         double MaxAllowablePressure = 180;
         double MinPressure = 120;
-        double ToPressure;
         double MomentMaxFound;
         double MaxTimeAfterMaxFound = 4; //sec
         double MaxTimeAfterStartPumping = 15; //sec
@@ -46,7 +45,7 @@ namespace TTestApp
 
         DeviceStatus DevStatus;
 
-        public event Action<Message> WindowsMessage;
+        public event Action<Message> WindowsMessageHandler;
 
         public Form1()
         {
@@ -67,6 +66,7 @@ namespace TTestApp
             }
             numUDLeft.Value = Cfg.CoeffLeft;
             numUDRight.Value = Cfg.CoeffRight;
+            numUDpressure.Value = Cfg.ToPressure;
             panelGraph.Dock = DockStyle.Fill;
             panelGraph.Controls.Add(BufPanel);
             BufPanel.Dock = DockStyle.Fill;
@@ -107,21 +107,16 @@ namespace TTestApp
 
         private void OnConnectionFailure(Exception obj)
         {
-            MessageBoxButtons but = MessageBoxButtons.OK;
-            MessageBoxIcon icon = MessageBoxIcon.Error;
-            MessageBox.Show("Connection failure", "Error", but, icon);
+            ShowError(BPMError.Connection);
             ViewMode = true;
         }
 
         protected override void WndProc(ref Message m)
         {
             const int WM_DEVICECHANGE = 0x0219;
-            if (WindowsMessage != null)
+            if (m.Msg == WM_DEVICECHANGE)
             {
-                if (m.Msg == WM_DEVICECHANGE)
-                {
-                    WindowsMessage(m);
-                }
+                WindowsMessageHandler?.Invoke(m);
             }
             base.WndProc(ref m);
         }
@@ -139,13 +134,12 @@ namespace TTestApp
             if (CurrentFileSize == 0)
             {
                 ShowError(BPMError.ReadingFile);
-                MessageBox.Show("Error reading file " + fileName);
                 return;
             }
             DataA = DataArrays.CreateDataFromLines(lines);
             if (DataA == null)
             {
-                MessageBox.Show("Error reading file");
+                ShowError(BPMError.ReadingFile);
                 return;
             }
             PrepareData();
@@ -257,7 +251,7 @@ namespace TTestApp
             if (P1 == 0)
             {
                 P1 = DataA.DCArray[ArrayOfWaveIndexes[0]];
-//                MessageBox.Show("SYS Error");
+                ShowError(BPMError.Sys);
             }
             //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
@@ -276,7 +270,7 @@ namespace TTestApp
             if (P1 == 0)
             {
                 P1 = DataA.DCArray[ArrayOfWaveIndexes[ArrayOfWaveIndexes.Length - 1]];
-//                MessageBox.Show("DIA Error");
+                ShowError(BPMError.Dia);
             }
             int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
             VisirList.Add(ArrayOfPoints);
@@ -454,7 +448,7 @@ namespace TTestApp
 
             if (PressureMeasStatus == PressureMeasurementStatus.PumpingToLevel)
             {
-                if (CurrentPressure >= ToPressure)
+                if (CurrentPressure >= (int)Cfg.ToPressure)
                 {
                     PressureMeasStatus = PressureMeasurementStatus.Ready;
                     butPumpOff_Click(this, EventArgs.Empty);
@@ -547,6 +541,9 @@ namespace TTestApp
             {
                 BPMError.AirLeak => "Air leak",
                 BPMError.ReadingFile => "Reading file error",
+                BPMError.Connection => "Connection failure",
+                BPMError.Sys => "Systolic pressure error",
+                BPMError.Dia => "Diastolic pressure error",
                 _ => "",
             };
             MessageBox.Show(errorText, "Error");
@@ -554,7 +551,7 @@ namespace TTestApp
 
         private void butStartToPressure_Click(object sender, EventArgs e)
         {
-            ToPressure = (double)numUDpressure.Value;
+            Cfg.ToPressure = numUDpressure.Value;
             butValvesClose_Click(this, EventArgs.Empty);
             butPumpOn_Click(this, EventArgs.Empty);
             PressureMeasStatus = PressureMeasurementStatus.PumpingToLevel;

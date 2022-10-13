@@ -23,7 +23,7 @@
         private int _currentInterval;
 
         private double CurrentValue;
-        public EventHandler<WaveDetectorEventArgs>? OnWaveDetected;
+        public EventHandler<WaveDetectorEventArgs> OnWaveDetected;
 
         public int Arrythmia;
 

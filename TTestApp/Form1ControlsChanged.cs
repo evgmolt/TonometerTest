@@ -23,5 +23,9 @@
         {
             Cfg.CoeffRight = numUDRight.Value;
         }
+        private void numUDpressure_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.ToPressure = numUDpressure.Value;
+        }
     }
 }

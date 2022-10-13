@@ -6,7 +6,7 @@ namespace TTestApp
 {
     public interface IMessageHandler
     {
-        event Action<Message> WindowsMessage;
+        event Action<Message> WindowsMessageHandler;
     }
 
     public class USBSerialPort: IMessageHandler
@@ -25,7 +25,7 @@ namespace TTestApp
 
         public event Action<Exception> ConnectionFailure;
         public event Action ConnectionOk;
-        public event Action<Message> WindowsMessage;
+        public event Action<Message> WindowsMessageHandler;
 
         private readonly string _connectionString;
 
@@ -33,7 +33,7 @@ namespace TTestApp
         {
             _baudRate = baudRate;
             _connectionString = connectionString;
-            messageHandler.WindowsMessage += OnMessage;
+            messageHandler.WindowsMessageHandler += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
             ReadTimer = new System.Threading.Timer(ReadPort, null, 0, Timeout.Infinite);

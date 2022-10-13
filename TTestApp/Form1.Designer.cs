@@ -69,6 +69,7 @@
             this.butStopRecord = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.controlPanel = new System.Windows.Forms.Panel();
+            this.labZero = new System.Windows.Forms.Label();
             this.butCalibr = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.butStartToPressure = new System.Windows.Forms.Button();
@@ -96,7 +97,6 @@
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timerDetectRate = new System.Windows.Forms.Timer(this.components);
-            this.labZero = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -598,6 +598,15 @@
             this.controlPanel.Size = new System.Drawing.Size(1012, 93);
             this.controlPanel.TabIndex = 17;
             // 
+            // labZero
+            // 
+            this.labZero.AutoSize = true;
+            this.labZero.Location = new System.Drawing.Point(816, 62);
+            this.labZero.Name = "labZero";
+            this.labZero.Size = new System.Drawing.Size(40, 15);
+            this.labZero.TabIndex = 28;
+            this.labZero.Text = "Zero : ";
+            // 
             // butCalibr
             // 
             this.butCalibr.Location = new System.Drawing.Point(735, 57);
@@ -648,6 +657,7 @@
             0,
             0,
             0});
+            this.numUDpressure.ValueChanged += new System.EventHandler(this.numUDpressure_ValueChanged);
             // 
             // butValvesClose
             // 
@@ -853,15 +863,6 @@
             // 
             this.timerDetectRate.Interval = 10000;
             this.timerDetectRate.Tick += new System.EventHandler(this.timerDetectRate_Tick);
-            // 
-            // labZero
-            // 
-            this.labZero.AutoSize = true;
-            this.labZero.Location = new System.Drawing.Point(816, 62);
-            this.labZero.Name = "labZero";
-            this.labZero.Size = new System.Drawing.Size(40, 15);
-            this.labZero.TabIndex = 28;
-            this.labZero.Text = "Zero : ";
             // 
             // Form1
             // 

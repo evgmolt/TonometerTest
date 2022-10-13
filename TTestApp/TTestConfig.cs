@@ -13,6 +13,8 @@ namespace TTestApp
         public int MedianWindowSize { get; set; }
         public decimal CoeffLeft { get; set; }
         public decimal CoeffRight { get; set; }
+        public decimal ToPressure { get; set; }
+
         public TTestConfig()
         {
             DataDir = Directory.GetCurrentDirectory() + @"\Data\";
@@ -23,6 +25,7 @@ namespace TTestApp
             MedianWindowSize = 10;
             CoeffLeft = 0.4m;
             CoeffRight = 0.8m;
+            ToPressure = 60;
         }
 
         public static TTestConfig GetConfig()
