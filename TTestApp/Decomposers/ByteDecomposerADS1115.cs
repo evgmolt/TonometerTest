@@ -14,7 +14,7 @@
         public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
         {
             _samplingFrequency = 240;
-            _zeroLine = 17;
+            _zeroLine = 0;
         }
 
         public override int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)

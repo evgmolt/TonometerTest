@@ -194,5 +194,19 @@ namespace TTestApp
             }
             Text = "File : " + CurrentFile;
         }
+
+        private void butStartToPressure_Click(object sender, EventArgs e)
+        {
+            Cfg.ToPressure = numUDpressure.Value;
+            butValvesClose_Click(this, EventArgs.Empty);
+            butPumpOn_Click(this, EventArgs.Empty);
+            PressureMeasStatus = PressureMeasurementStatus.PumpingToLevel;
+        }
+
+        private void butCalibr_Click(object sender, EventArgs e)
+        {
+            Decomposer.ZeroLine = Decomposer.tmpZero;
+        }
     }
 }
+

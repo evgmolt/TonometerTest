@@ -620,7 +620,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(893, 8);
+            this.label1.Location = new System.Drawing.Point(887, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(86, 15);
             this.label1.TabIndex = 26;
@@ -638,7 +638,7 @@
             // 
             // numUDpressure
             // 
-            this.numUDpressure.Location = new System.Drawing.Point(893, 26);
+            this.numUDpressure.Location = new System.Drawing.Point(893, 25);
             this.numUDpressure.Maximum = new decimal(new int[] {
             300,
             0,
@@ -681,7 +681,7 @@
             // 
             // butPumpOff
             // 
-            this.butPumpOff.Location = new System.Drawing.Point(643, 25);
+            this.butPumpOff.Location = new System.Drawing.Point(616, 25);
             this.butPumpOff.Name = "butPumpOff";
             this.butPumpOff.Size = new System.Drawing.Size(75, 23);
             this.butPumpOff.TabIndex = 9;
@@ -691,7 +691,7 @@
             // 
             // butPumpOn
             // 
-            this.butPumpOn.Location = new System.Drawing.Point(562, 25);
+            this.butPumpOn.Location = new System.Drawing.Point(535, 25);
             this.butPumpOn.Name = "butPumpOn";
             this.butPumpOn.Size = new System.Drawing.Size(75, 23);
             this.butPumpOn.TabIndex = 8;

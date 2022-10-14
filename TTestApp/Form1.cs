@@ -35,7 +35,7 @@ namespace TTestApp
         double MaxTimeAfterStartPumping = 15; //sec
         int DelayCounter;
         int DelayValue;
-        const double DelayInSeconds = 0.3; //sec
+        const double DelayInSeconds = 0.3; //sec задержка начала записи сигнала после выключения компрессора
         int HeartVisibleDelay = 50;
         int HeartVisibleCounter;
 
@@ -360,7 +360,7 @@ namespace TTestApp
             double sec = index / Decomposer.SamplingFrequency;
             labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
-            labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
+            labY1.Text = String.Format("RealTimeArray : {0:f0}", DataA.RealTimeArray[index]);
             labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]) + "  " +
                                         DataProcessing.ValueToMmHg(DataA.DCArray[index]).ToString();
         }
@@ -536,30 +536,20 @@ namespace TTestApp
 
         private void ShowError(BPMError error)
         {
-            butPressureMeasAbort_Click(this, EventArgs.Empty);
+            if (error == BPMError.AirLeak)
+            {
+                butPressureMeasAbort_Click(this, EventArgs.Empty);
+            }
             string errorText = error switch
             {
-                BPMError.AirLeak => "Air leak",
+                BPMError.AirLeak     => "Air leak",
                 BPMError.ReadingFile => "Reading file error",
-                BPMError.Connection => "Connection failure",
-                BPMError.Sys => "Systolic pressure error",
-                BPMError.Dia => "Diastolic pressure error",
+                BPMError.Connection  => "Connection failure",
+                BPMError.Sys         => "Systolic pressure error",
+                BPMError.Dia         => "Diastolic pressure error",
                 _ => "",
             };
             MessageBox.Show(errorText, "Error");
-        }
-
-        private void butStartToPressure_Click(object sender, EventArgs e)
-        {
-            Cfg.ToPressure = numUDpressure.Value;
-            butValvesClose_Click(this, EventArgs.Empty);
-            butPumpOn_Click(this, EventArgs.Empty);
-            PressureMeasStatus = PressureMeasurementStatus.PumpingToLevel;
-        }
-
-        private void butCalibr_Click(object sender, EventArgs e)
-        {
-            Decomposer.ZeroLine = Decomposer.tmpZero;
         }
     }
 }
