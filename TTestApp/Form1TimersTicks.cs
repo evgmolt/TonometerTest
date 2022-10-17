@@ -11,6 +11,9 @@ namespace TTestApp
     {
         private void timerStatus_Tick(object sender, EventArgs e)
         {
+            timerRead.Enabled = !ViewMode;
+            timerPaint.Enabled = !ViewMode;
+
             labValve1.Text = DevStatus.ValveSlowClosed ? "Valve 1 (Slow) : closed" : "Valve 1 (Slow) : opened";
             labValve2.Text = DevStatus.ValveFastClosed ? "Valve 2 (Fast) : closed" : "Valve 2 (Fast) : opened";
             labPump.Text = DevStatus.PumpIsOn ? "Pump : On" : "Pump : Off";

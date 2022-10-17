@@ -38,6 +38,7 @@ namespace TTestApp
         const double DelayInSeconds = 0.3; //sec задержка начала записи сигнала после выключения компрессора
         int HeartVisibleDelay = 50;
         int HeartVisibleCounter;
+        bool HRVmode = false;
 
         double MaxPressure = 0;
 
@@ -230,6 +231,14 @@ namespace TTestApp
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
             labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
 
+            if (HRVmode)
+            {
+                FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+                formHRV.ShowDialog();
+                formHRV.Dispose();
+                return;
+            }
+
             double P1 = 0;
             double P2 = 0;
             int indexP1 = 0;
@@ -283,12 +292,9 @@ namespace TTestApp
             labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmHg(MeanPress).ToString();
             labSys.Text = "Sys : " + DataProcessing.ValueToMmHg(P1).ToString();
             labDia.Text = "Dia : " + DataProcessing.ValueToMmHg(P2).ToString();
-            //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-            //formHRV.ShowDialog();
-            //formHRV.Dispose();
         }
 
-        private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
+        private void bufferedPanel_Paint(object sender, PaintEventArgs e)
         {
             if (DataA == null)
             {
@@ -331,7 +337,7 @@ namespace TTestApp
             TTestConfig.SaveConfig(Cfg);
         }
 
-        private void Form1_Resize(object? sender, EventArgs e)
+        private void Form1_Resize(object sender, EventArgs e)
         {
             if (DataA == null)
             {
@@ -345,7 +351,7 @@ namespace TTestApp
             BufPanel.Refresh();
         }
 
-        private void BufPanel_MouseMove(object? sender, MouseEventArgs e)
+        private void BufPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (!ViewMode)
             {
@@ -370,7 +376,7 @@ namespace TTestApp
                                         DataProcessing.ValueToMmHg(DataA.DCArray[index]).ToString();
         }
 
-        private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
+        private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
         {
             double StopMeasCoeff = 0.5;
             HeartVisibleCounter = HeartVisibleDelay;

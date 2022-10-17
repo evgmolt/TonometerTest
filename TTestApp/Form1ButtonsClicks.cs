@@ -108,6 +108,7 @@ namespace TTestApp
 
         private void butStartMeas_Click(object sender, EventArgs e)
         {
+            HRVmode = false;
             TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
             Decomposer.PacketCounter = 0;
             Decomposer.MainIndex = 0;
@@ -128,8 +129,9 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdDevice.StartReading);
         }
 
-        private void butStartRecord_Click(object sender, EventArgs e)
+        private void butStartRecord_Click(object sender, EventArgs e) //HRV
         {
+            HRVmode = true;
             TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
             Decomposer.PacketCounter = 0;
             Decomposer.MainIndex = 0;
@@ -142,8 +144,6 @@ namespace TTestApp
         private void butFlow_Click(object sender, EventArgs e)
         {
             ViewMode = !ViewMode;
-            timerRead.Enabled = !ViewMode;
-            timerPaint.Enabled = !ViewMode;
             if (!ViewMode)
             {
                 InitArraysForFlow();
