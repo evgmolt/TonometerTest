@@ -73,14 +73,15 @@ namespace TTestApp
             BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
             InitArraysForFlow();
-            string ConnectionString;
+            string ConnectionString = String.Empty;
             try
             {
                 ConnectionString = File.ReadAllText("conectstr.txt");
             }
             catch (Exception)
             {
-                ConnectionString = String.Empty;
+                MessageBox.Show("Connection string not found. The device cannot be connected");
+                return;
             }
             USBPort = new USBSerialPort(this, Decomposer.BaudRate, ConnectionString);
             USBPort.ConnectionFailure += OnConnectionFailure;
@@ -102,6 +103,10 @@ namespace TTestApp
             if (Decomposer is ByteDecomposerBCI)
             {
                 CommandsBCI.BCISetup(USBPort);
+            }
+            if (Decomposer is ByteDecomposerADS1115)
+            {
+                USBPort.WriteByte((byte)CmdDevice.StartReading);
             }
         }
 
@@ -405,8 +410,8 @@ namespace TTestApp
                     {
                         DevStatus.ValveSlowClosed = false; 
                         DevStatus.ValveFastClosed = false;
-                        USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
                         PressureMeasStatus = PressureMeasurementStatus.Ready;
+                        USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
                         USBPort.WriteByte((byte)CmdDevice.StopReading);
                         butStopRecord_Click(this, EventArgs.Empty);
                     }

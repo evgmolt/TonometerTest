@@ -9,7 +9,7 @@ namespace TTestApp
         event Action<Message> WindowsMessageHandler;
     }
 
-    public class USBSerialPort: IMessageHandler
+    public class USBSerialPort
     {
         private const int _USBTimerInterval = 25;
         public SerialPort PortHandle;

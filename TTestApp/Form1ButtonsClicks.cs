@@ -49,7 +49,7 @@ namespace TTestApp
         private void butValve2Open_Click(object sender, EventArgs e)
         {
             DevStatus.ValveFastClosed = false;
-            USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
+            USBPort?.WriteByte((byte)CmdDevice.ValveFastOpen);
         }
 
         private void butValve2Close_Click(object sender, EventArgs e)
@@ -61,7 +61,7 @@ namespace TTestApp
         private void butValve1Open_Click(object sender, EventArgs e)
         {
             DevStatus.ValveSlowClosed = false;
-            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
+            USBPort?.WriteByte((byte)CmdDevice.ValveSlowOpen);
         }
 
         private void butValve1Close_Click(object sender, EventArgs e)
