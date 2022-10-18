@@ -67,7 +67,13 @@ namespace TTestApp
                                                                     MaxSize,
                                                                     ScaleY,
                                                                     1);
-                    e.Graphics.DrawCurve(pen, OutArray, tension);
+                    try
+                    {
+                        e.Graphics.DrawCurve(pen, OutArray, tension);
+                    }
+                    catch (Exception)
+                    {
+                    }
                     pen.Dispose();
                 }
                 int X1 = ViewShift;
