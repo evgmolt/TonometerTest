@@ -153,12 +153,7 @@
             {
                 return true;
             }
-            if (NewInterval > PrevInt + PrevInt / 2)
-            {
-                Arrythmia++;
-                return false;
-            }
-            if (NewInterval < PrevInt - PrevInt / 2)
+            if (NewInterval > PrevInt + PrevInt / 2 || NewInterval < PrevInt - PrevInt / 2)
             {
                 Arrythmia++;
                 return false;
