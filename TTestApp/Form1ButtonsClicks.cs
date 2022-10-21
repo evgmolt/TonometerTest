@@ -84,7 +84,7 @@ namespace TTestApp
 
         private void butStopRecord_Click(object sender, EventArgs e)
         {
-            labArrythmia.Text = Detector?.Arrythmia.ToString();
+            labArrythmia.Text = Detector?.Arrhythmia.ToString();
 //            Detector.OnWaveDetected -= NewWaveDetected;
             Detector = null;
             progressBarRecord.Visible = false;

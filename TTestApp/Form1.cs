@@ -163,7 +163,7 @@ namespace TTestApp
                 DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i);
             }
 
-            labArrythmia.Text = WD.Arrythmia.ToString();
+            labArrythmia.Text = WD.Arrhythmia.ToString();
             var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); //Используем только интервалы, прошедшие фильтр 25%
             if (ArrayOfWaveIndexesDerivative.Length == 0)
             {
@@ -172,7 +172,7 @@ namespace TTestApp
 
             int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length];
             //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
-            for (int i = 0; i < ArrayOfWaveIndexes.Length - 1; i++)
+            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
 //                ArrayOfWaveIndexes[i] = ArrayOfWaveIndexesDerivative[i] + 9;
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
@@ -219,14 +219,28 @@ namespace TTestApp
                 double coeff = (y2 - y1) / (x2 - x1);
                 for (int j = x1 - 1; j < x2; j++)
                 {
+                    int ind = i + j;
+                    if (ind >= DataA.Size)
+                    {
+                        break;
+                    }
                     DataA.EnvelopeArray[i + j] = y1 + coeff * (j - x1);
                 }
             }
 
             //Вычисление пульса 
-            int DecreaseSize = 2; //Количество отбрасываемых интервалов справа и слева
-            int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
-            int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+            //int DecreaseSize = 2; //Количество отбрасываемых интервалов справа и слева
+            //int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
+            //int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+
+            int ArrayForPulseSize = 10;
+            int shift = 6;
+            int[] ArrayForPulse = new int[ArrayForPulseSize];// ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+            for (int i = 0; i < ArrayForPulseSize; i++)
+            {
+                ArrayForPulse[i] = ArrayOfWaveIndexes[XMaxIndex - shift + i];
+            }
+
 
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
             labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
@@ -265,7 +279,7 @@ namespace TTestApp
             if (P1 == 0)
             {
                 P1 = DataA.DCArray[ArrayOfWaveIndexes[0]];
-                ShowError(BPMError.Sys);
+//                ShowError(BPMError.Sys);
             }
             //Определение диастолического давления (вправо от Max)
             for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
@@ -281,10 +295,11 @@ namespace TTestApp
                     break;
                 }
             }
-            if (P1 == 0)
+
+            if (P2 == 0)
             {
-                P1 = DataA.DCArray[ArrayOfWaveIndexes[ArrayOfWaveIndexes.Length - 1]];
-                ShowError(BPMError.Dia);
+                P2 = DataA.DCArray[ArrayOfWaveIndexes[ArrayOfWaveIndexes.Length - 1]];
+//                ShowError(BPMError.Dia);
             }
             int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
             VisirList.Add(ArrayOfPoints);

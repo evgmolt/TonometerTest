@@ -19,13 +19,13 @@
         private const int MaxNumOfIntervalsForAver = 10;
         public List<int> FiltredPoints;
         private readonly int _samplingFrequency;
-        private const double _detectLevelCoeff = 0.7;
+        private const double _detectLevelCoeff = 0.55;
         private int _currentInterval;
 
         private double CurrentValue;
         public EventHandler<WaveDetectorEventArgs> OnWaveDetected;
 
-        public int Arrythmia;
+        public int Arrhythmia;
 
         public WaveDetector(int samplingFrequency)
         {
@@ -42,7 +42,7 @@
                 WaveCount = FiltredPoints.Count,
                 Amplitude = CurrentValue,
                 Interval = _currentInterval,
-                Arrithmia = Arrythmia
+                Arrithmia = Arrhythmia
             };
             OnWaveDetected?.Invoke(this, args);
         }
@@ -53,7 +53,7 @@
             NNIndex = 0;
             FiltredPoints.Clear();
             DetectLevel = MinDetectLevel;
-            Arrythmia = 0;
+            Arrhythmia = 0;
         }
 
         public int GetCurrentPulse()
@@ -155,8 +155,8 @@
             }
             if (NewInterval > PrevInt + PrevInt / 2 || NewInterval < PrevInt - PrevInt / 2)
             {
-                Arrythmia++;
-                return false;
+                Arrhythmia++;
+                return true;
             }
             return true;
         }

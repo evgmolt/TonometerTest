@@ -26,6 +26,7 @@
         {
             int range = 60;
             double[] regionArray = new double[range];
+            range = 2 * Math.Min(range / 2, sourceArray.Length - index);
             Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
             double max = regionArray.Max();
             int maxIndex = Array.IndexOf(regionArray, max);

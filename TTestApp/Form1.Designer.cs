@@ -477,9 +477,10 @@
             // labelX
             // 
             this.labelX.AutoSize = true;
-            this.labelX.Location = new System.Drawing.Point(616, 110);
+            this.labelX.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labelX.Location = new System.Drawing.Point(616, 86);
             this.labelX.Name = "labelX";
-            this.labelX.Size = new System.Drawing.Size(35, 15);
+            this.labelX.Size = new System.Drawing.Size(70, 30);
             this.labelX.TabIndex = 2;
             this.labelX.Text = "X : 0  ";
             // 
