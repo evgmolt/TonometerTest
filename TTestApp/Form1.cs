@@ -228,19 +228,24 @@ namespace TTestApp
                 }
             }
 
-            //Вычисление пульса 
-            //int DecreaseSize = 2; //Количество отбрасываемых интервалов справа и слева
-            //int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
-            //int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
-
-            int ArrayForPulseSize = 10;
-            int shift = 6;
-            int[] ArrayForPulse = new int[ArrayForPulseSize];// ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
-            for (int i = 0; i < ArrayForPulseSize; i++)
+            //Вычисление пульса
+            int[] ArrayForPulse;
+            if (!HRVmode)
             {
-                ArrayForPulse[i] = ArrayOfWaveIndexes[XMaxIndex - shift + i];
+                int DecreaseSize = 2; //Количество отбрасываемых интервалов справа и слева
+                int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
+                ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
             }
-
+            else
+            {
+                int ArrayForPulseSize = 10;
+                int shift = 6;
+                ArrayForPulse = new int[ArrayForPulseSize];// ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+                for (int i = 0; i < ArrayForPulseSize; i++)
+                {
+                    ArrayForPulse[i] = ArrayOfWaveIndexes[XMaxIndex - shift + i];
+                }
+            }
 
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
             labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();

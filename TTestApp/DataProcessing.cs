@@ -30,7 +30,8 @@
             Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
             double max = regionArray.Max();
             int maxIndex = Array.IndexOf(regionArray, max);
-            return index - range / 2 + maxIndex;
+            int result = index - range / 2 + maxIndex;
+            return (result >=sourceArray.Length - 1)? sourceArray.Length - 1 : result;
         }
 
         public static void SaveArray(string fname, int[] inputArray)
