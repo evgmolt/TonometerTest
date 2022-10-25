@@ -98,6 +98,7 @@
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timerDetectRate = new System.Windows.Forms.Timer(this.components);
+            this.labAF = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -282,6 +283,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labAF);
             this.panelBottom.Controls.Add(this.labHeart);
             this.panelBottom.Controls.Add(this.labelRate);
             this.panelBottom.Controls.Add(this.labArrythmia);
@@ -331,7 +333,7 @@
             // 
             this.labArrythmia.AutoSize = true;
             this.labArrythmia.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labArrythmia.Location = new System.Drawing.Point(981, 15);
+            this.labArrythmia.Location = new System.Drawing.Point(981, 29);
             this.labArrythmia.Name = "labArrythmia";
             this.labArrythmia.Size = new System.Drawing.Size(19, 21);
             this.labArrythmia.TabIndex = 21;
@@ -866,6 +868,18 @@
             this.timerDetectRate.Interval = 10000;
             this.timerDetectRate.Tick += new System.EventHandler(this.timerDetectRate_Tick);
             // 
+            // labAF
+            // 
+            this.labAF.AutoSize = true;
+            this.labAF.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labAF.ForeColor = System.Drawing.Color.Red;
+            this.labAF.Location = new System.Drawing.Point(971, 8);
+            this.labAF.Name = "labAF";
+            this.labAF.Size = new System.Drawing.Size(29, 21);
+            this.labAF.TabIndex = 24;
+            this.labAF.Text = "AF";
+            this.labAF.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -970,5 +984,6 @@
         private NumericUpDown numUDpressure;
         private Button butCalibr;
         private Label labZero;
+        private Label labAF;
     }
 }

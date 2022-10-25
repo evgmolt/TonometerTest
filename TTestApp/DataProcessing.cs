@@ -54,11 +54,15 @@
         {
             double secondPerMin = 60;
             double mean = 0;
+            int[] intervals = new int[arrayOfIndexes.Length - 1];
             for (int i = 1; i < arrayOfIndexes.Length; i++) //Внимание! Цикл с 1!
             {
                 mean += arrayOfIndexes[i] - arrayOfIndexes[i - 1];
+                intervals[i - 1] = arrayOfIndexes[i] - arrayOfIndexes[i - 1];
             }
             mean /= arrayOfIndexes.Length - 1;
+
+//            mean = Filter.Median(intervals.Length, intervals, 0);
 
             //Аналог цикла и деления выше
             //            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();

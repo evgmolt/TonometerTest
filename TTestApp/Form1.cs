@@ -228,6 +228,8 @@ namespace TTestApp
                 }
             }
 
+            labAF.Visible = Arrhythmia.AtrialFibrillation(ArrayOfWaveIndexes);
+
             //Вычисление пульса
             int[] ArrayForPulse;
             if (!HRVmode)
@@ -253,7 +255,7 @@ namespace TTestApp
             }
 
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
-            labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
+            labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length).ToString();
 
             if (HRVmode)
             {
