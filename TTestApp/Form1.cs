@@ -242,7 +242,7 @@ namespace TTestApp
             {
                 int ArrayForPulseSize = 10;
                 int shift = 6;
-                ArrayForPulse = new int[ArrayForPulseSize];// ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+                ArrayForPulse = new int[ArrayForPulseSize];
                 for (int i = 0; i < ArrayForPulseSize; i++)
                 {
                     int index = XMaxIndex - shift + i;

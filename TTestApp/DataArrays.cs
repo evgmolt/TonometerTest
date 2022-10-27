@@ -3,13 +3,13 @@
     internal class DataArrays
     {
         private readonly int _size;
+
         public double[] RealTimeArray;
         public double[] DCArray;
         public double[] PressureViewArray;
         public double[] EnvelopeArray;
         public double[] DerivArray;
         public double[] DebugArray;
-        public double[] DiffArray;
 
         public int Size { get { return _size; } }
         public DataArrays(int size)
@@ -21,10 +21,9 @@
             EnvelopeArray = new double[_size];
             DerivArray = new double[_size];  
             DebugArray = new double[_size];
-            DiffArray = new double[_size];
         }
 
-        public static DataArrays? CreateDataFromLines(string[] lines)
+        public static DataArrays CreateDataFromLines(string[] lines)
         {
             DataArrays a = new(lines.Length);
             try

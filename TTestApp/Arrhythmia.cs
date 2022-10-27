@@ -10,9 +10,10 @@ namespace TTestApp
     {
         private const int numOfIntervals = 10;
         private const double level = 0.06;
-        internal static bool AtrialFibrillation(int[] arrayOfIndex) //Мерцательная аритмия
+
+        //Мерцательная аритмия, алгоритм Microlife
+        internal static bool AtrialFibrillation(int[] arrayOfIndexes) 
         {
-            int[] arrayOfIndexes = { 0, 2, 4, 6, 8, 10, 14, 16, 18, 21, 23, 25 };
             int length = arrayOfIndexes.Length;
             if (numOfIntervals > length - 1)
             {

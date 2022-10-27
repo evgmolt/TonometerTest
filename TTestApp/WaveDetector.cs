@@ -9,18 +9,13 @@
         private const int NoWaveInterval1 = 600;
         private const int NoWaveInterval2 = 1000;
         public double MaxD;
-        private const int NNArrSize = 10000;
-        private Point[] NNPointArr;
-        private int NNPointIndex;
+        private int PrevIndex;
         private int PrevInterval;
-        private int[] NNArray;
-        private int NNIndex;
-        private int NumOfIntervalsForAver;
-        private const int MaxNumOfIntervalsForAver = 10;
+        private int NumOfNN;
         public List<int> FiltredPoints;
         private readonly int _samplingFrequency;
         private const double _detectLevelCoeff = 0.55;
-        private int _currentInterval;
+        private int _lastInterval;
 
         private double CurrentValue;
         public EventHandler<WaveDetectorEventArgs> OnWaveDetected;
@@ -29,8 +24,6 @@
 
         public WaveDetector(int samplingFrequency)
         {
-            NNPointArr = new Point[NNArrSize];
-            NNArray = new int[NNArrSize];
             FiltredPoints = new List<int>();
             _samplingFrequency = samplingFrequency;
         }
@@ -41,7 +34,7 @@
             {
                 WaveCount = FiltredPoints.Count,
                 Amplitude = CurrentValue,
-                Interval = _currentInterval,
+                Interval = _lastInterval,
                 Arrithmia = Arrhythmia
             };
             OnWaveDetected?.Invoke(this, args);
@@ -49,33 +42,10 @@
 
         public void Reset()
         {
-            NNPointIndex = 0;
-            NNIndex = 0;
+            NumOfNN = 0;
             FiltredPoints.Clear();
             DetectLevel = MinDetectLevel;
             Arrhythmia = 0;
-        }
-
-        public int GetCurrentPulse()
-        {
-            if (NNIndex == 0)
-            {
-                return 0;
-            }
-            if (NNIndex < NumOfIntervalsForAver)
-            {
-                NumOfIntervalsForAver = NNIndex;
-            }
-            int sum = 0;
-            for (int i = 0; i<NumOfIntervalsForAver; i++)
-            {
-                sum += NNArray[(NNIndex - 1 - i) ];
-            }
-            sum /= NumOfIntervalsForAver;
-            double d = sum;
-            d /= _samplingFrequency; 
-            d = 60 / d;
-            return (int)Math.Round(d);
         }
 
         public double Detect(double[] DataArr, int Ind)
@@ -88,7 +58,6 @@
             if (CurrentInterval > NoWaveInterval2)
             {
                 DetectLevel /= 2;
-                NumOfIntervalsForAver = 0;
             }
             DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
             if (Ind < DataProcessing.DerivativeShift)
@@ -108,25 +77,20 @@
                 if (MaxD > CurrentValue)
                 {
                     int tmpNN = 0;
-                    NNPointArr[NNPointIndex].X = Ind - 1;
-                    NNPointArr[NNPointIndex].Y = (int)MaxD;
-                    if (NNPointIndex > 0)
+                    if (PrevIndex > 0)
                     {
-                        tmpNN = NNPointArr[NNPointIndex].X - NNPointArr[NNPointIndex - 1].X;
+                        tmpNN = (Ind - 1) - PrevIndex;
                     }
                     if (Filter25percent(tmpNN))
                     {
-                        NNArray[NNIndex] = tmpNN;
-                        _currentInterval = tmpNN;
-                        NNIndex++;
-                        NumOfIntervalsForAver++;
-                        NumOfIntervalsForAver = Math.Min(NumOfIntervalsForAver, MaxNumOfIntervalsForAver);
+                        _lastInterval = tmpNN;
                         FiltredPoints.Add(Ind - 1);
                         LockInterval = tmpNN / 2;
                         NewWaveDetected();
                     }
                     CurrentInterval = 0;
-                    NNPointIndex++;
+                    PrevIndex = Ind - 1;
+                    NumOfNN++;
                     DetectLevel = MaxD * _detectLevelCoeff;
                     MaxD = 0;
                 }
@@ -136,8 +100,8 @@
 
         private bool Filter25percent(int NewInterval)
         {
-            const int LoLimit = 50;  //ms - 240 уд / мин 
-            const int HiLimit = 400; //ms - 30  уд / мин
+            const int LoLimit = 75;  //ms - 200 уд / мин 
+            const int HiLimit = 500; //ms - 30  уд / мин
             const int MinNumberForArrythmia = 4;
             if (NewInterval < LoLimit) 
             {
@@ -149,11 +113,12 @@
             }
             int PrevInt = PrevInterval;
             PrevInterval = NewInterval;
-            if (NNPointIndex < MinNumberForArrythmia)
+            //Аритмию не оцениваем, если число зарегистрированных интервалов < Min
+            if (NumOfNN < MinNumberForArrythmia)
             {
                 return true;
             }
-            if (NewInterval > PrevInt + PrevInt / 2 || NewInterval < PrevInt - PrevInt / 2)
+            if (NewInterval > PrevInt + PrevInt / 4 || NewInterval < PrevInt - PrevInt / 4)
             {
                 Arrhythmia++;
                 return true;
