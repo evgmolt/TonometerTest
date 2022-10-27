@@ -91,6 +91,304 @@ namespace TTestApp
             DevStatus = new DeviceStatus();
         }
 
+        #region buttons_Clicks
+        private void button1_Click(object sender, EventArgs e)
+        {
+            USBPort.WriteByte((byte)CmdDevice.StartReading);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            USBPort.WriteByte((byte)CmdDevice.StopReading);
+        }
+
+        private void butPressureMeasAbort_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveSlowClosed = false;
+            DevStatus.ValveFastClosed = false;
+            DevStatus.PumpIsOn = false;
+            PumpStatus = PumpingStatus.Ready;
+            USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
+            PressureMeasStatus = PressureMeasurementStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
+            butStopRecord_Click(butPressureMeasAbort, e);
+        }
+
+        private void butValvesOpen_Click(object sender, EventArgs e)
+        {
+            butValve1Open_Click(this, EventArgs.Empty);
+            butValve2Open_Click(this, EventArgs.Empty);
+        }
+
+        private void butValvesClose_Click(object sender, EventArgs e)
+        {
+            butValve1Close_Click(this, EventArgs.Empty);
+            butValve2Close_Click(this, EventArgs.Empty);
+        }
+
+        private void butValve2Open_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveFastClosed = false;
+            USBPort?.WriteByte((byte)CmdDevice.ValveFastOpen);
+        }
+
+        private void butValve2Close_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveFastClosed = true;
+            USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
+        }
+
+        private void butValve1Open_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveSlowClosed = false;
+            USBPort?.WriteByte((byte)CmdDevice.ValveSlowOpen);
+        }
+
+        private void butValve1Close_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveSlowClosed = true;
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
+        }
+
+        private void butPumpOn_Click(object sender, EventArgs e)
+        {
+            DevStatus.PumpIsOn = true;
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
+        }
+
+        private void butPumpOff_Click(object sender, EventArgs e)
+        {
+            DevStatus.PumpIsOn = false;
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
+        }
+
+        private void butStopRecord_Click(object sender, EventArgs e)
+        {
+            labArrythmia.Text = Detector?.Arrhythmia.ToString();
+            //            Detector.OnWaveDetected -= NewWaveDetected;
+            Detector = null;
+            progressBarRecord.Visible = false;
+            Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
+            Decomposer.RecordStarted = false;
+            TextWriter?.Dispose();
+
+            CurrentFileSize = Decomposer.PacketCounter;
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
+            UpdateScrollBar(CurrentFileSize);
+            PressureMeasStatus = PressureMeasurementStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
+            butValvesOpen_Click(sender, EventArgs.Empty);
+            ViewMode = true;
+            timerPaint.Enabled = !ViewMode;
+            timerRead.Enabled = false;
+            PrepareData();
+            BufPanel.Refresh();
+            controlPanel.Refresh();
+        }
+
+        private void butStartMeas_Click(object sender, EventArgs e)
+        {
+            HRVmode = false;
+            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            Decomposer.PacketCounter = 0;
+            Decomposer.MainIndex = 0;
+            Decomposer.RecordStarted = true;
+            progressBarRecord.Visible = true;
+            labMeanPressure.Text = "Mean : ";
+            labSys.Text = "Sys : ";
+            labDia.Text = "Dia : ";
+            labPulse.Text = "Pulse : ";
+            Detector = new WaveDetector();
+            Detector.OnWaveDetected += NewWaveDetected;
+
+            DevStatus.ValveSlowClosed = true;
+            DevStatus.ValveFastClosed = true;
+            DevStatus.PumpIsOn = true;
+            PumpStatus = PumpingStatus.WaitingForLevel;
+            PressureMeasStatus = PressureMeasurementStatus.Calibration;
+            USBPort.WriteByte((byte)CmdDevice.StartReading);
+        }
+
+        private void butStartRecord_Click(object sender, EventArgs e) //HRV
+        {
+            HRVmode = true;
+            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            Decomposer.PacketCounter = 0;
+            Decomposer.MainIndex = 0;
+            Decomposer.RecordStarted = true;
+            progressBarRecord.Visible = true;
+            Detector = new WaveDetector();
+            Detector.OnWaveDetected += NewWaveDetected;
+        }
+
+        private void butFlow_Click(object sender, EventArgs e)
+        {
+            ViewMode = !ViewMode;
+            if (!ViewMode)
+            {
+                InitArraysForFlow();
+                hScrollBar1.Visible = false;
+            }
+        }
+
+        private void butRefresh_Click(object sender, EventArgs e)
+        {
+            PrepareData();
+            BufPanel.Refresh();
+            controlPanel.Refresh();
+        }
+
+        private void butSaveFile_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                Cfg.DataDir = Path.GetDirectoryName(saveFileDialog1.FileName) + @"\";
+                TTestConfig.SaveConfig(Cfg);
+                CurrentFile = Path.GetFileName(saveFileDialog1.FileName);
+                if (File.Exists(Cfg.DataDir + CurrentFile))
+                {
+                    File.Delete(Cfg.DataDir + CurrentFile);
+                }
+                File.Move(saveFileDialog1.InitialDirectory + TmpDataFile, Cfg.DataDir + CurrentFile);
+                Text = "File : " + CurrentFile;
+            }
+        }
+
+        private void butOpenFile_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = "";
+            openFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                ViewMode = true;
+                if (File.Exists(openFileDialog1.FileName))
+                {
+                    Cfg.DataDir = Path.GetDirectoryName(openFileDialog1.FileName) + @"\";
+                    TTestConfig.SaveConfig(Cfg);
+                    timerRead.Enabled = false;
+
+                    CurrentFile = Path.GetFileName(openFileDialog1.FileName);
+                    ReadFile(Cfg.DataDir + CurrentFile);
+                }
+            }
+            Text = "File : " + CurrentFile;
+        }
+
+        private void butStartToPressure_Click(object sender, EventArgs e)
+        {
+            Cfg.ToPressure = numUDpressure.Value;
+            butValvesClose_Click(this, EventArgs.Empty);
+            butPumpOn_Click(this, EventArgs.Empty);
+            PressureMeasStatus = PressureMeasurementStatus.PumpingToLevel;
+        }
+
+        private void butCalibr_Click(object sender, EventArgs e)
+        {
+            Decomposer.ZeroLine = Decomposer.tmpZero;
+        }
+        #endregion
+
+        #region ControlsChanged
+        private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
+        {
+            ViewShift = hScrollBar1.Value;
+            BufPanel.Refresh();
+        }
+
+        private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
+        {
+            double a = trackBarAmp.Value;
+            ScaleY = Math.Pow(2, a / 2);
+            BufPanel.Refresh();
+        }
+        private void numUDLeft_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.CoeffLeft = numUDLeft.Value;
+        }
+
+        private void numUDRight_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.CoeffRight = numUDRight.Value;
+        }
+        private void numUDpressure_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.ToPressure = numUDpressure.Value;
+        }
+        #endregion
+
+        #region TimersTicks
+        private void timerStatus_Tick(object sender, EventArgs e)
+        {
+            timerRead.Enabled = !ViewMode;
+            timerPaint.Enabled = !ViewMode;
+
+            labValve1.Text = DevStatus.ValveSlowClosed ? "Valve 1 (Slow) : closed" : "Valve 1 (Slow) : opened";
+            labValve2.Text = DevStatus.ValveFastClosed ? "Valve 2 (Fast) : closed" : "Valve 2 (Fast) : opened";
+            labPump.Text = DevStatus.PumpIsOn ? "Pump : On" : "Pump : Off";
+            butValveSlowClose.Enabled = !DevStatus.ValveSlowClosed;
+            butValveSlowOpen.Enabled = DevStatus.ValveSlowClosed;
+            butValveFastClose.Enabled = !DevStatus.ValveFastClosed;
+            butValveFastOpen.Enabled = DevStatus.ValveFastClosed;
+            butValvesOpen.Enabled = DevStatus.ValveFastClosed || DevStatus.ValveSlowClosed;
+            butValvesClose.Enabled = !DevStatus.ValveFastClosed || !DevStatus.ValveSlowClosed;
+
+            butPumpOn.Enabled = !DevStatus.PumpIsOn;
+            butPumpOff.Enabled = DevStatus.PumpIsOn;
+
+            if (Decomposer is null)
+            {
+                return;
+            }
+            butStartMeas.Enabled = !ViewMode && !Decomposer.RecordStarted!;
+            butStopRecord.Enabled = Decomposer.RecordStarted;
+            butSaveFile.Enabled = ViewMode && Decomposer.PacketCounter != 0;
+            butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
+            if (USBPort == null)
+            {
+                labPort.Text = "Disconnected";
+                ViewMode = true;
+                return;
+            }
+            if (USBPort.PortHandle == null)
+            {
+                labPort.Text = "Disconnected";
+                ViewMode = true;
+                return;
+            }
+            if (USBPort.PortHandle.IsOpen)
+            {
+                labPort.Text = "Connected to " + USBPort.PortNames[USBPort.CurrentPort];
+            }
+            else
+            {
+                labPort.Text = "Disconnected";
+            }
+        }
+
+        private void timerRead_Tick(object sender, EventArgs e)
+        {
+            if (USBPort?.PortHandle?.IsOpen == true)
+            {
+                Decomposer?.Decompos(USBPort, TextWriter);
+            }
+        }
+
+        private void timerPaint_Tick(object sender, EventArgs e)
+        {
+            BufPanel.Refresh();
+        }
+
+        private void timerDetectRate_Tick(object sender, EventArgs e)
+        {
+            Decomposer.SamplingFrequency = Decomposer.PacketCounter / 10;
+            timerDetectRate.Enabled = false;
+            labelRate.Text = "Sample rate : " + Decomposer.SamplingFrequency.ToString();
+        }
+        #endregion
+
         private void InitArraysForFlow()
         {
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
@@ -156,7 +454,7 @@ namespace TTestApp
         {
             DataA.CountViewArrays(BufPanel);
             //Детектор - обнаружение пульсовых волн по производной
-            WaveDetector WD = new(Decomposer.SamplingFrequency);
+            WaveDetector WD = new();
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
             {
@@ -164,7 +462,7 @@ namespace TTestApp
             }
 
             labArrythmia.Text = WD.Arrhythmia.ToString();
-            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); //Используем только интервалы, прошедшие фильтр 25%
+            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); 
             if (ArrayOfWaveIndexesDerivative.Length == 0)
             {
                 return;

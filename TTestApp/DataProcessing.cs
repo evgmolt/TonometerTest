@@ -50,7 +50,7 @@
             File.WriteAllLines(fname, stringsArr);
         }
 
-        public static int GetPulseFromIndexesArray(int[] arrayOfIndexes, int SamplingFreq)
+        public static int GetPulseFromIndexesArray(int[] arrayOfIndexes, int samplingFreq)
         {
             double secondPerMin = 60;
             double mean = 0;
@@ -67,12 +67,12 @@
             //Аналог цикла и деления выше
             //            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();
 
-            mean /= SamplingFreq;
+            mean /= samplingFreq;
             mean = secondPerMin / mean;
             return (int)Math.Round(mean);
         }
 
-        public static int[] ExpandArray(int[] inputArray, double[] CorrArray, int expandBy)
+        public static int[] ExpandArray(int[] inputArray, double[] corrArray, int expandBy)
         {
             int[] resultArray = new int[inputArray.Length + expandBy * 2];
             int intervalForSearch = 50;
@@ -95,9 +95,9 @@
                 int maxIndex = 0;
                 for (int i = index - intervalForSearch / 2; i < index + intervalForSearch; i++)
                 {
-                    if (CorrArray[i] > max)
+                    if (corrArray[i] > max)
                     {
-                        max = CorrArray[i];
+                        max = corrArray[i];
                         maxIndex = i;
                     }
                 }
@@ -112,13 +112,13 @@
                 int maxIndex = 0;
                 for (int i = index + intervalForSearch / 2; i < index + intervalForSearch; i++)
                 {
-                    if (i > CorrArray.Length - 1)
+                    if (i > corrArray.Length - 1)
                     {
                         break;
                     }
-                    if (CorrArray[i] > max)
+                    if (corrArray[i] > max)
                     {
-                        max = CorrArray[i];
+                        max = corrArray[i];
                         maxIndex = i;
                     }
                 }
@@ -210,13 +210,13 @@
             return (max - min);
         }
 
-        public static double GetDerivative(double[] DataArr, uint Ind)
+        public static double GetDerivative(double[] dataArr, uint Ind)
         {
             if (Ind < DerivativeAverageWidth / 2 + DerivativeShift)
             {
                 return 0;
             }
-            if (Ind - DerivativeAverageWidth / 2 + DerivativeAverageWidth > DataArr.Length - 1)
+            if (Ind - DerivativeAverageWidth / 2 + DerivativeAverageWidth > dataArr.Length - 1)
             {
                 return 0;
             }
@@ -225,8 +225,8 @@
             for (int i = 0; i < DerivativeAverageWidth; i++)
             {
                 {
-                    L1.Add(DataArr[Ind - DerivativeAverageWidth / 2 + i]);
-                    L2.Add(DataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
+                    L1.Add(dataArr[Ind - DerivativeAverageWidth / 2 + i]);
+                    L2.Add(dataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
                 }
             }
             if (L1.Count > 0 && L2.Count > 0)
