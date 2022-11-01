@@ -42,6 +42,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labAF = new System.Windows.Forms.Label();
             this.labHeart = new System.Windows.Forms.Label();
             this.labelRate = new System.Windows.Forms.Label();
             this.labArrythmia = new System.Windows.Forms.Label();
@@ -98,7 +99,6 @@
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timerDetectRate = new System.Windows.Forms.Timer(this.components);
-            this.labAF = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -307,6 +307,18 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labAF
+            // 
+            this.labAF.AutoSize = true;
+            this.labAF.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labAF.ForeColor = System.Drawing.Color.Red;
+            this.labAF.Location = new System.Drawing.Point(971, 8);
+            this.labAF.Name = "labAF";
+            this.labAF.Size = new System.Drawing.Size(29, 21);
+            this.labAF.TabIndex = 24;
+            this.labAF.Text = "AF";
+            this.labAF.Visible = false;
             // 
             // labHeart
             // 
@@ -665,7 +677,7 @@
             // 
             // butValvesClose
             // 
-            this.butValvesClose.Location = new System.Drawing.Point(379, 28);
+            this.butValvesClose.Location = new System.Drawing.Point(379, 25);
             this.butValvesClose.Name = "butValvesClose";
             this.butValvesClose.Size = new System.Drawing.Size(45, 52);
             this.butValvesClose.TabIndex = 11;
@@ -714,7 +726,7 @@
             // 
             // butValveFastClose
             // 
-            this.butValveFastClose.Location = new System.Drawing.Point(298, 55);
+            this.butValveFastClose.Location = new System.Drawing.Point(298, 56);
             this.butValveFastClose.Name = "butValveFastClose";
             this.butValveFastClose.Size = new System.Drawing.Size(75, 23);
             this.butValveFastClose.TabIndex = 5;
@@ -867,18 +879,6 @@
             // 
             this.timerDetectRate.Interval = 10000;
             this.timerDetectRate.Tick += new System.EventHandler(this.timerDetectRate_Tick);
-            // 
-            // labAF
-            // 
-            this.labAF.AutoSize = true;
-            this.labAF.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labAF.ForeColor = System.Drawing.Color.Red;
-            this.labAF.Location = new System.Drawing.Point(971, 8);
-            this.labAF.Name = "labAF";
-            this.labAF.Size = new System.Drawing.Size(29, 21);
-            this.labAF.TabIndex = 24;
-            this.labAF.Text = "AF";
-            this.labAF.Visible = false;
             // 
             // Form1
             // 

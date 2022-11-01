@@ -91,7 +91,7 @@ namespace TTestApp
             DevStatus = new DeviceStatus();
         }
 
-        #region buttons_Clicks
+        #region [ Buttons Clicks ]
         private void button1_Click(object sender, EventArgs e)
         {
             USBPort.WriteByte((byte)CmdDevice.StartReading);
@@ -291,7 +291,7 @@ namespace TTestApp
         }
         #endregion
 
-        #region ControlsChanged
+        #region [ Controls Changed ]
         private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
         {
             ViewShift = hScrollBar1.Value;
@@ -317,9 +317,9 @@ namespace TTestApp
         {
             Cfg.ToPressure = numUDpressure.Value;
         }
-        #endregion
+        #endregion ]
 
-        #region TimersTicks
+        #region [ Timers Ticks ]
         private void timerStatus_Tick(object sender, EventArgs e)
         {
             timerRead.Enabled = !ViewMode;
@@ -452,7 +452,7 @@ namespace TTestApp
 
         private void PrepareData()
         {
-            DataA.CountViewArrays(BufPanel);
+            DataA.CountViewArrays();
             //Детектор - обнаружение пульсовых волн по производной
             WaveDetector WD = new();
             WD.Reset();
@@ -472,7 +472,6 @@ namespace TTestApp
             //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
             for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
             {
-//                ArrayOfWaveIndexes[i] = ArrayOfWaveIndexesDerivative[i] + 9;
                 ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
             }
 
@@ -507,6 +506,12 @@ namespace TTestApp
 //            double[] ArrRightSorted = ArrayRightValues.OrderByDescending(x => x).ToArray();
             double[] ArrValues = ArrLeftSorted.Concat(ArrayRightValues).ToArray();
 
+            DataProcessing.RemoveArtifacts(ref ArrValues);
+            DataProcessing.SaveArray(@"D:\J\Tonometer_Doc\Анализ данных\env1.txt", ArrValues.Select(x => (int)x).ToArray());
+            DataProcessing.SaveArray(@"D:\J\Tonometer_Doc\Анализ данных\dc.txt", DataA.DCArray.Select(x => (int)x).ToArray());
+            max = ArrValues.Max();
+            XMaxIndex = Array.IndexOf(ArrValues, max);
+
             //Построение огибающей максимумов пульсаций давления
             for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
             {
@@ -525,6 +530,7 @@ namespace TTestApp
                     DataA.EnvelopeArray[i + j] = y1 + coeff * (j - x1);
                 }
             }
+
 
             labAF.Visible = Arrhythmia.AtrialFibrillation(ArrayOfWaveIndexes);
 
@@ -672,7 +678,7 @@ namespace TTestApp
             {
                 return;
             }
-            DataA.CountViewArrays(BufPanel);
+            DataA.CountViewArrays();
             BufPanel.Refresh();
         }
 

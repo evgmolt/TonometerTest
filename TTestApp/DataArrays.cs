@@ -12,6 +12,7 @@
         public double[] DebugArray;
 
         public int Size { get { return _size; } }
+        
         public DataArrays(int size)
         {
             _size = size;
@@ -40,7 +41,7 @@
             }
         }
 
-        public void CountViewArrays(Control panel)
+        public void CountViewArrays()
         {
             int DCArrayWindow = 60;
             int ACArrayWindow = 6;

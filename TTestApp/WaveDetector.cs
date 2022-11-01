@@ -14,7 +14,7 @@
         private int _prevIndex;
         private int _prevInterval;
         private int _numOfNN;
-        private const double _detectLevelCoeff = 0.55;
+        private const double _detectLevelCoeff = 0.7;
         private int _lastInterval;
         private double _currentValue;
 
@@ -34,7 +34,7 @@
                 WaveCount = FiltredPoints.Count,
                 Amplitude = _currentValue,
                 Interval = _lastInterval,
-                Arrithmia = Arrhythmia
+                ArrhythmiaCount = Arrhythmia
             };
             OnWaveDetected?.Invoke(this, args);
         }
@@ -42,8 +42,8 @@
         public void Reset()
         {
             _numOfNN = 0;
-            FiltredPoints.Clear();
             _detectLevel = _minDetectLevel;
+            FiltredPoints.Clear();
             Arrhythmia = 0;
         }
 

@@ -21,7 +21,6 @@
         //    return (int)((value - zero) * pressure / (val - zero));
         //}
 
-
         public static int GetMaxIndexInRegion(double[] sourceArray, int index)
         {
             int range = 60;
@@ -31,7 +30,7 @@
             double max = regionArray.Max();
             int maxIndex = Array.IndexOf(regionArray, max);
             int result = index - range / 2 + maxIndex;
-            return (result >=sourceArray.Length - 1)? sourceArray.Length - 1 : result;
+            return (result >= sourceArray.Length - 1)? sourceArray.Length - 1 : result;
         }
 
         public static void SaveArray(string fname, int[] inputArray)
@@ -52,7 +51,7 @@
 
         public static int GetPulseFromIndexesArray(int[] arrayOfIndexes, int samplingFreq)
         {
-            double secondPerMin = 60;
+            double secondsPerMin = 60;
             double mean = 0;
             int[] intervals = new int[arrayOfIndexes.Length - 1];
             for (int i = 1; i < arrayOfIndexes.Length; i++) //Внимание! Цикл с 1!
@@ -68,7 +67,7 @@
             //            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();
 
             mean /= samplingFreq;
-            mean = secondPerMin / mean;
+            mean = secondsPerMin / mean;
             return (int)Math.Round(mean);
         }
 
@@ -319,6 +318,18 @@
                 outputArray[i] = tmp / z + 50;
             }
             return outputArray;
+        }
+
+        internal static void RemoveArtifacts(ref double[] arrValues)
+        {
+            int level = 8;
+            for (int i = 1; i < arrValues.Length - 1; i++)
+            {
+                if (Math.Abs(arrValues[i] - arrValues[i - 1]) > level)
+                {
+                    arrValues[i] = (arrValues[i - 1] + arrValues[i + 1]) / 2;
+                }
+            }
         }
     }
 }
