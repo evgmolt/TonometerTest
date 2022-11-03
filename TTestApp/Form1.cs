@@ -495,7 +495,7 @@ namespace TTestApp
 
             //Подготовка массива для вычисления пульса
             int[] ArrayForPulse;
-            if (!HRVmode)
+            if (HRVmode)
             {
                 int DecreaseSize = 2; //Количество отбрасываемых интервалов справа и слева
                 int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
@@ -505,16 +505,17 @@ namespace TTestApp
             {
                 int ArrayForPulseSize = 10;
                 int shift = 6;
-                ArrayForPulse = new int[ArrayForPulseSize];
-                for (int i = 0; i < ArrayForPulseSize; i++)
-                {
-                    int index = XMaxIndex - shift + i;
-                    if (index < 0 || index > ArrayOfWaveIndexes.Length - 1)
-                    {
-                        continue;
-                    }
-                    ArrayForPulse[i] = ArrayOfWaveIndexes[index];
-                }
+                //ArrayForPulse = new int[ArrayForPulseSize];
+                //for (int i = 0; i < ArrayForPulseSize; i++)
+                //{
+                //    int index = XMaxIndex - shift + i;
+                //    if (index < 0 || index > ArrayOfWaveIndexes.Length - 1)
+                //    {
+                //        continue;
+                //    }
+                //    ArrayForPulse[i] = ArrayOfWaveIndexes[index];
+                //}
+                ArrayForPulse = DataProcessing.GetSubArray(ArrayOfWaveIndexes, XMaxIndex - shift, XMaxIndex - shift + ArrayForPulseSize);
             }
 
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();

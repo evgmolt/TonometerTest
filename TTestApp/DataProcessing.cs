@@ -21,6 +21,24 @@
         //    return (int)((value - zero) * pressure / (val - zero));
         //}
 
+        public static int[] GetSubArray(int[] inputArray, int start, int stop)
+        {
+            if (start < 0)
+            {
+                start = 0;
+            }
+            if (stop > inputArray.Length - 1)
+            {
+                stop = inputArray.Length - 1;
+            }
+            int[] subArray = new int[stop - start];
+            for (int i = 0; i < stop - start; i++)
+            {
+                subArray[i] = inputArray[start + i];
+            }
+            return subArray;
+        }
+
         public static int[] GetArrayOfWaveIndexes(double[] valuesArray, int[] indexesArray)
         {
             int[] indexes = new int[indexesArray.Length];
