@@ -21,6 +21,16 @@
         //    return (int)((value - zero) * pressure / (val - zero));
         //}
 
+        public static int[] GetArrayOfWaveIndexes(double[] valuesArray, int[] indexesArray)
+        {
+            int[] indexes = new int[indexesArray.Length];
+            for (int i = 0; i < indexesArray.Length; i++)
+            {
+                indexes[i] = DataProcessing.GetMaxIndexInRegion(valuesArray, indexesArray[i]);
+            }
+            return indexes;
+        }
+
         public static int GetMaxIndexInRegion(double[] sourceArray, int index)
         {
             int range = 60;
