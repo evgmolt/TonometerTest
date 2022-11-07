@@ -461,10 +461,9 @@ namespace TTestApp
             }
 
             labArrythmia.Text = WD.Arrhythmia.ToString();
-            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray();
 
             //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
-            int[] ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative);
+            int[] ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
 
             double[] ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
             DataProcessing.RemoveArtifacts(ref ArrayOfWaveAmplitudes);
@@ -481,10 +480,8 @@ namespace TTestApp
                 DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i, XMax);
             }
 
-            ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray();
-
             //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
-            ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative);
+            ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
 
             ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
             DataProcessing.RemoveArtifacts(ref ArrayOfWaveAmplitudes);
@@ -544,16 +541,11 @@ namespace TTestApp
             double ValueDia = max * (double)Cfg.CoeffRight;
 
             //Определение систолического давления (влево от Max)
-            for (int i = XMaxIndex; i >= 0; i--)
+            for (int i = XMax; i >= 0; i--)
             {
-                if (ArrValues[i] < ValueSys)
+                if (DataA.EnvelopeArray[i] < ValueSys)
                 {
-                    int x1 = ArrayOfWaveIndexes[i];
-                    int x2 = ArrayOfWaveIndexes[i + 1];
-                    double y1 = ArrValues[i];
-                    double y2 = ArrValues[i + 1];
-                    indexPSys = (int)(x1 + (x2 - x1) * (ValueSys - y1) / (y2 - y1));
-                    PSys = DataA.DCArray[indexPSys];
+                    PSys = DataA.DCArray[i];
                     break;
                 }
             }
@@ -563,16 +555,11 @@ namespace TTestApp
 //                ShowError(BPMError.Sys);
             }
             //Определение диастолического давления (вправо от Max)
-            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length; i++)
+            for (int i = XMax; i < DataA.Size; i++)
             {
-                if (ArrValues[i] < ValueDia)
+                if (DataA.EnvelopeArray[i] < ValueDia)
                 {
-                    int x2 = ArrayOfWaveIndexes[i];
-                    int x1 = ArrayOfWaveIndexes[i - 1];
-                    double y2 = ArrValues[i];
-                    double y1 = ArrValues[i - 1];
-                    indexPDia = (int)(x2 - (x1 - x2) * (ValueSys - y2) / (y1 - x2));
-                    PDia = DataA.DCArray[indexPDia];
+                    PDia = DataA.DCArray[i];
                     break;
                 }
             }
