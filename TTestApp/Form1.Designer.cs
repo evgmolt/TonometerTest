@@ -57,7 +57,6 @@
             this.labPulse = new System.Windows.Forms.Label();
             this.labDia = new System.Windows.Forms.Label();
             this.labSys = new System.Windows.Forms.Label();
-            this.labMeanPressure = new System.Windows.Forms.Label();
             this.labCurrentPressure = new System.Windows.Forms.Label();
             this.labPort = new System.Windows.Forms.Label();
             this.labelX = new System.Windows.Forms.Label();
@@ -298,7 +297,6 @@
             this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.labDia);
             this.panelBottom.Controls.Add(this.labSys);
-            this.panelBottom.Controls.Add(this.labMeanPressure);
             this.panelBottom.Controls.Add(this.labCurrentPressure);
             this.panelBottom.Controls.Add(this.labPort);
             this.panelBottom.Controls.Add(this.labelX);
@@ -458,16 +456,6 @@
             this.labSys.Size = new System.Drawing.Size(61, 30);
             this.labSys.TabIndex = 8;
             this.labSys.Text = "Sys : ";
-            // 
-            // labMeanPressure
-            // 
-            this.labMeanPressure.AutoSize = true;
-            this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labMeanPressure.Location = new System.Drawing.Point(183, 36);
-            this.labMeanPressure.Name = "labMeanPressure";
-            this.labMeanPressure.Size = new System.Drawing.Size(85, 30);
-            this.labMeanPressure.TabIndex = 7;
-            this.labMeanPressure.Text = "Mean : ";
             // 
             // labCurrentPressure
             // 
@@ -941,7 +929,6 @@
         private Button butSaveFile;
         private SaveFileDialog saveFileDialog1;
         private ProgressBar progressBarRecord;
-        private Label labMeanPressure;
         private Label labDia;
         private Label labSys;
         private Label labPulse;

@@ -14,7 +14,9 @@
         private int _prevIndex;
         private int _prevInterval;
         private int _numOfNN;
-        private const double _detectLevelCoeff = 0.7;
+        private double _detectLevelCoeff;
+        private const double _detectLevelCoeffSys = 0.7;
+        private const double _detectLevelCoeffDia = 0.55;
         private int _lastInterval;
         private double _currentValue;
 
@@ -24,6 +26,7 @@
 
         public WaveDetector()
         {
+            _detectLevelCoeff = _detectLevelCoeffSys;
             FiltredPoints = new List<int>();
         }
 
@@ -43,8 +46,18 @@
         {
             _numOfNN = 0;
             _detectLevel = _minDetectLevel;
+            _detectLevelCoeff = _detectLevelCoeffSys;
             FiltredPoints.Clear();
             Arrhythmia = 0;
+        }
+
+        public double Detect(double[] dataArr, int index, int IndexOfMax)
+        {
+            if (index == IndexOfMax)
+            {
+                _detectLevelCoeff = _detectLevelCoeffDia;
+            }
+            return Detect(dataArr, index);
         }
 
         public double Detect(double[] dataArr, int index)
