@@ -398,14 +398,7 @@ namespace TTestApp
 
         private void OnConnectionOk()
         {
-            if (Decomposer is ByteDecomposerBCI)
-            {
-                CommandsBCI.BCISetup(USBPort);
-            }
-            if (Decomposer is ByteDecomposerADS1115)
-            {
-                USBPort.WriteByte((byte)CmdDevice.StartReading);
-            }
+            USBPort.WriteByte((byte)CmdDevice.StartReading);
         }
 
         private void OnConnectionFailure(Exception obj)
@@ -546,13 +539,14 @@ namespace TTestApp
                 if (DataA.EnvelopeArray[i] < ValueSys)
                 {
                     PSys = DataA.DCArray[i];
+                    indexPSys = i;
                     break;
                 }
             }
             if (PSys == 0)
             {
-                PSys = DataA.DCArray[ArrayOfWaveIndexes[0]];
-//                ShowError(BPMError.Sys);
+                PSys = DataA.DCArray[0];
+                ShowError(BPMError.Sys);
             }
             //Определение диастолического давления (вправо от Max)
             for (int i = XMax; i < DataA.Size; i++)
@@ -560,16 +554,17 @@ namespace TTestApp
                 if (DataA.EnvelopeArray[i] < ValueDia)
                 {
                     PDia = DataA.DCArray[i];
+                    indexPDia = i;
                     break;
                 }
             }
             if (PDia == 0)
             {
-                PDia = DataA.DCArray[ArrayOfWaveIndexes[ArrayOfWaveIndexes.Length - 1]];
-//                ShowError(BPMError.Dia);
+                PDia = DataA.DCArray[DataA.Size - 1];
+                ShowError(BPMError.Dia);
             }
 
-            int[] ArrayOfPoints = { indexPSys, ArrayOfWaveIndexes[XMaxIndex], indexPDia };
+            int[] ArrayOfPoints = { indexPSys, XMax, indexPDia };
             VisirList.Add(ArrayOfPoints);
 
             labSys.Text = "Sys : " + DataProcessing.ValueToMmHg(PSys).ToString();
@@ -588,7 +583,7 @@ namespace TTestApp
                 ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DerivArray);
                 ArrayList.Add(DataA.DebugArray);
-                ArrayList.Add(DataA.EnvelopeArray);
+                ArrayList.Add(DataA.EnvelopeArray);//Последняя кривая в списке жирная
             }
             else
             {

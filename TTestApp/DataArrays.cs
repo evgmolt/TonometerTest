@@ -88,7 +88,6 @@
                     EnvelopeArray[i + j] = y1 + coeff * (j - x1);
                 }
             }
-
         }
 
         public String GetDataString(uint index)

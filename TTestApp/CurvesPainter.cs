@@ -58,7 +58,13 @@ namespace TTestApp
                 for (int i = 0; i < data.Count; i++)
                 {
                     if (data[i] == null) break;
-                    var pen = new Pen(curveColors[i], 1);
+                    int width = 1;
+                    if (i == data.Count - 1)
+                    {
+                        width = 2;
+                    }
+
+                    var pen = new Pen(curveColors[i], width);
 
                     Point[] OutArray = ViewArrayMaker.MakeArrayForView(
                                                                     _control,
