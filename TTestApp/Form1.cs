@@ -472,8 +472,9 @@ namespace TTestApp
             int XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, max);
             int XMax = ArrayOfWaveIndexes[XMaxIndex];
 
-            //-----Второй проход-----
-            
+            //-----Второй проход с изменяемым порогом------------
+            //-----До максимума 0.7, после максимума 0.55--------
+
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
             {
@@ -485,13 +486,16 @@ namespace TTestApp
             //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
             ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative);
 
-            VisirList.Clear();
-            VisirList.Add(ArrayOfWaveIndexes);
-
             ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
             DataProcessing.RemoveArtifacts(ref ArrayOfWaveAmplitudes);
 
-            //-----------------------
+            max = ArrayOfWaveAmplitudes.Max();
+            XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, max);
+            XMax = ArrayOfWaveIndexes[XMaxIndex];
+            //--------------------------------------------
+
+            VisirList.Clear();
+            VisirList.Add(ArrayOfWaveIndexes);
 
             double[] ArrLeftValues = new double[XMaxIndex];
             double[] ArrRightValues = new double[ArrayOfWaveIndexes.Length - XMaxIndex];
