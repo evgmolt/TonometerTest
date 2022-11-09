@@ -245,18 +245,16 @@ namespace TTestApp
             if (currentIndex > 0)
             {
                 labCurrentPressure.Text = "Current pressure, mmHG: " +
-                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString();// +
-                                           //" Deriv : " +
-                                           //                                           MaxPressure.ToString();
-                                           //DataA.DerivArray[currentIndex].ToString();
+                                           DataProcessing.ValueToMmhG(CurrentPressure).ToString() + " " +
+                                           DataA.DCArray[currentIndex].ToString();
 //                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
 //                    MaxPressure.ToString();
             }
             if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
             {
                 Decomposer.ZeroLine = Decomposer.tmpZero;
-                Decomposer.RecordStarted = true;
-                PressureMeasStatus = PressureMeasurementStatus.Measurement;
+//                Decomposer.RecordStarted = true;
+                PressureMeasStatus = PressureMeasurementStatus.Ready;// Measurement;
             }
             if (Decomposer.RecordStarted)
             {
@@ -264,6 +262,9 @@ namespace TTestApp
             }
         }
 
-
+        private void butCalibration_Click(object sender, EventArgs e)
+        {
+            PressureMeasStatus = PressureMeasurementStatus.Calibration;
+        }
     }
 }

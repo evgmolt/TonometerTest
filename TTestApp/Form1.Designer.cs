@@ -49,6 +49,7 @@
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
+            this.butCalibration = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).BeginInit();
@@ -164,6 +165,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.butCalibration);
             this.panelBottom.Controls.Add(this.labCurrentPressure);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelBottom.Location = new System.Drawing.Point(233, 548);
@@ -181,7 +183,6 @@
             this.labCurrentPressure.Size = new System.Drawing.Size(74, 21);
             this.labCurrentPressure.TabIndex = 5;
             this.labCurrentPressure.Text = "Current : ";
-            this.labCurrentPressure.Visible = false;
             // 
             // panel2
             // 
@@ -246,6 +247,17 @@
             this.timerPaint.Enabled = true;
             this.timerPaint.Tick += new System.EventHandler(this.timerPaint_Tick);
             // 
+            // butCalibration
+            // 
+            this.butCalibration.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.butCalibration.Location = new System.Drawing.Point(783, 20);
+            this.butCalibration.Name = "butCalibration";
+            this.butCalibration.Size = new System.Drawing.Size(85, 23);
+            this.butCalibration.TabIndex = 6;
+            this.butCalibration.Text = "Calibration";
+            this.butCalibration.UseVisualStyleBackColor = true;
+            this.butCalibration.Click += new System.EventHandler(this.butCalibration_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -293,5 +305,6 @@
         private Label labRecordSize;
         private ProgressBar progressBarRecord;
         private Label labPort;
+        private Button butCalibration;
     }
 }
