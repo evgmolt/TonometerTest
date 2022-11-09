@@ -7,9 +7,12 @@
 
         public static int ValueToMmHg(double value)
         {
+            //Тонометр
+            //double val = 43215;
+            //double val = 59021;
             double pressure = 2210;
-            double val = 43215;
-            return (int)(value / 20);
+            double val = 55736;
+            return (int)(value / (val / pressure));
         }
 
         public static int[] GetSubArray(int[] inputArray, int start, int stop)
