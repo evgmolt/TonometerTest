@@ -19,7 +19,6 @@ namespace TTestApp
         string CurrentFile;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
-//        int MaxValue = 200000; // Для BCI
         int MaxValue = 200;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
@@ -457,11 +456,11 @@ namespace TTestApp
 
             //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
             int[] ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
-
             double[] ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
-            DataProcessing.RemoveArtifacts(ref ArrayOfWaveAmplitudes);
-            double max = ArrayOfWaveAmplitudes.Max();
-            int XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, max);
+            DataProcessing.RemoveArtifacts(ArrayOfWaveAmplitudes);
+
+            double MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
+            int XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, MaximumAmplitude);
             int XMax = ArrayOfWaveIndexes[XMaxIndex];
 
             //-----Второй проход с изменяемым порогом------------
@@ -475,12 +474,11 @@ namespace TTestApp
 
             //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
             ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
-
             ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
-            DataProcessing.RemoveArtifacts(ref ArrayOfWaveAmplitudes);
+            DataProcessing.RemoveArtifacts(ArrayOfWaveAmplitudes);
 
-            max = ArrayOfWaveAmplitudes.Max();
-            XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, max);
+            MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
+            XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, MaximumAmplitude);
             XMax = ArrayOfWaveIndexes[XMaxIndex];
             //--------------------------------------------
 
@@ -530,8 +528,8 @@ namespace TTestApp
             double PDia = 0;
             int indexPSys = 0;
             int indexPDia = 0;
-            double ValueSys = max * (double)Cfg.CoeffLeft;
-            double ValueDia = max * (double)Cfg.CoeffRight;
+            double ValueSys = MaximumAmplitude * (double)Cfg.CoeffLeft;
+            double ValueDia = MaximumAmplitude * (double)Cfg.CoeffRight;
 
             //Определение систолического давления (влево от Max)
             for (int i = XMax; i >= 0; i--)
@@ -742,14 +740,21 @@ namespace TTestApp
                     butPumpOff_Click(this, EventArgs.Empty);
                 }
             }
-
+            double aver = 0;
+            int averSize = 250;
+            for (int i = 0; i < averSize; i++)
+            {
+                long index = (currentIndex - i) & (ByteDecomposer.DataArrSize - 1);
+                aver += DataA.RealTimeArray[index];
+            }
+            aver = aver / averSize;
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
             MaxPressure = (int)Math.Max(DataA.RealTimeArray[currentIndex], MaxPressure);
             labCurrentPressure.Text = "Current : " +
                                         CurrentPressure.ToString() +
                                         " RealTime : " +
-                                        DataA.RealTimeArray[currentIndex].ToString();// + " " +
-//                                        MaxPressure.ToString();
+                                        DataA.RealTimeArray[currentIndex].ToString() + " " +
+                                        Math.Round(aver).ToString();
             if (Decomposer.RecordStarted)
             {
                 if (PressureMeasStatus == PressureMeasurementStatus.Calibration)

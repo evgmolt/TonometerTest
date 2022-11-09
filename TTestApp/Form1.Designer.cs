@@ -363,7 +363,7 @@
             // 
             this.labMeasStatus.AutoSize = true;
             this.labMeasStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labMeasStatus.Location = new System.Drawing.Point(474, 50);
+            this.labMeasStatus.Location = new System.Drawing.Point(500, 50);
             this.labMeasStatus.Name = "labMeasStatus";
             this.labMeasStatus.Size = new System.Drawing.Size(223, 21);
             this.labMeasStatus.TabIndex = 19;
@@ -373,7 +373,7 @@
             // 
             this.labPumpStatus.AutoSize = true;
             this.labPumpStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labPumpStatus.Location = new System.Drawing.Point(509, 29);
+            this.labPumpStatus.Location = new System.Drawing.Point(535, 29);
             this.labPumpStatus.Name = "labPumpStatus";
             this.labPumpStatus.Size = new System.Drawing.Size(188, 21);
             this.labPumpStatus.TabIndex = 18;
@@ -394,7 +394,7 @@
             // 
             this.labNumOfWaves.AutoSize = true;
             this.labNumOfWaves.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labNumOfWaves.Location = new System.Drawing.Point(509, 8);
+            this.labNumOfWaves.Location = new System.Drawing.Point(535, 8);
             this.labNumOfWaves.Name = "labNumOfWaves";
             this.labNumOfWaves.Size = new System.Drawing.Size(142, 21);
             this.labNumOfWaves.TabIndex = 15;

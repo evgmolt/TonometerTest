@@ -7,19 +7,10 @@
 
         public static int ValueToMmHg(double value)
         {
-            double pressure = 220;
-            double val = 4082;
-            return (int)(value * pressure / val);
+            double pressure = 2210;
+            double val = 43215;
+            return (int)(value / 20);
         }
-
-        //Для BCI
-        //public static int ValueToMmHg(double value)
-        //{
-        //    double zero = 465;
-        //    double pressure = 142;
-        //    double val = 2503287;
-        //    return (int)((value - zero) * pressure / (val - zero));
-        //}
 
         public static int[] GetSubArray(int[] inputArray, int start, int stop)
         {
@@ -348,7 +339,7 @@
             return outputArray;
         }
 
-        internal static void RemoveArtifacts(ref double[] arrValues)
+        internal static void RemoveArtifacts(double[] arrValues)
         {
             int level = 8;
             for (int i = 1; i < arrValues.Length - 1; i++)
