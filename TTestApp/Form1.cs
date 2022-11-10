@@ -16,6 +16,7 @@ namespace TTestApp
         BufferedPanel BufPanel;
         TTestConfig Cfg;
         StreamWriter TextWriter;
+        ConverterValueToMmHg ValueToMmHg = new();
         string CurrentFile;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
@@ -165,6 +166,7 @@ namespace TTestApp
 
         private void butStopRecord_Click(object sender, EventArgs e)
         {
+            ValueToMmHg.Coeff = ConverterValueToMmHg.CoeffTonometer;
             labArrythmia.Text = Detector?.Arrhythmia.ToString();
             //            Detector.OnWaveDetected -= NewWaveDetected;
             Detector = null;
@@ -269,6 +271,13 @@ namespace TTestApp
                     timerRead.Enabled = false;
 
                     CurrentFile = Path.GetFileName(openFileDialog1.FileName);
+                    ValueToMmHg.Coeff = CurrentFile[0] switch
+                    {
+                        'A' => ConverterValueToMmHg.CoeffA,
+                        'B' => ConverterValueToMmHg.CoeffB,
+                        _ => ConverterValueToMmHg.CoeffTonometer
+                    };
+
                     ReadFile(Cfg.DataDir + CurrentFile);
                 }
             }
@@ -565,8 +574,8 @@ namespace TTestApp
             int[] ArrayOfPoints = { indexPSys, XMax, indexPDia };
             VisirList.Add(ArrayOfPoints);
 
-            labSys.Text = "Sys : " + DataProcessing.ValueToMmHg(PSys).ToString();
-            labDia.Text = "Dia : " + DataProcessing.ValueToMmHg(PDia).ToString();
+            labSys.Text = "Sys : " + ValueToMmHg.Convert(PSys).ToString();
+            labDia.Text = "Dia : " + ValueToMmHg.Convert(PDia).ToString();
         }
 
         private void bufferedPanel_Paint(object sender, PaintEventArgs e)
@@ -648,7 +657,7 @@ namespace TTestApp
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
             labY1.Text = String.Format("RealTimeArray : {0:f0}", DataA.RealTimeArray[index]);
             labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]) + "  " +
-                                        DataProcessing.ValueToMmHg(DataA.DCArray[index]).ToString();
+                                        ValueToMmHg.Convert(DataA.DCArray[index]).ToString();
         }
 
         private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
@@ -730,7 +739,7 @@ namespace TTestApp
                 _ => "Ready",
             };
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            CurrentPressure = DataProcessing.ValueToMmHg(e.RealTimeValue);
+            CurrentPressure = ValueToMmHg.Convert(e.RealTimeValue);
 
             if (PressureMeasStatus == PressureMeasurementStatus.PumpingToLevel)
             {
