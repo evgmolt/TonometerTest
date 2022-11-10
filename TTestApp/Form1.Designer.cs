@@ -98,6 +98,7 @@
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timerDetectRate = new System.Windows.Forms.Timer(this.components);
+            this.labCoeff = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -282,6 +283,7 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labCoeff);
             this.panelBottom.Controls.Add(this.labAF);
             this.panelBottom.Controls.Add(this.labHeart);
             this.panelBottom.Controls.Add(this.labelRate);
@@ -868,6 +870,15 @@
             this.timerDetectRate.Interval = 10000;
             this.timerDetectRate.Tick += new System.EventHandler(this.timerDetectRate_Tick);
             // 
+            // labCoeff
+            // 
+            this.labCoeff.AutoSize = true;
+            this.labCoeff.Location = new System.Drawing.Point(13, 29);
+            this.labCoeff.Name = "labCoeff";
+            this.labCoeff.Size = new System.Drawing.Size(110, 15);
+            this.labCoeff.TabIndex = 25;
+            this.labCoeff.Text = "Value to mm coeff :";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -972,5 +983,6 @@
         private Button butCalibr;
         private Label labZero;
         private Label labAF;
+        private Label labCoeff;
     }
 }

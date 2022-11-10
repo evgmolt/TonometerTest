@@ -16,7 +16,7 @@ namespace TTestApp
         BufferedPanel BufPanel;
         TTestConfig Cfg;
         StreamWriter TextWriter;
-        ConverterValueToMmHg ValueToMmHg = new();
+        ConverterValueToMmHg ValueToMmHg;
         string CurrentFile;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
@@ -51,6 +51,8 @@ namespace TTestApp
         public Form1()
         {
             InitializeComponent();
+            ValueToMmHg = new();
+            ValueToMmHg.CoeffChanged += OnCoeffChanged;
             labHeart.Text = "♥";
             BufPanel = new BufferedPanel(0);
             BufPanel.MouseMove += BufPanel_MouseMove;
@@ -166,7 +168,6 @@ namespace TTestApp
 
         private void butStopRecord_Click(object sender, EventArgs e)
         {
-            ValueToMmHg.Coeff = ConverterValueToMmHg.CoeffTonometer;
             labArrythmia.Text = Detector?.Arrhythmia.ToString();
             //            Detector.OnWaveDetected -= NewWaveDetected;
             Detector = null;
@@ -191,6 +192,7 @@ namespace TTestApp
 
         private void butStartMeas_Click(object sender, EventArgs e)
         {
+            ValueToMmHg.ChangeCoeff('T');
             HRVmode = false;
             TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
             Decomposer.PacketCounter = 0;
@@ -271,13 +273,7 @@ namespace TTestApp
                     timerRead.Enabled = false;
 
                     CurrentFile = Path.GetFileName(openFileDialog1.FileName);
-                    ValueToMmHg.Coeff = CurrentFile[0] switch
-                    {
-                        'A' => ConverterValueToMmHg.CoeffA,
-                        'B' => ConverterValueToMmHg.CoeffB,
-                        _ => ConverterValueToMmHg.CoeffTonometer
-                    };
-
+                    ValueToMmHg.ChangeCoeff(CurrentFile[0]);
                     ReadFile(Cfg.DataDir + CurrentFile);
                 }
             }
@@ -660,6 +656,10 @@ namespace TTestApp
                                         ValueToMmHg.Convert(DataA.DCArray[index]).ToString();
         }
 
+        private void OnCoeffChanged(object senger, ConverterValueToMmHgEventArgs e)
+        {
+            labCoeff.Text = "Coeff : " + e.Coeff.ToString();
+        }
         private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
         {
             double StopMeasCoeff = 0.5;

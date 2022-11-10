@@ -5,8 +5,6 @@
         public static int DerivativeShift = 13;
         public static int DerivativeAverageWidth = 4;
 
-
-
         public static int[] GetSubArray(int[] inputArray, int start, int stop)
         {
             if (start < 0)
