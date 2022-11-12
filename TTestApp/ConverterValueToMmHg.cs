@@ -8,7 +8,7 @@ namespace TTestApp
 {
     internal class ConverterValueToMmHg
     {
-        private double Coeff = CoeffB;
+        private double Coefficient = CoeffTonometer;
         private const double CoeffA = 59021;
         private const double CoeffB = 55736;
         private const double CoeffTonometer = 43215;
@@ -16,16 +16,17 @@ namespace TTestApp
 
         public EventHandler<ConverterValueToMmHgEventArgs> CoeffChanged;
 
-        public void ChangeCoeff(char filePrefix)
+        public void ChangeCoeff(string fileName)
         {
-            Coeff = filePrefix switch
+            char filePrefix = fileName[0];
+            Coefficient = filePrefix switch
             {
                 'A' => CoeffA,
                 'B' => CoeffB,
                 _ => CoeffTonometer
             };
-            CoeffChanged(this, new ConverterValueToMmHgEventArgs { Coeff = Coeff });
+            CoeffChanged(this, new ConverterValueToMmHgEventArgs { Coeff = Coefficient });
         }
-        public int Convert(double value) => (int)(value / (Coeff / _pressure));
+        public int Convert(double value) => (int)(value / (Coefficient / _pressure));
     }
 }

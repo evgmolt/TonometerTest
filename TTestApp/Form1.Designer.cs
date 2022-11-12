@@ -42,12 +42,14 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labMeasurementStatus = new System.Windows.Forms.Label();
+            this.labPressPumping = new System.Windows.Forms.Label();
+            this.labCoeff = new System.Windows.Forms.Label();
             this.labAF = new System.Windows.Forms.Label();
             this.labHeart = new System.Windows.Forms.Label();
             this.labelRate = new System.Windows.Forms.Label();
             this.labArrythmia = new System.Windows.Forms.Label();
             this.labStopPumpingReason = new System.Windows.Forms.Label();
-            this.labMeasStatus = new System.Windows.Forms.Label();
             this.labPumpStatus = new System.Windows.Forms.Label();
             this.labDeviceIsOff = new System.Windows.Forms.Label();
             this.labNumOfWaves = new System.Windows.Forms.Label();
@@ -98,7 +100,6 @@
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.timerDetectRate = new System.Windows.Forms.Timer(this.components);
-            this.labCoeff = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
@@ -283,13 +284,14 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labMeasurementStatus);
+            this.panelBottom.Controls.Add(this.labPressPumping);
             this.panelBottom.Controls.Add(this.labCoeff);
             this.panelBottom.Controls.Add(this.labAF);
             this.panelBottom.Controls.Add(this.labHeart);
             this.panelBottom.Controls.Add(this.labelRate);
             this.panelBottom.Controls.Add(this.labArrythmia);
             this.panelBottom.Controls.Add(this.labStopPumpingReason);
-            this.panelBottom.Controls.Add(this.labMeasStatus);
             this.panelBottom.Controls.Add(this.labPumpStatus);
             this.panelBottom.Controls.Add(this.labDeviceIsOff);
             this.panelBottom.Controls.Add(this.labNumOfWaves);
@@ -307,6 +309,37 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
+            // 
+            // labMeasurementStatus
+            // 
+            this.labMeasurementStatus.AutoSize = true;
+            this.labMeasurementStatus.CausesValidation = false;
+            this.labMeasurementStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labMeasurementStatus.Location = new System.Drawing.Point(500, 51);
+            this.labMeasurementStatus.Name = "labMeasurementStatus";
+            this.labMeasurementStatus.Size = new System.Drawing.Size(176, 21);
+            this.labMeasurementStatus.TabIndex = 27;
+            this.labMeasurementStatus.Text = "Measurement status : ";
+            // 
+            // labPressPumping
+            // 
+            this.labPressPumping.AutoSize = true;
+            this.labPressPumping.CausesValidation = false;
+            this.labPressPumping.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labPressPumping.Location = new System.Drawing.Point(219, 1);
+            this.labPressPumping.Name = "labPressPumping";
+            this.labPressPumping.Size = new System.Drawing.Size(22, 30);
+            this.labPressPumping.TabIndex = 26;
+            this.labPressPumping.Text = "/";
+            // 
+            // labCoeff
+            // 
+            this.labCoeff.AutoSize = true;
+            this.labCoeff.Location = new System.Drawing.Point(13, 29);
+            this.labCoeff.Name = "labCoeff";
+            this.labCoeff.Size = new System.Drawing.Size(110, 15);
+            this.labCoeff.TabIndex = 25;
+            this.labCoeff.Text = "Value to mm coeff :";
             // 
             // labAF
             // 
@@ -361,25 +394,15 @@
             this.labStopPumpingReason.TabIndex = 20;
             this.labStopPumpingReason.Text = "test";
             // 
-            // labMeasStatus
-            // 
-            this.labMeasStatus.AutoSize = true;
-            this.labMeasStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labMeasStatus.Location = new System.Drawing.Point(500, 50);
-            this.labMeasStatus.Name = "labMeasStatus";
-            this.labMeasStatus.Size = new System.Drawing.Size(223, 21);
-            this.labMeasStatus.TabIndex = 19;
-            this.labMeasStatus.Text = "Measurement status : Ready";
-            // 
             // labPumpStatus
             // 
             this.labPumpStatus.AutoSize = true;
             this.labPumpStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.labPumpStatus.Location = new System.Drawing.Point(535, 29);
             this.labPumpStatus.Name = "labPumpStatus";
-            this.labPumpStatus.Size = new System.Drawing.Size(188, 21);
+            this.labPumpStatus.Size = new System.Drawing.Size(141, 21);
             this.labPumpStatus.TabIndex = 18;
-            this.labPumpStatus.Text = "Pumping status : Ready";
+            this.labPumpStatus.Text = "Pumping status : ";
             // 
             // labDeviceIsOff
             // 
@@ -464,7 +487,7 @@
             this.labCurrentPressure.AutoSize = true;
             this.labCurrentPressure.CausesValidation = false;
             this.labCurrentPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labCurrentPressure.Location = new System.Drawing.Point(166, 6);
+            this.labCurrentPressure.Location = new System.Drawing.Point(165, 36);
             this.labCurrentPressure.Name = "labCurrentPressure";
             this.labCurrentPressure.Size = new System.Drawing.Size(103, 30);
             this.labCurrentPressure.TabIndex = 5;
@@ -870,15 +893,6 @@
             this.timerDetectRate.Interval = 10000;
             this.timerDetectRate.Tick += new System.EventHandler(this.timerDetectRate_Tick);
             // 
-            // labCoeff
-            // 
-            this.labCoeff.AutoSize = true;
-            this.labCoeff.Location = new System.Drawing.Point(13, 29);
-            this.labCoeff.Name = "labCoeff";
-            this.labCoeff.Size = new System.Drawing.Size(110, 15);
-            this.labCoeff.TabIndex = 25;
-            this.labCoeff.Text = "Value to mm coeff :";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -966,7 +980,6 @@
         private Label labValve1;
         private Label labValve2;
         private Label labPumpStatus;
-        private Label labMeasStatus;
         private Label labStopPumpingReason;
         private Label labArrythmia;
         private System.Windows.Forms.Timer timerDetectRate;
@@ -984,5 +997,7 @@
         private Label labZero;
         private Label labAF;
         private Label labCoeff;
+        private Label labPressPumping;
+        private Label labMeasurementStatus;
     }
 }

@@ -19,6 +19,7 @@
         private const double _detectLevelCoeffDia = 0.55;
         private int _lastInterval;
         private double _currentValue;
+        private int _currentIndex;
 
         public EventHandler<WaveDetectorEventArgs> OnWaveDetected;
 
@@ -37,7 +38,8 @@
                 WaveCount = FiltredPoints.Count,
                 Amplitude = _currentValue,
                 Interval = _lastInterval,
-                ArrhythmiaCount = Arrhythmia
+                ArrhythmiaCount = Arrhythmia,
+                Index = _currentIndex
             };
             OnWaveDetected?.Invoke(this, args);
         }
@@ -62,6 +64,7 @@
 
         public double Detect(double[] dataArr, int index)
         {
+            _currentIndex = index;
             _currentInterval++;
             if (_currentInterval == _noWaveInterval1)
             {

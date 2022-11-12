@@ -31,8 +31,8 @@ namespace TTestApp
         double MaxAllowablePressure = 180;
         double MinPressure = 120;
         double MomentMaxFound;
-        double MaxTimeAfterMaxFound = 4; //sec
-        double MaxTimeAfterStartPumping = 15; //sec
+        double MaxTimeAfterMaxFound = 6; //sec
+        double MaxTimeAfterStartPumping = 25; //sec
         int DelayCounter;
         int DelayValue;
         const double DelayInSeconds = 0.3; //sec задержка начала записи сигнала после выключения компрессора
@@ -185,6 +185,10 @@ namespace TTestApp
             ViewMode = true;
             timerPaint.Enabled = !ViewMode;
             timerRead.Enabled = false;
+            if (sender == butPressureMeasAbort)
+            {
+                return;
+            }
             PrepareData();
             BufPanel.Refresh();
             controlPanel.Refresh();
@@ -192,7 +196,10 @@ namespace TTestApp
 
         private void butStartMeas_Click(object sender, EventArgs e)
         {
-            ValueToMmHg.ChangeCoeff('T');
+            PumpingDia = 0;
+            PumpingSys = 0;
+            PumpingStopLevel = 0;
+            ValueToMmHg.ChangeCoeff("T");
             HRVmode = false;
             TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
             Decomposer.PacketCounter = 0;
@@ -273,7 +280,7 @@ namespace TTestApp
                     timerRead.Enabled = false;
 
                     CurrentFile = Path.GetFileName(openFileDialog1.FileName);
-                    ValueToMmHg.ChangeCoeff(CurrentFile[0]);
+                    ValueToMmHg.ChangeCoeff(CurrentFile);
                     ReadFile(Cfg.DataDir + CurrentFile);
                 }
             }
@@ -285,7 +292,7 @@ namespace TTestApp
             Cfg.ToPressure = numUDpressure.Value;
             butValvesClose_Click(this, EventArgs.Empty);
             butPumpOn_Click(this, EventArgs.Empty);
-            PressureMeasStatus = PressureMeasurementStatus.PumpingToLevel;
+            PressureMeasStatus = PressureMeasurementStatus.Pumping;
         }
 
         private void butCalibr_Click(object sender, EventArgs e)
@@ -325,6 +332,9 @@ namespace TTestApp
         #region [ Timers Ticks ]
         private void timerStatus_Tick(object sender, EventArgs e)
         {
+            labMeasurementStatus.Text = "Measurement status : " + PressureMeasStatus.ToString();
+            labPumpStatus.Text = "Pumpung status : " + PumpStatus.ToString();
+
             timerRead.Enabled = !ViewMode;
             timerPaint.Enabled = !ViewMode;
 
@@ -592,10 +602,8 @@ namespace TTestApp
             {
                 ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DerivArray);
-//                ArrayList.Add(DataA.DCArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
-//            ArrayList.Clear();
         }
 
         private void UpdateScrollBar(int size)
@@ -660,6 +668,11 @@ namespace TTestApp
         {
             labCoeff.Text = "Coeff : " + e.Coeff.ToString();
         }
+
+        int PumpingDia;
+        int PumpingSys;
+        int PumpingStopLevel;
+        int ExcessOverSys = 25;
         private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
         {
             double StopMeasCoeff = 0.5;
@@ -670,6 +683,16 @@ namespace TTestApp
             switch (PressureMeasStatus)
             {
                 case PressureMeasurementStatus.Pumping:
+                    if (PumpingDia == 0)
+                    {
+                        PumpingDia = ValueToMmHg.Convert(DataA.DCArray[e.Index]);
+                    }
+                    else
+                    {
+                        PumpingSys = ValueToMmHg.Convert(DataA.DCArray[e.Index]);
+                        PumpingStopLevel = PumpingSys + ExcessOverSys;
+                    }
+                    
                     switch (PumpStatus)
                     {
                         case PumpingStatus.WaitingForLevel:
@@ -686,15 +709,16 @@ namespace TTestApp
                                 MomentMaxFound = (int)Decomposer.MainIndex;
                             }
                             break;
-                        case PumpingStatus.MaximumFound:
-                            if (e.Amplitude < Decomposer.StopPumpingLevel && CurrentPressure > MinPressure)
-                            {
-                                StopPumping("Stop pumping level reached");
-                            }
-                            break;
+                        //case PumpingStatus.MaximumFound:
+                        //    if (e.Amplitude < Decomposer.StopPumpingLevel && CurrentPressure > MinPressure)
+                        //    {
+                        //        StopPumping("Stop pumping level reached");
+                        //    }
+                        //    break;
                     }
                     break;
                 case PressureMeasurementStatus.Measurement:
+//                    labPressPumping.Text = PumpingSys.ToString() + "/" + PumpingDia.ToString();
                     MaxDerivValue = Math.Max(e.Amplitude, MaxDerivValue);
                     if (e.Amplitude < MaxDerivValue * StopMeasCoeff)
                     {
@@ -719,36 +743,10 @@ namespace TTestApp
             {
                 HeartVisibleCounter--;
             }
-            labPumpStatus.Text = "Pumping status : " + PumpStatus switch
-            {
-                PumpingStatus.Ready           => "Ready",
-                PumpingStatus.WaitingForLevel => "Waiting for level",
-                PumpingStatus.MaximumSearch   => "Maximum search",
-                PumpingStatus.MaximumFound    => "Maximum found",
-                _ => "Ready",
-            };
 
-            labMeasStatus.Text = "Measurement status : " + PressureMeasStatus switch
-            {
-                PressureMeasurementStatus.Ready          => "Ready",
-                PressureMeasurementStatus.Calibration    => "Calibration",
-                PressureMeasurementStatus.Pumping        => "Pumping",
-                PressureMeasurementStatus.Delay          => "Delay",
-                PressureMeasurementStatus.Measurement    => "Measurement",
-                PressureMeasurementStatus.PumpingToLevel => "PumpingToLevel",
-                _ => "Ready",
-            };
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
             CurrentPressure = ValueToMmHg.Convert(e.RealTimeValue);
 
-            if (PressureMeasStatus == PressureMeasurementStatus.PumpingToLevel)
-            {
-                if (CurrentPressure >= (int)Cfg.ToPressure)
-                {
-                    PressureMeasStatus = PressureMeasurementStatus.Ready;
-                    butPumpOff_Click(this, EventArgs.Empty);
-                }
-            }
             double aver = 0;
             int averSize = 250;
             for (int i = 0; i < averSize; i++)
@@ -786,12 +784,16 @@ namespace TTestApp
                     bool timeout = e.PacketCounter / Decomposer.SamplingFrequency > MaxTimeAfterStartPumping;
                     if (timeout)
                     {
+                        butPressureMeasAbort_Click(this, EventArgs.Empty);
                         ShowError(BPMError.AirLeak);
-
                     }
                 }
                 if (PumpStatus == PumpingStatus.MaximumFound)
                 {
+                    if (CurrentPressure > PumpingStopLevel)
+                    {
+                        StopPumping("Level reached");
+                    }
                     int Index = e.PacketCounter;
                     bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
                     if (timeout && CurrentPressure > MinPressure)
@@ -834,14 +836,11 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
             PressureMeasStatus = PressureMeasurementStatus.Measurement;
             timerDetectRate.Enabled = true;
+            labPressPumping.Text = PumpingSys.ToString() + " / " + PumpingDia.ToString() + " : " + PumpingStopLevel.ToString();
         }
 
-        private void ShowError(BPMError error)
+        private static void ShowError(BPMError error)
         {
-            if (error == BPMError.AirLeak)
-            {
-                butPressureMeasAbort_Click(this, EventArgs.Empty);
-            }
             string errorText = error switch
             {
                 BPMError.AirLeak     => "Air leak",
