@@ -1,6 +1,4 @@
-﻿using TTestApp.Decomposers;
-
-namespace TTestApp
+﻿namespace TTestApp
 {
     internal class CurvesPainter
     {

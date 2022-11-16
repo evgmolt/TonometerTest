@@ -1,23 +1,90 @@
-﻿namespace TTestApp.Decomposers
+﻿namespace TTestApp
 {
-    internal class ByteDecomposerADS1115 : ByteDecomposer
+    internal class ByteDecomposer
     {
-        public override int BaudRate => 115200;
-        public override int BytesInPacket => 3;
-        public override int MaxNoDataCounter => 10;
-        public override int StartSearchMaxLevel => 8;
-        public override int StopPumpingLevel => 6;
+        protected int _samplingFrequency;
+        protected int _zeroLine;
 
+        public const int DataArrSize = 0x100000;
+
+        public int tmpZero;
+
+        public int ZeroLine
+        {
+            get { return _zeroLine; }
+            set { _zeroLine = value; }
+        }
+        public int SamplingFrequency
+        {
+            get { return _samplingFrequency; }
+            set { _samplingFrequency = value; }
+        }
+
+        protected const byte marker1 = 0x19;
+
+        protected DataArrays Data;
+
+        public event EventHandler<PacketEventArgs> OnDecomposePacketEvent;
+
+        public uint MainIndex = 0;
+        public int PacketCounter = 0;
+
+        public bool RecordStarted;
+        public bool DeviceTurnedOn;
+
+        protected int tmpValue;
+
+        protected int noDataCounter;
+
+        protected int byteNum;
+
+        protected bool RateDetection = true;
+
+        //Очереди для усреднения скользящим окном
+        protected Queue<double> QueueForDC;
+        protected Queue<double> QueueForAC;
+        protected Queue<int> QueueForZero;
         public const int _queueForACSize = 6;
         public const int _queueForDCSize = 60;
 
-        public ByteDecomposerADS1115(DataArrays data) : base(data, _queueForDCSize, _queueForACSize)
+
+        protected int sizeQForZero = 10;
+        public ByteDecomposer(DataArrays data)
         {
+            Data = data;
+            RecordStarted = false;
+            DeviceTurnedOn = true;
+            MainIndex = 0;
+            noDataCounter = 0;
+            byteNum = 0;
+            QueueForDC = new Queue<double>(_queueForDCSize);
+            QueueForAC = new Queue<double>(_queueForACSize);
+            QueueForZero = new Queue<int>(sizeQForZero);
             _samplingFrequency = 240;
             _zeroLine = 0;
         }
 
-        public override int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
+        protected virtual void OnDecomposeLineEvent()
+        {
+            OnDecomposePacketEvent?.Invoke(
+                this,
+                new PacketEventArgs
+                {
+                    DCValue = Data.DCArray[MainIndex],
+                    RealTimeValue = Data.RealTimeArray[MainIndex],
+                    PressureViewValue = Data.PressureViewArray[MainIndex],
+                    DerivativeValue = Data.DerivArray[MainIndex],
+                    PacketCounter = PacketCounter,
+                    MainIndex = MainIndex
+                });
+        }
+        public int BaudRate => 115200;
+        public int BytesInPacket => 3;
+        public int MaxNoDataCounter => 10;
+        public int StartSearchMaxLevel => 8;
+        public int StopPumpingLevel => 6;
+
+        public int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
         {
             int bytes = usbport.BytesRead;
             if (bytes == 0)

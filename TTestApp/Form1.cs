@@ -1,5 +1,4 @@
 ﻿using TTestApp.Commands;
-using TTestApp.Decomposers;
 using TTestApp.Enums;
 
 namespace TTestApp
@@ -384,7 +383,7 @@ namespace TTestApp
         {
             if (USBPort?.PortHandle?.IsOpen == true)
             {
-                Decomposer?.Decompos(USBPort, TextWriter);
+                Decomposer?.Decompos(USBPort, null, TextWriter);
             }
         }
 
@@ -404,7 +403,7 @@ namespace TTestApp
         private void InitArraysForFlow()
         {
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
-            Decomposer = new ByteDecomposerADS1115(DataA);
+            Decomposer = new ByteDecomposer(DataA);
             Decomposer.OnDecomposePacketEvent += OnPacketReceived;
             Painter = new CurvesPainter(BufPanel, Decomposer);
         }
@@ -718,7 +717,6 @@ namespace TTestApp
                     MaxDerivValue = Math.Max(e.Amplitude, MaxDerivValue);
                     if (e.Amplitude < MaxDerivValue * StopMeasCoeff)
                     {
-                        StopMeasIndex = e.Index;
                         DevStatus.ValveSlowClosed = false; 
                         DevStatus.ValveFastClosed = false;
                         PressureMeasStatus = PressureMeasurementStatus.Ready;
