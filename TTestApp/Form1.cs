@@ -1,8 +1,6 @@
-﻿using HRV;
-using TTestApp.Commands;
+﻿using TTestApp.Commands;
 using TTestApp.Decomposers;
 using TTestApp.Enums;
-using TTestApp.Spline;
 
 namespace TTestApp
 {
@@ -30,9 +28,11 @@ namespace TTestApp
         double CurrentPressure;
         double MaxAllowablePressure = 180;
         double MinPressure = 120;
+        double PressureLevelForLeak = 10;
         double MomentMaxFound;
+        double MaxPressureReachedValue;
         double MaxTimeAfterMaxFound = 6; //sec
-        double MaxTimeAfterStartPumping = 25; //sec
+        double MaxTimeAfterStartPumping = 10; //sec
         int DelayCounter;
         int DelayValue;
         const double DelayInSeconds = 0.3; //sec задержка начала записи сигнала после выключения компрессора
@@ -54,7 +54,7 @@ namespace TTestApp
             ValueToMmHg = new();
             ValueToMmHg.CoeffChanged += OnCoeffChanged;
             labHeart.Text = "♥";
-            BufPanel = new BufferedPanel(0);
+            BufPanel = new BufferedPanel();
             BufPanel.MouseMove += BufPanel_MouseMove;
             Cfg = TTestConfig.GetConfig();
             if (Cfg.Maximized)
@@ -198,7 +198,6 @@ namespace TTestApp
         {
             PumpingDia = 0;
             PumpingSys = 0;
-            PumpingStopLevel = 0;
             ValueToMmHg.ChangeCoeff("T");
             HRVmode = false;
             TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
@@ -478,7 +477,7 @@ namespace TTestApp
             int XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, MaximumAmplitude);
             int XMax = ArrayOfWaveIndexes[XMaxIndex];
 
-            //-----Второй проход с изменяемым порогом------------
+            //-----Второй проход с изменяемым порогом------------------------------------------------------
             //-----До максимума 0.7, после максимума 0.55--------
 
             WD.Reset();
@@ -495,7 +494,7 @@ namespace TTestApp
             MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
             XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, MaximumAmplitude);
             XMax = ArrayOfWaveIndexes[XMaxIndex];
-            //--------------------------------------------
+            //----------------------------------------------------------------------------------------------
 
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
@@ -671,8 +670,6 @@ namespace TTestApp
 
         int PumpingDia;
         int PumpingSys;
-        int PumpingStopLevel;
-        int ExcessOverSys = 25;
         private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
         {
             double StopMeasCoeff = 0.5;
@@ -690,7 +687,6 @@ namespace TTestApp
                     else
                     {
                         PumpingSys = ValueToMmHg.Convert(DataA.DCArray[e.Index]);
-                        PumpingStopLevel = PumpingSys + ExcessOverSys;
                     }
                     
                     switch (PumpStatus)
@@ -709,12 +705,12 @@ namespace TTestApp
                                 MomentMaxFound = (int)Decomposer.MainIndex;
                             }
                             break;
-                        //case PumpingStatus.MaximumFound:
-                        //    if (e.Amplitude < Decomposer.StopPumpingLevel && CurrentPressure > MinPressure)
-                        //    {
-                        //        StopPumping("Stop pumping level reached");
-                        //    }
-                        //    break;
+                        case PumpingStatus.MaximumFound:
+                            if (e.Amplitude < Decomposer.StopPumpingLevel && CurrentPressure > MinPressure)
+                            {
+                                StopPumping("Stop pumping level reached");
+                            }
+                            break;
                     }
                     break;
                 case PressureMeasurementStatus.Measurement:
@@ -722,6 +718,7 @@ namespace TTestApp
                     MaxDerivValue = Math.Max(e.Amplitude, MaxDerivValue);
                     if (e.Amplitude < MaxDerivValue * StopMeasCoeff)
                     {
+                        StopMeasIndex = e.Index;
                         DevStatus.ValveSlowClosed = false; 
                         DevStatus.ValveFastClosed = false;
                         PressureMeasStatus = PressureMeasurementStatus.Ready;
@@ -782,7 +779,7 @@ namespace TTestApp
                 if (PumpStatus == PumpingStatus.WaitingForLevel)
                 {
                     bool timeout = e.PacketCounter / Decomposer.SamplingFrequency > MaxTimeAfterStartPumping;
-                    if (timeout)
+                    if (timeout && CurrentPressure < PressureLevelForLeak)
                     {
                         butPressureMeasAbort_Click(this, EventArgs.Empty);
                         ShowError(BPMError.AirLeak);
@@ -790,10 +787,6 @@ namespace TTestApp
                 }
                 if (PumpStatus == PumpingStatus.MaximumFound)
                 {
-                    if (CurrentPressure > PumpingStopLevel)
-                    {
-                        StopPumping("Level reached");
-                    }
                     int Index = e.PacketCounter;
                     bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
                     if (timeout && CurrentPressure > MinPressure)
@@ -815,6 +808,7 @@ namespace TTestApp
 
         private void StopPumping(string mess)
         {
+            MaxPressureReachedValue = ValueToMmHg.Convert(DataA.DCArray[Decomposer.MainIndex]);
             DevStatus.PumpIsOn = false;
             DevStatus.ValveSlowClosed = false;
             labStopPumpingReason.Text = mess;
@@ -836,7 +830,7 @@ namespace TTestApp
             USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
             PressureMeasStatus = PressureMeasurementStatus.Measurement;
             timerDetectRate.Enabled = true;
-            labPressPumping.Text = PumpingSys.ToString() + " / " + PumpingDia.ToString() + " : " + PumpingStopLevel.ToString();
+            labPressPumping.Text = PumpingSys.ToString() + " / " + PumpingDia.ToString() + " Reached pressure " + MaxPressureReachedValue;
         }
 
         private static void ShowError(BPMError error)

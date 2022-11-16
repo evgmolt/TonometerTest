@@ -235,10 +235,8 @@
             List<double> L2 = new();
             for (int i = 0; i < DerivativeAverageWidth; i++)
             {
-                {
-                    L1.Add(dataArr[Ind - DerivativeAverageWidth / 2 + i]);
-                    L2.Add(dataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
-                }
+                L1.Add(dataArr[Ind - DerivativeAverageWidth / 2 + i]);
+                L2.Add(dataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
             }
             if (L1.Count > 0 && L2.Count > 0)
             {

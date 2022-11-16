@@ -25,7 +25,6 @@ namespace TTestApp
 
         public event Action<Exception> ConnectionFailure;
         public event Action ConnectionOk;
-        public event Action<Message> WindowsMessageHandler;
 
         private readonly string _connectionString;
 
@@ -127,7 +126,6 @@ namespace TTestApp
             }
             catch (Exception)
             {
-
                 portName = "";
             }
             return portName;
