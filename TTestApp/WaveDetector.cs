@@ -5,18 +5,12 @@
         public List<int> FiltredPoints;
 
         private int _currentInterval;
-        private double _detectLevel = 5;
-        private const double _minDetectLevel = 5;
-        private int _lockInterval = 60;
-        private const int _noWaveInterval1 = 600;
-        private const int _noWaveInterval2 = 1200;
+        private double _detectLevel = Constants.MinDetectLevel;
         private double _maxD;
         private int _prevIndex;
         private int _prevInterval;
         private int _numOfNN;
         private double _detectLevelCoeff;
-        private const double _detectLevelCoeffSys = 0.7;
-        private const double _detectLevelCoeffDia = 0.55;
         private int _lastInterval;
         private double _currentValue;
         private int _currentIndex;
@@ -27,7 +21,7 @@
 
         public WaveDetector()
         {
-            _detectLevelCoeff = _detectLevelCoeffSys;
+            _detectLevelCoeff = Constants.DetectLevelCoeffSys;
             FiltredPoints = new List<int>();
         }
 
@@ -47,8 +41,8 @@
         public void Reset()
         {
             _numOfNN = 0;
-            _detectLevel = _minDetectLevel;
-            _detectLevelCoeff = _detectLevelCoeffSys;
+            _detectLevel = Constants.MinDetectLevel;
+            _detectLevelCoeff = Constants.DetectLevelCoeffSys;
             FiltredPoints.Clear();
             Arrhythmia = 0;
         }
@@ -57,7 +51,7 @@
         {
             if (index == IndexOfMax)
             {
-                _detectLevelCoeff = _detectLevelCoeffDia;
+                _detectLevelCoeff = Constants.DetectLevelCoeffDia;
             }
             return Detect(dataArr, index);
         }
@@ -66,20 +60,20 @@
         {
             _currentIndex = index;
             _currentInterval++;
-            if (_currentInterval == _noWaveInterval1)
+            if (_currentInterval == Constants.NoWaveInterval1)
             {
                 _detectLevel /= 2;
             }
-            if (_currentInterval == _noWaveInterval2)
+            if (_currentInterval == Constants.NoWaveInterval2)
             {
-                _detectLevel = _minDetectLevel;
+                _detectLevel = Constants.MinDetectLevel;
             }
             if (index < DataProcessing.DerivativeShift)
             {
                 return _detectLevel;
             }
 
-            if (_currentInterval < _lockInterval)
+            if (_currentInterval < Constants.LockInterval)
             {
                 return _detectLevel;
             }
@@ -99,7 +93,7 @@
                     {
                         _lastInterval = tmpNN;
                         FiltredPoints.Add(index - 1);
-                        _lockInterval = tmpNN / 2;
+                        Constants.LockInterval = tmpNN / 2;
                         NewWaveDetected();
                     }
                     _currentInterval = 0;

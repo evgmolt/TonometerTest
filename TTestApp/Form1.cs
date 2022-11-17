@@ -25,13 +25,9 @@ namespace TTestApp
         PressureMeasurementStatus PressureMeasStatus = PressureMeasurementStatus.Ready;
         PumpingStatus PumpStatus = PumpingStatus.Ready;
         double CurrentPressure;
-        double MaxAllowablePressure = 180;
-        double MinPressure = 120;
-        double PressureLevelForLeak = 10;
         double MomentMaxFound;
         double MaxPressureReachedValue;
-        double MaxTimeAfterMaxFound = 6; //sec
-        double MaxTimeAfterStartPumping = 10; //sec
+
         int DelayCounter;
         int DelayValue;
         const double DelayInSeconds = 0.3; //sec задержка начала записи сигнала после выключения компрессора
@@ -85,7 +81,7 @@ namespace TTestApp
                 MessageBox.Show("Connection string not found. The device cannot be connected");
                 return;
             }
-            USBPort = new USBSerialPort(this, Decomposer.BaudRate, ConnectionString);
+            USBPort = new USBSerialPort(this, ConnectionString);
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
@@ -671,7 +667,6 @@ namespace TTestApp
         int PumpingSys;
         private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
         {
-            double StopMeasCoeff = 0.5;
             HeartVisibleCounter = HeartVisibleDelay;
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
             labNumOfWaves.Text = "Waves detected: " + text;
@@ -691,7 +686,7 @@ namespace TTestApp
                     switch (PumpStatus)
                     {
                         case PumpingStatus.WaitingForLevel:
-                            if (e.Amplitude > Decomposer.StartSearchMaxLevel)
+                            if (e.Amplitude > Constants.StartSearchMaxLevel)
                             {
                                 PumpStatus = PumpingStatus.MaximumSearch;
                             }
@@ -705,7 +700,7 @@ namespace TTestApp
                             }
                             break;
                         case PumpingStatus.MaximumFound:
-                            if (e.Amplitude < Decomposer.StopPumpingLevel && CurrentPressure > MinPressure)
+                            if (e.Amplitude < Constants.StopPumpingLevel && CurrentPressure > Constants.MinPressure)
                             {
                                 StopPumping("Stop pumping level reached");
                             }
@@ -715,7 +710,7 @@ namespace TTestApp
                 case PressureMeasurementStatus.Measurement:
 //                    labPressPumping.Text = PumpingSys.ToString() + "/" + PumpingDia.ToString();
                     MaxDerivValue = Math.Max(e.Amplitude, MaxDerivValue);
-                    if (e.Amplitude < MaxDerivValue * StopMeasCoeff)
+                    if (e.Amplitude < MaxDerivValue * Constants.StopMeasCoeff)
                     {
                         DevStatus.ValveSlowClosed = false; 
                         DevStatus.ValveFastClosed = false;
@@ -770,14 +765,14 @@ namespace TTestApp
                 }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
-                if (CurrentPressure > MaxAllowablePressure)
+                if (CurrentPressure > Constants.MaxAllowablePressure)
                 { 
                     StopPumping("Max Allowable Pressure");
                 }
                 if (PumpStatus == PumpingStatus.WaitingForLevel)
                 {
-                    bool timeout = e.PacketCounter / Decomposer.SamplingFrequency > MaxTimeAfterStartPumping;
-                    if (timeout && CurrentPressure < PressureLevelForLeak)
+                    bool timeout = e.PacketCounter / Decomposer.SamplingFrequency > Constants.MaxTimeAfterStartPumping;
+                    if (timeout && CurrentPressure < Constants.PressureLevelForLeak)
                     {
                         butPressureMeasAbort_Click(this, EventArgs.Empty);
                         ShowError(BPMError.AirLeak);
@@ -786,8 +781,8 @@ namespace TTestApp
                 if (PumpStatus == PumpingStatus.MaximumFound)
                 {
                     int Index = e.PacketCounter;
-                    bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
-                    if (timeout && CurrentPressure > MinPressure)
+                    bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > Constants.MaxTimeAfterMaxFound;
+                    if (timeout && CurrentPressure > Constants.MinPressure)
                     {
                         StopPumping("Timeout");
                     }

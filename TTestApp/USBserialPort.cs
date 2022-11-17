@@ -21,16 +21,15 @@ namespace TTestApp
         private readonly System.Threading.Timer ReadTimer;
 
         private readonly int _portBufSize = 10000;
-        private readonly int _baudRate;
+        private readonly int _baudRate = 115200;
 
         public event Action<Exception> ConnectionFailure;
         public event Action ConnectionOk;
 
         private readonly string _connectionString;
 
-        public USBSerialPort(IMessageHandler messageHandler, int baudRate, string connectionString)
+        public USBSerialPort(IMessageHandler messageHandler, string connectionString)
         {
-            _baudRate = baudRate;
             _connectionString = connectionString;
             messageHandler.WindowsMessageHandler += OnMessage;
             ReadEnabled = false;

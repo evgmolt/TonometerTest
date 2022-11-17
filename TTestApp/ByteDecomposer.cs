@@ -78,11 +78,7 @@
                     MainIndex = MainIndex
                 });
         }
-        public int BaudRate => 115200;
-        public int BytesInPacket => 3;
-        public int MaxNoDataCounter => 10;
-        public int StartSearchMaxLevel => 8;
-        public int StopPumpingLevel => 6;
+        private int MaxNoDataCounter = 10;
 
         public int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
         {
