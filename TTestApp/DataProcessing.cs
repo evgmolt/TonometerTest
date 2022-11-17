@@ -4,10 +4,8 @@
     {
         public static int ValueToMmhG(double value)
         {
-            double zero = 17;
-            double pressure = 143;
-            double val = 2961;
-            return (int)((value - zero) * pressure / (val - zero));
+            double pressure = value / 19.87;
+            return (int)pressure;
         }
 
         public static double[] GetSmoothArray(double[] inputArray, int windowSize)
