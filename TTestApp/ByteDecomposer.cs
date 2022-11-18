@@ -2,13 +2,6 @@
 {
     internal class ByteDecomposer
     {
-        protected int _samplingFrequency;
-        protected int _zeroLine;
-
-        public const int DataArrSize = 0x100000;
-
-        public int tmpZero;
-
         public int ZeroLine
         {
             get { return _zeroLine; }
@@ -20,48 +13,44 @@
             set { _samplingFrequency = value; }
         }
 
-        protected const byte marker1 = 0x19;
-
-        protected DataArrays Data;
-
         public event EventHandler<PacketEventArgs> OnDecomposePacketEvent;
 
         public uint MainIndex = 0;
         public int PacketCounter = 0;
-
         public bool RecordStarted;
-        public bool DeviceTurnedOn;
 
-        protected int tmpValue;
-
-        protected int noDataCounter;
-
-        protected int byteNum;
-
-        protected bool RateDetection = true;
+        private const byte _marker1 = 0x19;
+        private int _tmpZero;
+        private int _samplingFrequency;
+        private int _zeroLine;
+        private DataArrays _data;
+        private int _tmpValue;
+        private int _byteNum;
 
         //Очереди для усреднения скользящим окном
-        protected Queue<double> QueueForDC;
-        protected Queue<double> QueueForAC;
-        protected Queue<int> QueueForZero;
-        public const int _queueForACSize = 6;
-        public const int _queueForDCSize = 60;
+        private Queue<double> _queueForDC;
+        private Queue<double> _queueForAC;
+        private Queue<int> _queueForZero;
+        private const int _sizeQForAC = 6;
+        private const int _sizeQForDC = 60;
+        private const int _sizeQForZero = 10;
 
-
-        protected int sizeQForZero = 10;
         public ByteDecomposer(DataArrays data)
         {
-            Data = data;
             RecordStarted = false;
-            DeviceTurnedOn = true;
             MainIndex = 0;
-            noDataCounter = 0;
-            byteNum = 0;
-            QueueForDC = new Queue<double>(_queueForDCSize);
-            QueueForAC = new Queue<double>(_queueForACSize);
-            QueueForZero = new Queue<int>(sizeQForZero);
+            _data = data;
+            _byteNum = 0;
+            _queueForDC = new Queue<double>(_sizeQForDC);
+            _queueForAC = new Queue<double>(_sizeQForAC);
+            _queueForZero = new Queue<int>(_sizeQForZero);
             _samplingFrequency = 240;
             _zeroLine = 0;
+        }
+
+        public void Calibr()
+        {
+            ZeroLine = _tmpZero;
         }
 
         protected virtual void OnDecomposeLineEvent()
@@ -70,29 +59,22 @@
                 this,
                 new PacketEventArgs
                 {
-                    DCValue = Data.DCArray[MainIndex],
-                    RealTimeValue = Data.RealTimeArray[MainIndex],
-                    PressureViewValue = Data.PressureViewArray[MainIndex],
-                    DerivativeValue = Data.DerivArray[MainIndex],
+                    DCValue = _data.DCArray[MainIndex],
+                    RealTimeValue = _data.RealTimeArray[MainIndex],
+                    PressureViewValue = _data.PressureViewArray[MainIndex],
+                    DerivativeValue = _data.DerivArray[MainIndex],
                     PacketCounter = PacketCounter,
                     MainIndex = MainIndex
                 });
         }
-        private int MaxNoDataCounter = 10;
 
         public int Decompos(USBSerialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
         {
             int bytes = usbport.BytesRead;
             if (bytes == 0)
             {
-                noDataCounter++;
-                if (noDataCounter > MaxNoDataCounter)
-                {
-                    DeviceTurnedOn = false;
-                }
                 return 0;
             }
-            DeviceTurnedOn = true;
             if (saveFileStream != null && RecordStarted)
             {
                 try
@@ -106,64 +88,64 @@
             }
             for (int i = 0; i < bytes; i++)
             {
-                switch (byteNum)
+                switch (_byteNum)
                 {
                     case 0:// Marker
-                        if (usbport.PortBuf[i] == marker1)
+                        if (usbport.PortBuf[i] == _marker1)
                         {
-                            byteNum = 1;
+                            _byteNum = 1;
                         }
                         break;
                     case 1:
-                        tmpValue = usbport.PortBuf[i];
-                        byteNum = 2;
+                        _tmpValue = usbport.PortBuf[i];
+                        _byteNum = 2;
                         break;
                     case 2:
-                        tmpValue += 0x100 * usbport.PortBuf[i];
-                        if ((tmpValue & 0x8000) != 0)
+                        _tmpValue += 0x100 * usbport.PortBuf[i];
+                        if ((_tmpValue & 0x8000) != 0)
                         {
-                            tmpValue -= 0x10000;
+                            _tmpValue -= 0x10000;
                         }
-                        QueueForZero.Enqueue(tmpValue);
-                        if (QueueForZero.Count > sizeQForZero)
+                        _queueForZero.Enqueue(_tmpValue);
+                        if (_queueForZero.Count > _sizeQForZero)
                         {
-                            QueueForZero.Dequeue();
-                            tmpZero = (int)QueueForZero.Average();
+                            _queueForZero.Dequeue();
+                            _tmpZero = (int)_queueForZero.Average();
                         }
 
-                        tmpValue -= ZeroLine;
+                        _tmpValue -= ZeroLine;
                         //Очередь для выделения постоянной составляющей
-                        QueueForDC.Enqueue(tmpValue);
-                        if (QueueForDC.Count > _queueForDCSize)
+                        _queueForDC.Enqueue(_tmpValue);
+                        if (_queueForDC.Count > _sizeQForDC)
                         {
-                            QueueForDC.Dequeue();
+                            _queueForDC.Dequeue();
                         }
 
                         //Массив исходных данных - смещение
-                        Data.RealTimeArray[MainIndex] = tmpValue;
+                        _data.RealTimeArray[MainIndex] = _tmpValue;
                         //Массив постоянной составляющей
-                        Data.DCArray[MainIndex] = QueueForDC.Average();
+                        _data.DCArray[MainIndex] = _queueForDC.Average();
 
                         //Очередь - переменная составляющая
-                        QueueForAC.Enqueue(tmpValue - QueueForDC.Average());
-                        if (QueueForAC.Count > _queueForACSize)
+                        _queueForAC.Enqueue(_tmpValue - _queueForDC.Average());
+                        if (_queueForAC.Count > _sizeQForAC)
                         {
-                            QueueForAC.Dequeue();
+                            _queueForAC.Dequeue();
                         }
 
                         //Массив переменной составляющей
-                        Data.PressureViewArray[MainIndex] = QueueForAC.Average();
+                        _data.PressureViewArray[MainIndex] = _queueForAC.Average();
 
-                        byteNum = 0;
+                        _byteNum = 0;
 
                         if (RecordStarted)
                         {
-                            txtFileStream.WriteLine(Data.GetDataString(MainIndex));
+                            txtFileStream.WriteLine(_data.GetDataString(MainIndex));
                         }
                         OnDecomposeLineEvent();
                         PacketCounter++;
                         MainIndex++;
-                        MainIndex &= DataArrSize - 1;
+                        MainIndex &= Constants.DataArrSize - 1;
                         break;
                 }
             }

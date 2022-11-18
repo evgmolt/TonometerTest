@@ -74,7 +74,7 @@ namespace TTestApp
             string ConnectionString = String.Empty;
             try
             {
-                ConnectionString = File.ReadAllText("conectstr.txt");
+                ConnectionString = File.ReadAllText("connectstr.txt");
             }
             catch (Exception)
             {
@@ -291,7 +291,7 @@ namespace TTestApp
 
         private void butCalibr_Click(object sender, EventArgs e)
         {
-            Decomposer.ZeroLine = Decomposer.tmpZero;
+            Decomposer.Calibr();
         }
         #endregion
 
@@ -398,7 +398,7 @@ namespace TTestApp
 
         private void InitArraysForFlow()
         {
-            DataA = new DataArrays(ByteDecomposer.DataArrSize);
+            DataA = new DataArrays(Constants.DataArrSize);
             Decomposer = new ByteDecomposer(DataA);
             Decomposer.OnDecomposePacketEvent += OnPacketReceived;
             Painter = new CurvesPainter(BufPanel, Decomposer);
@@ -734,14 +734,14 @@ namespace TTestApp
                 HeartVisibleCounter--;
             }
 
-            uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
+            uint currentIndex = (e.MainIndex - 1) & (Constants.DataArrSize - 1);
             CurrentPressure = ValueToMmHg.Convert(e.RealTimeValue);
 
             double aver = 0;
             int averSize = 250;
             for (int i = 0; i < averSize; i++)
             {
-                long index = (currentIndex - i) & (ByteDecomposer.DataArrSize - 1);
+                long index = (currentIndex - i) & (Constants.DataArrSize - 1);
                 aver += DataA.RealTimeArray[index];
             }
             aver = aver / averSize;
@@ -756,7 +756,7 @@ namespace TTestApp
             {
                 if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
                 {
-                    Decomposer.ZeroLine = Decomposer.tmpZero;
+                    Decomposer.Calibr();
                     USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
                     USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
                     USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);

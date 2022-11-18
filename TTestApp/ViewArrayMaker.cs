@@ -14,7 +14,7 @@
 
         public static Point[] MakeArray(Control view, double[] dataSource, uint index, int max, double scaleY, int scaleX)
         {
-            var size = ByteDecomposer.DataArrSize;
+            var size = Constants.DataArrSize;
             var h = view.Height;
             var w = view.Width;
             var arr = new Point[w / scaleX];

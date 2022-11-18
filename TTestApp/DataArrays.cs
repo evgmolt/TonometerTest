@@ -13,9 +13,9 @@
 
         public int Size { get { return _size; } }
         
-        public DataArrays(int size)
+        public DataArrays(uint size)
         {
-            _size = size;
+            _size = (int)size;
             RealTimeArray = new double[_size];
             DCArray = new double[_size];
             PressureViewArray = new double[_size];
@@ -26,7 +26,7 @@
 
         public static DataArrays CreateDataFromLines(string[] lines)
         {
-            DataArrays a = new(lines.Length);
+            DataArrays a = new((uint)lines.Length);
             try
             {
                 for (int i = 0; i < lines.Length; i++)

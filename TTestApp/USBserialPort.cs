@@ -89,47 +89,6 @@ namespace TTestApp
             }
         }
 
-        private string GetUSBSerialPortName()
-        {
-            string portName;
-            string usbSerialString = "USB-SERIAL";
-            ManagementObjectCollection collection = null;
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher(
-                        "root\\CIMV2",
-                        @"Select Caption,DeviceID,PnpClass From Win32_PnpEntity WHERE DeviceID like '%USB%'")) 
-                    collection = searcher.Get();
-            }
-            catch (Exception)
-            {
-                portName = "";
-            }
-            List<string> list = new();
-            if (collection != null)
-            {
-                foreach (var device in collection)
-                {
-                    foreach (var p in device.Properties)
-                    {
-                        if (p.Value != null)
-                        {
-                            list.Add(p.Value.ToString());
-                        }
-                    }
-                }
-            }
-            try
-            {
-                portName = list.Where(p => p.IndexOf(usbSerialString) >= 0).First();
-            }
-            catch (Exception)
-            {
-                portName = "";
-            }
-            return portName;
-        }
-
         public void Connect()
         {
             PortNames = GetPortsNames();
