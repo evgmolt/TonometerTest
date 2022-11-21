@@ -33,16 +33,34 @@
             return indexes;
         }
 
+        //public static int GetMaxIndexInRegion(double[] sourceArray, int index)
+        //{
+        //    int range = 60;
+        //    double[] regionArray = new double[range];
+        //    range = 2 * Math.Min(range / 2, sourceArray.Length - index);
+        //    Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
+        //    double max = regionArray.Max();
+        //    int maxIndex = Array.IndexOf(regionArray, max);
+        //    int result = index - range / 2 + maxIndex;
+        //    return (result >= sourceArray.Length - 1)? sourceArray.Length - 1 : result;
+        //}
+
         public static int GetMaxIndexInRegion(double[] sourceArray, int index)
         {
-            int range = 60;
-            double[] regionArray = new double[range];
-            range = 2 * Math.Min(range / 2, sourceArray.Length - index);
-            Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
-            double max = regionArray.Max();
-            int maxIndex = Array.IndexOf(regionArray, max);
-            int result = index - range / 2 + maxIndex;
-            return (result >= sourceArray.Length - 1)? sourceArray.Length - 1 : result;
+            int range = 50;
+            double max = 0;
+            int maxIndex = 0;
+            for (int i = 0; i < range; i++)
+            {
+                if (i - range / 2 < 0) continue;
+                if (i - range / 2 > sourceArray.Length) continue;
+                if (sourceArray[i - range / 2] > max)
+                {
+                    max = sourceArray[i - range / 2];
+                    maxIndex = i;
+                }
+            }
+            return index + maxIndex;
         }
 
         public static void SaveArray(string fname, int[] inputArray)
@@ -50,6 +68,7 @@
             var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
             File.WriteAllLines(fname, stringsArr);
         }
+
         public static void SaveArray(string fname, double[] inputArray)
         {
             var stringsArr = inputArray.Select(s => Math.Round(s).ToString()).ToArray();
