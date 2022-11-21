@@ -13,9 +13,8 @@ namespace TTestApp
         TTestConfig Cfg;
         StreamWriter TextWriter;
         string CurrentFile;
-        Patient CurrentPatient;
         int CurrentFileSize;
-        const string TmpDataFile = "tmpdata.t";
+        const string TmpDataFile = "tmpdata.txt";
         int MaxValue = 200;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
@@ -54,8 +53,10 @@ namespace TTestApp
             InitArraysForFlow();
             USBPort = new USBserialPort(this, Decomposer.BaudRate);
             USBPort.ConnectionOk += OnConnectionOk;
+            USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.Connect();
         }
+
 
         private void InitArraysForFlow()
         {
@@ -65,8 +66,20 @@ namespace TTestApp
             Painter = new CurvesPainter(BufPanel, Decomposer);
         }
 
+        private void OnConnectionFailure(Exception obj)
+        {
+            if (Decomposer?.RecordStarted == true)
+            {
+                butStopRecord_Click(this, EventArgs.Empty);
+            }
+            butFlow.Enabled = false;
+        }
+
         private void OnConnectionOk()
         {
+            butFlow.Enabled = true;
+            //            butFlow_Click(this, EventArgs.Empty);
+            //            butStartRecord_Click(this, EventArgs.Empty);
         }
 
         protected override void WndProc(ref Message m)
@@ -80,6 +93,52 @@ namespace TTestApp
                 }
             }
             base.WndProc(ref m);
+        }
+
+        private void timerStatus_Tick(object sender, EventArgs e)
+        {
+            if (Decomposer is null)
+            {
+                return;
+            }
+            butStartRecord.Enabled = !ViewMode && !Decomposer.RecordStarted!;
+            butStopRecord.Enabled = Decomposer.RecordStarted;
+            butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
+//            butFlow.Enabled = !Decomposer.RecordStarted;
+
+            if (USBPort == null)
+            {
+                labPort.Text = "Disconnected";
+                ViewMode = true;
+                return;
+            }
+            if (USBPort.PortHandle == null)
+            {
+                labPort.Text = "Disconnected";
+                ViewMode = true;
+                return;
+            }
+            if (USBPort.PortHandle.IsOpen)
+            {
+                labPort.Text = "Connected to " + USBPort.PortNames[USBPort.CurrentPort];
+            }
+            else
+            {
+                labPort.Text = "Disconnected";
+            }
+        }
+
+        private void timerRead_Tick(object sender, EventArgs e)
+        {
+            if (USBPort?.PortHandle?.IsOpen == true)
+            {
+                Decomposer?.Decompos(USBPort, TextWriter);
+            }
+        }
+
+        private void timerPaint_Tick(object sender, EventArgs e)
+        {
+            BufPanel.Refresh();
         }
 
 
@@ -96,33 +155,18 @@ namespace TTestApp
             CurrentFileSize = Decomposer.PacketCounter;
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
-
-            FormPatientData formPatientData = new FormPatientData(CurrentPatient);
-            formPatientData.SetStateAfterRecord();
-            if (formPatientData.ShowDialog() == DialogResult.OK)
-            {
-                CurrentPatient = formPatientData.patient;
-                SaveFile();
-            }
-            formPatientData.Dispose();
+            SaveFile();
             BufPanel.Refresh();
         }
 
         private void butStartRecord_Click(object sender, EventArgs e)
         {
-            FormPatientData formPatientData = new(null);
-            formPatientData.SetStateBeforeRecord();
-            if (formPatientData.ShowDialog() == DialogResult.OK)
-            {
-                CurrentPatient = formPatientData.patient;
-                TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
-                Decomposer.PacketCounter = 0;
-                Decomposer.MainIndex = 0;
-                progressBarRecord.Visible = true;
-                FileNum++;
-                PressureMeasStatus = PressureMeasurementStatus.Calibration;
-            }
-            formPatientData.Dispose();
+            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            Decomposer.PacketCounter = 0;
+            Decomposer.MainIndex = 0;
+            progressBarRecord.Visible = true;
+            FileNum++;
+            PressureMeasStatus = PressureMeasurementStatus.Calibration;
         }
         private void butFlow_Click(object sender, EventArgs e)
         {
@@ -156,7 +200,6 @@ namespace TTestApp
                 File.Delete(Cfg.DataDir + CurrentFile);
             }
             var DataStrings = File.ReadAllLines(Cfg.DataDir + TmpDataFile);
-            File.WriteAllLines(Cfg.DataDir + CurrentFile, CurrentPatient.ToArray());
             File.AppendAllLines(Cfg.DataDir + CurrentFile, DataStrings);
             Text = "Pulse wave recorder. File : " + CurrentFile;
         }
@@ -240,21 +283,18 @@ namespace TTestApp
         private void OnPacketReceived(object? sender, PacketEventArgs e)
         {
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            double CurrentPressure = e.RealTimeValue;
-            MaxPressure = (int)Math.Max(CurrentPressure, MaxPressure);            
+            double CurrentPressure = e.PressureViewValue;
             if (currentIndex > 0)
             {
                 labCurrentPressure.Text = "Current pressure, mmHG: " +
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() + " " +
-                                           DataA.DCArray[currentIndex].ToString();
-//                labCurrentPressure.Text = "Current : " + (DataA.RealTimeArray[Decomposer.MainIndex - 1]).ToString() + " Max : " + 
-//                    MaxPressure.ToString();
+                                           CurrentPressure.ToString();
             }
             if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
             {
-                Decomposer.ZeroLine = Decomposer.tmpZero;
-//                Decomposer.RecordStarted = true;
-                PressureMeasStatus = PressureMeasurementStatus.Ready;// Measurement;
+//                Decomposer.ZeroLine = Decomposer.tmpZero;
+                Decomposer.RecordStarted = true;
+                PressureMeasStatus = PressureMeasurementStatus.Measurement;
             }
             if (Decomposer.RecordStarted)
             {

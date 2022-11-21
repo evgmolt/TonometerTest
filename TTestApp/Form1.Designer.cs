@@ -40,6 +40,7 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.butCalibration = new System.Windows.Forms.Button();
             this.labCurrentPressure = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
@@ -49,7 +50,6 @@
             this.timerRead = new System.Windows.Forms.Timer(this.components);
             this.timerStatus = new System.Windows.Forms.Timer(this.components);
             this.timerPaint = new System.Windows.Forms.Timer(this.components);
-            this.butCalibration = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).BeginInit();
@@ -129,7 +129,7 @@
             this.butStartRecord.Name = "butStartRecord";
             this.butStartRecord.Size = new System.Drawing.Size(85, 23);
             this.butStartRecord.TabIndex = 0;
-            this.butStartRecord.Text = "New record";
+            this.butStartRecord.Text = "Start record";
             this.butStartRecord.UseVisualStyleBackColor = true;
             this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
             // 
@@ -172,6 +172,18 @@
             this.panelBottom.Name = "panelBottom";
             this.panelBottom.Size = new System.Drawing.Size(1014, 64);
             this.panelBottom.TabIndex = 3;
+            // 
+            // butCalibration
+            // 
+            this.butCalibration.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.butCalibration.Location = new System.Drawing.Point(783, 20);
+            this.butCalibration.Name = "butCalibration";
+            this.butCalibration.Size = new System.Drawing.Size(85, 23);
+            this.butCalibration.TabIndex = 6;
+            this.butCalibration.Text = "Calibration";
+            this.butCalibration.UseVisualStyleBackColor = true;
+            this.butCalibration.Visible = false;
+            this.butCalibration.Click += new System.EventHandler(this.butCalibration_Click);
             // 
             // labCurrentPressure
             // 
@@ -246,17 +258,6 @@
             // 
             this.timerPaint.Enabled = true;
             this.timerPaint.Tick += new System.EventHandler(this.timerPaint_Tick);
-            // 
-            // butCalibration
-            // 
-            this.butCalibration.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.butCalibration.Location = new System.Drawing.Point(783, 20);
-            this.butCalibration.Name = "butCalibration";
-            this.butCalibration.Size = new System.Drawing.Size(85, 23);
-            this.butCalibration.TabIndex = 6;
-            this.butCalibration.Text = "Calibration";
-            this.butCalibration.UseVisualStyleBackColor = true;
-            this.butCalibration.Click += new System.EventHandler(this.butCalibration_Click);
             // 
             // Form1
             // 
