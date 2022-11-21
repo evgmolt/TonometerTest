@@ -235,7 +235,7 @@
                 val2 += dataArr[Ind - DerivativeAverageWidth - DerivativeShift + i];
             }
             val1 /= DerivativeAverageWidth;
-            val1 /= DerivativeAverageWidth;
+            val2 /= DerivativeAverageWidth;
             return val1 - val2;
         }
 
