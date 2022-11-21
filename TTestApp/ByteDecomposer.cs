@@ -102,6 +102,7 @@
                         break;
                     case 2:
                         _tmpValue += 0x100 * usbport.PortBuf[i];
+
                         if ((_tmpValue & 0x8000) != 0)
                         {
                             _tmpValue -= 0x10000;

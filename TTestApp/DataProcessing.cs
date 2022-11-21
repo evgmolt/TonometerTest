@@ -221,13 +221,31 @@
             return (max - min);
         }
 
-        public static double GetDerivative(double[] dataArr, uint Ind)
+        public static double GetDerivative(int[] dataArr, int Ind)
         {
-            if (Ind < DerivativeAverageWidth / 2 + DerivativeShift)
+            if (Ind < DerivativeAverageWidth + DerivativeShift)
             {
                 return 0;
             }
-            if (Ind - DerivativeAverageWidth / 2 + DerivativeAverageWidth > dataArr.Length - 1)
+            double val1 = 0;
+            double val2 = 0;
+            for (int i = 0; i < DerivativeAverageWidth; i++)
+            {
+                val1 += dataArr[Ind - DerivativeAverageWidth + i];
+                val2 += dataArr[Ind - DerivativeAverageWidth - DerivativeShift + i];
+            }
+            val1 /= DerivativeAverageWidth;
+            val1 /= DerivativeAverageWidth;
+            return val1 - val2;
+        }
+
+        public static double GetDerivative(double[] dataArr, uint Ind)
+        {
+            if (Ind < DerivativeAverageWidth + DerivativeShift)
+            {
+                return 0;
+            }
+            if (Ind - DerivativeAverageWidth + DerivativeAverageWidth > dataArr.Length - 1)
             {
                 return 0;
             }
@@ -235,8 +253,8 @@
             List<double> L2 = new();
             for (int i = 0; i < DerivativeAverageWidth; i++)
             {
-                L1.Add(dataArr[Ind - DerivativeAverageWidth / 2 + i]);
-                L2.Add(dataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
+                L1.Add(dataArr[Ind - DerivativeAverageWidth + i]);
+                L2.Add(dataArr[Ind - DerivativeAverageWidth - DerivativeShift + i]);
             }
             if (L1.Count > 0 && L2.Count > 0)
             {
@@ -248,8 +266,36 @@
             {
                 return 0;
             }
-
         }
+
+        //public static double GetDerivative(double[] dataArr, uint Ind)
+        //{
+        //    if (Ind < DerivativeAverageWidth / 2 + DerivativeShift)
+        //    {
+        //        return 0;
+        //    }
+        //    if (Ind - DerivativeAverageWidth / 2 + DerivativeAverageWidth > dataArr.Length - 1)
+        //    {
+        //        return 0;
+        //    }
+        //    List<double> L1 = new();
+        //    List<double> L2 = new();
+        //    for (int i = 0; i < DerivativeAverageWidth; i++)
+        //    {
+        //        L1.Add(dataArr[Ind - DerivativeAverageWidth / 2 + i]);
+        //        L2.Add(dataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
+        //    }
+        //    if (L1.Count > 0 && L2.Count > 0)
+        //    {
+        //        double A1 = L1.Average();
+        //        double A2 = L2.Average();
+        //        return (A1 - A2);
+        //    }
+        //    else
+        //    {
+        //        return 0;
+        //    }
+        //}
 
         //Корреляционная функция - весь массив, коэффициент корреляции Пирсона
         public static void Corr(double[] inputArray, double[] resultArray, double[] corrPattern)
