@@ -2,24 +2,12 @@
 
 namespace TTestApp.Decomposers
 {
-    abstract class ByteDecomposer
+    internal class ByteDecomposer
     {
-        private int _zeroLine;
-
         public const int DataArrSize = 0x100000;
-        public int ZeroLine 
-        { 
-            get { return _zeroLine; } 
-            set { _zeroLine = value; }
-        }
-        public abstract int StartSearchMaxLevel { get; } // Для алгоритма управления накачкой
-        public abstract int StopPumpingLevel { get; }    // Для алгоритма управления накачкой
-        public abstract int SamplingFrequency { get; }
-        public abstract int BaudRate { get; }
-        public abstract int BytesInPacket { get; } // Размер посылки
-        public abstract int MaxNoDataCounter { get; }
-
-        protected const byte marker1 = 0x19; // Если маркер - 1 байт, используется этот. Если больше, то объявлять свои в наследнике
+        public int SamplingFrequency = 240;
+        public int BaudRate = 115200;
+        private const byte marker1 = 0x19;
 
         protected DataArrays Data;
 
@@ -27,36 +15,18 @@ namespace TTestApp.Decomposers
 
         public uint MainIndex = 0;
         public int PacketCounter = 0;
-
         public bool RecordStarted;
-        public bool DeviceTurnedOn;
-
-        public int tmpZero;
 
         protected int tmpValue;
 
-        protected int noDataCounter;
-
         protected int byteNum;
 
-        //Очереди для усреднения скользящим окном
-        protected Queue<int> QueueForDC;
-        protected Queue<int> QueueForAC;
-        protected Queue<int> QueueForZero;
-
-        protected int sizeQForZero = 10;
-
-        public ByteDecomposer(DataArrays data, int sizeQForDC, int sizeQForAC)
+        public ByteDecomposer(DataArrays data)
         {
             Data = data;
             RecordStarted = false;
-            DeviceTurnedOn = true;
             MainIndex = 0;
-            noDataCounter = 0;
             byteNum = 0;
-            QueueForDC = new Queue<int>(sizeQForDC);
-            QueueForAC = new Queue<int>(sizeQForAC);
-            QueueForZero = new Queue<int>(sizeQForZero);
         }
 
         protected virtual void OnDecomposeLineEvent()
@@ -65,9 +35,7 @@ namespace TTestApp.Decomposers
                 this,
                 new PacketEventArgs
                 {
-                    DCValue = Data.DCArray[MainIndex],
                     RealTimeValue = Data.RealTimeArray[MainIndex],
-                    PressureViewValue = Data.PressureViewArray[MainIndex],
                     PacketCounter = PacketCounter,
                     MainIndex = MainIndex
                 });
@@ -78,7 +46,62 @@ namespace TTestApp.Decomposers
             return Decompos(usbport, null, saveFileStream);
         }
 
-        public abstract int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream);
-        //Возвращает число прочитанных и обработанных байт
+        public int Decompos(USBserialPort usbport, Stream saveFileStream, StreamWriter txtFileStream)
+        {
+            int bytes = usbport.BytesRead;
+            if (bytes == 0)
+            {
+                return 0;
+            }
+            if (saveFileStream != null && RecordStarted)
+            {
+                try
+                {
+                    saveFileStream.Write(usbport.PortBuf, 0, bytes);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Save file stream error" + ex.Message);
+                }
+            }
+            for (int i = 0; i < bytes; i++)
+            {
+                switch (byteNum)
+                {
+                    case 0:// Marker
+                        if (usbport.PortBuf[i] == marker1)
+                        {
+                            byteNum = 1;
+                        }
+                        break;
+                    case 1:
+                        tmpValue = usbport.PortBuf[i];
+                        byteNum = 2;
+                        break;
+                    case 2:
+                        tmpValue += 0x100 * usbport.PortBuf[i];
+                        if ((tmpValue & 0x8000) != 0)
+                        {
+                            tmpValue -= 0x10000;
+                        }
+
+                        Data.RealTimeArray[MainIndex] = tmpValue;
+
+                        byteNum = 0;
+
+                        if (RecordStarted)
+                        {
+                            txtFileStream.WriteLine(Data.GetDataString(MainIndex));
+                        }
+                        OnDecomposeLineEvent();
+                        PacketCounter++;
+                        MainIndex++;
+                        MainIndex &= DataArrSize - 1;
+                        break;
+                }
+            }
+            usbport.BytesRead = 0;
+            return bytes;
+        }
     }
 }

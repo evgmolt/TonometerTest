@@ -61,7 +61,7 @@ namespace TTestApp
         private void InitArraysForFlow()
         {
             DataA = new DataArrays(ByteDecomposer.DataArrSize);
-            Decomposer = new ByteDecomposerADS1115(DataA);
+            Decomposer = new ByteDecomposer(DataA);
             Decomposer.OnDecomposePacketEvent += OnPacketReceived;
             Painter = new CurvesPainter(BufPanel, Decomposer);
         }
@@ -212,14 +212,14 @@ namespace TTestApp
             var ArrayList = new List<double[]>();
             if (ViewMode)
             {
-                    ArrayList.Add(DataA.PressureViewArray);
+                    ArrayList.Add(DataA.RealTimeArray);
 //                    ArrayList.Add(DataA.DerivArray);
 //                    ArrayList.Add(DataA.DebugArray);
 //                    ArrayList.Add(DataA.EnvelopeArray);
             }
             else
             {
-                ArrayList.Add(DataA.PressureViewArray);
+                ArrayList.Add(DataA.RealTimeArray);
 //                ArrayList.Add(DataA.DerivArray);
 //                ArrayList.Add(DataA.DebugArray);
             }
@@ -255,7 +255,6 @@ namespace TTestApp
             {
                 return;
             }
-            DataA.CountViewArrays(BufPanel);
             BufPanel.Refresh();
         }
 
