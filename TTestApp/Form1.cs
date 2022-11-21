@@ -282,7 +282,7 @@ namespace TTestApp
         private void OnPacketReceived(object? sender, PacketEventArgs e)
         {
             uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            double CurrentPressure = e.PressureViewValue;
+            double CurrentPressure = e.RealTimeValue;
             if (currentIndex > 0)
             {
                 labCurrentPressure.Text = "Current pressure, mmHG: " +
