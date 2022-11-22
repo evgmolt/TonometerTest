@@ -1,29 +1,27 @@
-﻿using TTestApp.Decomposers;
-
-namespace TTestApp
+﻿namespace TTestApp
 {
     static class ViewArrayMaker
     {
-        public static Point[] MakeArray(Control view, double[] DataSource, uint index, int max)
+        public static Point[] MakeArray(Control view, double[] dataSource, uint index, int max)
         {
-            return MakeArray(view, DataSource, index, max, 1, 1);
+            return MakeArray(view, dataSource, index, max, 1, 1);
         }
 
-        public static Point[] MakeArray(Control view, double[] DataSource, uint index, int max, double scaleY)
+        public static Point[] MakeArray(Control view, double[] dataSource, uint index, int max, double scaleY)
         {
-            return MakeArray(view, DataSource, index, max, scaleY, 1);
+            return MakeArray(view, dataSource, index, max, scaleY, 1);
         }
 
-        public static Point[] MakeArray(Control view, double[] DataSource, uint index, int max, double scaleY, int scaleX)
+        public static Point[] MakeArray(Control view, double[] dataSource, uint index, int max, double scaleY, int scaleX)
         {
-            var size = ByteDecomposer.DataArrSize;
+            var size = Constants.DataArrSize;
             var h = view.Height;
             var w = view.Width;
             var arr = new Point[w / scaleX];
             for (int i = 0; i < w / scaleX; i++)
             {
                 arr[i].X = i * scaleX;
-                double res = h / 2 - (int)Math.Round(scaleY * (h * DataSource[(index - w / scaleX + i * scaleX) & (size - 1)])/(max));
+                double res = h / 2 - (int)Math.Round(scaleY * (h * dataSource[(index - w / scaleX + i * scaleX) & (size - 1)])/(max));
                 arr[i].Y = (int)Math.Round(res);
             }
             return arr;

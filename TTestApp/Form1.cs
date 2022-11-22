@@ -1,8 +1,5 @@
-﻿using HRV;
-using TTestApp.Commands;
-using TTestApp.Decomposers;
+﻿using TTestApp.Commands;
 using TTestApp.Enums;
-using TTestApp.Spline;
 
 namespace TTestApp
 {
@@ -16,20 +13,27 @@ namespace TTestApp
         BufferedPanel BufPanel;
         TTestConfig Cfg;
         StreamWriter TextWriter;
+        ConverterValueToMmHg ValueToMmHg;
         string CurrentFile;
         int CurrentFileSize;
         const string TmpDataFile = "tmpdata.t";
-//        int MaxValue = 200000; // Для BCI
         int MaxValue = 200;   // Для ADS1115
         bool ViewMode = false;
         int ViewShift;
         double ScaleY = 1;
         List<int[]> VisirList;
-        bool Compression;
-        int PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
-        int PumpStatus = (int)PumpingStatus.Ready;
-        double MaxFoundMoment;
-        double MaxTimeAfterMaxFound = 2.5; //sec
+        PressureMeasurementStatus PressureMeasStatus = PressureMeasurementStatus.Ready;
+        PumpingStatus PumpStatus = PumpingStatus.Ready;
+        double CurrentPressure;
+        double MomentMaxFound;
+        double MaxPressureReachedValue;
+
+        int DelayCounter;
+        int DelayValue;
+        const double DelayInSeconds = 0.3; //sec задержка начала записи сигнала после выключения компрессора
+        int HeartVisibleDelay = 50;
+        int HeartVisibleCounter;
+        bool HRVmode = false;
 
         double MaxPressure = 0;
 
@@ -37,12 +41,15 @@ namespace TTestApp
 
         DeviceStatus DevStatus;
 
-        public event Action<Message> WindowsMessage;
+        public event Action<Message> WindowsMessageHandler;
 
         public Form1()
         {
             InitializeComponent();
-            BufPanel = new BufferedPanel(0);
+            ValueToMmHg = new();
+            ValueToMmHg.CoeffChanged += OnCoeffChanged;
+            labHeart.Text = "♥";
+            BufPanel = new BufferedPanel();
             BufPanel.MouseMove += BufPanel_MouseMove;
             Cfg = TTestConfig.GetConfig();
             if (Cfg.Maximized)
@@ -57,237 +64,521 @@ namespace TTestApp
             }
             numUDLeft.Value = Cfg.CoeffLeft;
             numUDRight.Value = Cfg.CoeffRight;
-            radioButton11.Checked = true;
+            numUDpressure.Value = Cfg.ToPressure;
             panelGraph.Dock = DockStyle.Fill;
             panelGraph.Controls.Add(BufPanel);
             BufPanel.Dock = DockStyle.Fill;
             BufPanel.Paint += bufferedPanel_Paint;
             VisirList = new List<int[]>();
             InitArraysForFlow();
-            USBPort = new USBSerialPort(this, Decomposer.BaudRate);
+            string ConnectionString = String.Empty;
+            try
+            {
+                ConnectionString = File.ReadAllText("connectstr.txt");
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Connection string not found. The device cannot be connected");
+                return;
+            }
+            USBPort = new USBSerialPort(this, ConnectionString);
             USBPort.ConnectionFailure += OnConnectionFailure;
             USBPort.ConnectionOk += OnConnectionOk;
             USBPort.Connect();
             DevStatus = new DeviceStatus();
         }
 
+        #region [ Buttons Clicks ]
+        private void button1_Click(object sender, EventArgs e)
+        {
+            USBPort.WriteByte((byte)CmdDevice.StartReading);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            USBPort.WriteByte((byte)CmdDevice.StopReading);
+        }
+
+        private void butPressureMeasAbort_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveSlowClosed = false;
+            DevStatus.ValveFastClosed = false;
+            DevStatus.PumpIsOn = false;
+            PumpStatus = PumpingStatus.Ready;
+            USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
+            PressureMeasStatus = PressureMeasurementStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
+            butStopRecord_Click(butPressureMeasAbort, e);
+        }
+
+        private void butValvesOpen_Click(object sender, EventArgs e)
+        {
+            butValve1Open_Click(this, EventArgs.Empty);
+            butValve2Open_Click(this, EventArgs.Empty);
+        }
+
+        private void butValvesClose_Click(object sender, EventArgs e)
+        {
+            butValve1Close_Click(this, EventArgs.Empty);
+            butValve2Close_Click(this, EventArgs.Empty);
+        }
+
+        private void butValve2Open_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveFastClosed = false;
+            USBPort?.WriteByte((byte)CmdDevice.ValveFastOpen);
+        }
+
+        private void butValve2Close_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveFastClosed = true;
+            USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
+        }
+
+        private void butValve1Open_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveSlowClosed = false;
+            USBPort?.WriteByte((byte)CmdDevice.ValveSlowOpen);
+        }
+
+        private void butValve1Close_Click(object sender, EventArgs e)
+        {
+            DevStatus.ValveSlowClosed = true;
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
+        }
+
+        private void butPumpOn_Click(object sender, EventArgs e)
+        {
+            DevStatus.PumpIsOn = true;
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
+        }
+
+        private void butPumpOff_Click(object sender, EventArgs e)
+        {
+            DevStatus.PumpIsOn = false;
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
+        }
+
+        private void butStopRecord_Click(object sender, EventArgs e)
+        {
+            labArrythmia.Text = Detector?.Arrhythmia.ToString();
+            //            Detector.OnWaveDetected -= NewWaveDetected;
+            Detector = null;
+            progressBarRecord.Visible = false;
+            Decomposer.OnDecomposePacketEvent -= OnPacketReceived;
+            Decomposer.RecordStarted = false;
+            TextWriter?.Dispose();
+
+            CurrentFileSize = Decomposer.PacketCounter;
+            labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
+            UpdateScrollBar(CurrentFileSize);
+            PressureMeasStatus = PressureMeasurementStatus.Ready;
+            PumpStatus = PumpingStatus.Ready;
+            butValvesOpen_Click(sender, EventArgs.Empty);
+            ViewMode = true;
+            timerPaint.Enabled = !ViewMode;
+            timerRead.Enabled = false;
+            if (sender == butPressureMeasAbort)
+            {
+                return;
+            }
+            PrepareData();
+            BufPanel.Refresh();
+            controlPanel.Refresh();
+        }
+
+        private void butStartMeas_Click(object sender, EventArgs e)
+        {
+            PumpingDia = 0;
+            PumpingSys = 0;
+            ValueToMmHg.ChangeCoeff("T");
+            HRVmode = false;
+            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            Decomposer.PacketCounter = 0;
+            Decomposer.MainIndex = 0;
+            Decomposer.RecordStarted = true;
+            progressBarRecord.Visible = true;
+            labSys.Text = "Sys : ";
+            labDia.Text = "Dia : ";
+            labPulse.Text = "Pulse : ";
+            Detector = new WaveDetector();
+            Detector.OnWaveDetected += NewWaveDetected;
+
+            DevStatus.ValveSlowClosed = true;
+            DevStatus.ValveFastClosed = true;
+            DevStatus.PumpIsOn = true;
+            PumpStatus = PumpingStatus.WaitingForLevel;
+            PressureMeasStatus = PressureMeasurementStatus.Calibration;
+            USBPort.WriteByte((byte)CmdDevice.StartReading);
+        }
+
+        private void butStartRecord_Click(object sender, EventArgs e) //HRV
+        {
+            HRVmode = true;
+            TextWriter = new StreamWriter(Cfg.DataDir + TmpDataFile);
+            Decomposer.PacketCounter = 0;
+            Decomposer.MainIndex = 0;
+            Decomposer.RecordStarted = true;
+            progressBarRecord.Visible = true;
+            Detector = new WaveDetector();
+            Detector.OnWaveDetected += NewWaveDetected;
+        }
+
+        private void butFlow_Click(object sender, EventArgs e)
+        {
+            ViewMode = !ViewMode;
+            if (!ViewMode)
+            {
+                InitArraysForFlow();
+                hScrollBar1.Visible = false;
+            }
+        }
+
+        private void butRefresh_Click(object sender, EventArgs e)
+        {
+            PrepareData();
+            BufPanel.Refresh();
+            controlPanel.Refresh();
+        }
+
+        private void butSaveFile_Click(object sender, EventArgs e)
+        {
+            saveFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                Cfg.DataDir = Path.GetDirectoryName(saveFileDialog1.FileName) + @"\";
+                TTestConfig.SaveConfig(Cfg);
+                CurrentFile = Path.GetFileName(saveFileDialog1.FileName);
+                if (File.Exists(Cfg.DataDir + CurrentFile))
+                {
+                    File.Delete(Cfg.DataDir + CurrentFile);
+                }
+                File.Move(saveFileDialog1.InitialDirectory + TmpDataFile, Cfg.DataDir + CurrentFile);
+                Text = "File : " + CurrentFile;
+            }
+        }
+
+        private void butOpenFile_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.FileName = "";
+            openFileDialog1.InitialDirectory = Cfg.DataDir.ToString();
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                ViewMode = true;
+                if (File.Exists(openFileDialog1.FileName))
+                {
+                    Cfg.DataDir = Path.GetDirectoryName(openFileDialog1.FileName) + @"\";
+                    TTestConfig.SaveConfig(Cfg);
+                    timerRead.Enabled = false;
+
+                    CurrentFile = Path.GetFileName(openFileDialog1.FileName);
+                    ValueToMmHg.ChangeCoeff(CurrentFile);
+                    ReadFile(Cfg.DataDir + CurrentFile);
+                }
+            }
+            Text = "File : " + CurrentFile;
+        }
+
+        private void butStartToPressure_Click(object sender, EventArgs e)
+        {
+            Cfg.ToPressure = numUDpressure.Value;
+            butValvesClose_Click(this, EventArgs.Empty);
+            butPumpOn_Click(this, EventArgs.Empty);
+            PressureMeasStatus = PressureMeasurementStatus.Pumping;
+        }
+
+        private void butCalibr_Click(object sender, EventArgs e)
+        {
+            Decomposer.Calibr();
+        }
+        #endregion
+
+        #region [ Controls Changed ]
+        private void hScrollBar1_ValueChanged(object? sender, EventArgs e)
+        {
+            ViewShift = hScrollBar1.Value;
+            BufPanel.Refresh();
+        }
+
+        private void trackBarAmp_ValueChanged(object? sender, EventArgs e)
+        {
+            double a = trackBarAmp.Value;
+            ScaleY = Math.Pow(2, a / 2);
+            BufPanel.Refresh();
+        }
+        private void numUDLeft_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.CoeffLeft = numUDLeft.Value;
+        }
+
+        private void numUDRight_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.CoeffRight = numUDRight.Value;
+        }
+        private void numUDpressure_ValueChanged(object sender, EventArgs e)
+        {
+            Cfg.ToPressure = numUDpressure.Value;
+        }
+        #endregion ]
+
+        #region [ Timers Ticks ]
+        private void timerStatus_Tick(object sender, EventArgs e)
+        {
+            labMeasurementStatus.Text = "Measurement status : " + PressureMeasStatus.ToString();
+            labPumpStatus.Text = "Pumpung status : " + PumpStatus.ToString();
+
+            timerRead.Enabled = !ViewMode;
+            timerPaint.Enabled = !ViewMode;
+
+            labValve1.Text = DevStatus.ValveSlowClosed ? "Valve 1 (Slow) : closed" : "Valve 1 (Slow) : opened";
+            labValve2.Text = DevStatus.ValveFastClosed ? "Valve 2 (Fast) : closed" : "Valve 2 (Fast) : opened";
+            labPump.Text = DevStatus.PumpIsOn ? "Pump : On" : "Pump : Off";
+            butValveSlowClose.Enabled = !DevStatus.ValveSlowClosed;
+            butValveSlowOpen.Enabled = DevStatus.ValveSlowClosed;
+            butValveFastClose.Enabled = !DevStatus.ValveFastClosed;
+            butValveFastOpen.Enabled = DevStatus.ValveFastClosed;
+            butValvesOpen.Enabled = DevStatus.ValveFastClosed || DevStatus.ValveSlowClosed;
+            butValvesClose.Enabled = !DevStatus.ValveFastClosed || !DevStatus.ValveSlowClosed;
+
+            butPumpOn.Enabled = !DevStatus.PumpIsOn;
+            butPumpOff.Enabled = DevStatus.PumpIsOn;
+
+            if (Decomposer is null)
+            {
+                return;
+            }
+            butStartMeas.Enabled = !ViewMode && !Decomposer.RecordStarted!;
+            butStopRecord.Enabled = Decomposer.RecordStarted;
+            butSaveFile.Enabled = ViewMode && Decomposer.PacketCounter != 0;
+            butFlow.Text = ViewMode ? "Start stream" : "Stop stream";
+            if (USBPort == null)
+            {
+                labPort.Text = "Disconnected";
+                ViewMode = true;
+                return;
+            }
+            if (USBPort.PortHandle == null)
+            {
+                labPort.Text = "Disconnected";
+                ViewMode = true;
+                return;
+            }
+            if (USBPort.PortHandle.IsOpen)
+            {
+                labPort.Text = "Connected to " + USBPort.PortNames[USBPort.CurrentPort];
+            }
+            else
+            {
+                labPort.Text = "Disconnected";
+            }
+        }
+
+        private void timerRead_Tick(object sender, EventArgs e)
+        {
+            if (USBPort?.PortHandle?.IsOpen == true)
+            {
+                Decomposer?.Decompos(USBPort, null, TextWriter);
+            }
+        }
+
+        private void timerPaint_Tick(object sender, EventArgs e)
+        {
+            BufPanel.Refresh();
+        }
+
+        private void timerDetectRate_Tick(object sender, EventArgs e)
+        {
+            Decomposer.SamplingFrequency = Decomposer.PacketCounter / 10;
+            timerDetectRate.Enabled = false;
+            labelRate.Text = "Sample rate : " + Decomposer.SamplingFrequency.ToString();
+        }
+        #endregion
+
         private void InitArraysForFlow()
         {
-            DataA = new DataArrays(ByteDecomposer.DataArrSize);
-            Decomposer = new ByteDecomposerADS1115(DataA);
+            DataA = new DataArrays(Constants.DataArrSize);
+            Decomposer = new ByteDecomposer(DataA);
             Decomposer.OnDecomposePacketEvent += OnPacketReceived;
             Painter = new CurvesPainter(BufPanel, Decomposer);
         }
 
         private void OnConnectionOk()
         {
-            if (Decomposer is ByteDecomposerBCI)
-            {
-                CommandsBCI.BCISetup(USBPort);
-            }
+            USBPort.WriteByte((byte)CmdDevice.StartReading);
         }
 
         private void OnConnectionFailure(Exception obj)
         {
-            MessageBoxButtons but = MessageBoxButtons.OK;
-            MessageBoxIcon icon = MessageBoxIcon.Error;
-            MessageBox.Show("Connection failure", "Error", but, icon);
+            ShowError(BPMError.Connection);
             ViewMode = true;
         }
 
         protected override void WndProc(ref Message m)
         {
             const int WM_DEVICECHANGE = 0x0219;
-            if (WindowsMessage != null)
+            if (m.Msg == WM_DEVICECHANGE)
             {
-                if (m.Msg == WM_DEVICECHANGE)
-                {
-                    WindowsMessage(m);
-                }
+                WindowsMessageHandler?.Invoke(m);
             }
             base.WndProc(ref m);
         }
-        
+
         private void ReadFile(string fileName)
         {
+            int PatientDataCount = 7;
+
             string[] lines = File.ReadAllLines(fileName);
+            lines = lines.Skip(PatientDataCount).ToArray();
             CurrentFileSize = lines.Length;
             labRecordSize.Text = "Record size : " + (CurrentFileSize / Decomposer.SamplingFrequency).ToString() + " s";
             UpdateScrollBar(CurrentFileSize);
 
             if (CurrentFileSize == 0)
             {
-                MessageBox.Show("Error reading file " + fileName);
+                ShowError(BPMError.ReadingFile);
                 return;
             }
             DataA = DataArrays.CreateDataFromLines(lines);
             if (DataA == null)
             {
-                MessageBox.Show("Error reading file");
+                ShowError(BPMError.ReadingFile);
                 return;
             }
+            DataA.CountViewArrays();
             PrepareData();
             BufPanel.Refresh();
         }
 
         private void PrepareData()
         {
-            DataA.CountViewArrays(BufPanel);
             //Детектор - обнаружение пульсовых волн по производной
-            WaveDetector WD = new(Decomposer.SamplingFrequency);
+            WaveDetector WD = new();
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
             {
                 DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i);
             }
 
-            labArrythmia.Text = WD.Arrythmia.ToString();
-            var ArrayOfWaveIndexesDerivative = WD.FiltredPoints.ToArray(); //Используем только интервалы, прошедшие фильтр 25%
-            if (ArrayOfWaveIndexesDerivative.Length == 0)
+            labArrythmia.Text = WD.Arrhythmia.ToString();
+
+            //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
+            int[] ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
+            double[] ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
+            DataProcessing.RemoveArtifacts(ArrayOfWaveAmplitudes);
+
+            double MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
+            int XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, MaximumAmplitude);
+            int XMax = ArrayOfWaveIndexes[XMaxIndex];
+
+            //-----Второй проход с изменяемым порогом------------------------------------------------------
+            //-----До максимума 0.7, после максимума 0.55--------
+
+            WD.Reset();
+            for (int i = 0; i < CurrentFileSize; i++)
             {
-                return;
+                DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i, XMax);
             }
 
-            int[] ArrayOfWaveIndexes = new int[ArrayOfWaveIndexesDerivative.Length];
-            //Поиск максимумов пульсаций давления (в окрестностях максимума производной)
-            for (int i = 0; i < ArrayOfWaveIndexes.Length - 1; i++)
-            {
-                ArrayOfWaveIndexes[i] = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, ArrayOfWaveIndexesDerivative[i]);
-            }
-//            Array.Copy(ArrayOfWaveIndexesDerivative, ArrayOfWaveIndexes, ArrayOfWaveIndexes.Length);
+            //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
+            ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
+            ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
+            DataProcessing.RemoveArtifacts(ArrayOfWaveAmplitudes);
+
+            MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
+            XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, MaximumAmplitude);
+            XMax = ArrayOfWaveIndexes[XMaxIndex];
+            //----------------------------------------------------------------------------------------------
 
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
 
-            //Поиск пульсовой волны с максимальной амплитудой
-            double max = -1000000;
-            int XMax = default;
-            int XMaxIndex = 0;
-            for (int i = 0; i < ArrayOfWaveIndexes.Length - 4; i++)
-            {
-                if (ArrayOfWaveIndexes[i] > DataA.Size)
-                {
-                    break;
-                }
-                if (DataA.PressureViewArray[ArrayOfWaveIndexes[i]] > max)
-                {
-                    max = DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
-                    XMax = ArrayOfWaveIndexes[i];
-                    XMaxIndex = i;
-                }
-            }
-
-            int[] ArrayLeft = new int[XMaxIndex];
-            int[] ArrayRight = new int[ArrayOfWaveIndexes.Length - XMaxIndex];
-            Array.Copy(ArrayOfWaveIndexes, ArrayLeft, ArrayLeft.Length);
-            Array.Copy(ArrayOfWaveIndexes, XMaxIndex, ArrayRight, 0, ArrayRight.Length);
-            double[] ArrayLeftValues = ArrayLeft.Select(x => DataA.PressureViewArray[x]).ToArray();
-            double[] ArrayRightValues = ArrayRight.Select(x => DataA.PressureViewArray[x]).ToArray();
-            double[] ArrLeftSorted = ArrayLeftValues.OrderBy(x => x).ToArray();
-//            double[] ArrRightSorted = ArrayRightValues.OrderByDescending(x => x).ToArray();
-            double[] ArrValues = ArrLeftSorted.Concat(ArrayRightValues).ToArray();
+            double[] ArrLeftValues = new double[XMaxIndex];
+            double[] ArrRightValues = new double[ArrayOfWaveIndexes.Length - XMaxIndex];
+            Array.Copy(ArrayOfWaveAmplitudes, ArrLeftValues, ArrLeftValues.Length);
+            Array.Copy(ArrayOfWaveAmplitudes, XMaxIndex, ArrRightValues, 0, ArrRightValues.Length);
+            double[] ArrLeftSorted = ArrLeftValues.OrderBy(x => x).ToArray();
+            double[] ArrRightSorted = ArrRightValues.OrderByDescending(x => x).ToArray();
+            double[] ArrValues = ArrLeftSorted.Concat(ArrRightSorted).ToArray();
 
             //Построение огибающей максимумов пульсаций давления
-            for (int i = 1; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                int x1 = ArrayOfWaveIndexes[i - 1];
-                int x2 = ArrayOfWaveIndexes[i];
-                double y1 = ArrValues[i-1];
-                double y2 = ArrValues[i];
-                double coeff = (y2 - y1) / (x2 - x1);
-                for (int j = x1 - 1; j < x2; j++)
-                {
-                    DataA.EnvelopeArray[i + j] = y1 + coeff * (j - x1);
-                }
-            }
+            DataA.CountEnvelopeArray(ArrayOfWaveIndexes, ArrValues);
 
-            //Вычисление пульса 
-            int DecreaseSize = 3; //Количество отбрасываемых интервалов справа и слева
-            int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
-            int[] ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+            labAF.Visible = Arrhythmia.AtrialFibrillation(ArrayOfWaveIndexes);
+
+            //Подготовка массива для вычисления пульса
+            int[] ArrayForPulse;
+            if (HRVmode)
+            {
+                int DecreaseSize = 2; //Количество отбрасываемых интервалов справа и слева
+                int TakeSize = ArrayOfWaveIndexes.Length - DecreaseSize * 2;
+                ArrayForPulse = ArrayOfWaveIndexes.Skip(DecreaseSize).Take(TakeSize).ToArray();
+            }
+            else
+            {
+                int ArrayForPulseSize = 10;
+                int shift = 6;
+                ArrayForPulse = DataProcessing.GetSubArray(ArrayOfWaveIndexes, XMaxIndex - shift, XMaxIndex - shift + ArrayForPulseSize);
+            }
 
             labPulse.Text = "Pulse : " + DataProcessing.GetPulseFromIndexesArray(ArrayForPulse, Decomposer.SamplingFrequency).ToString();
-            labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length - 1).ToString();
+            labNumOfWaves.Text = "Waves detected : " + (ArrayOfWaveIndexes.Length).ToString();
 
-            double P1 = 0;
-            double P2 = 0;
-            int indexP1 = 0;
-            int indexP2 = 0;
-            //Среднее давление
-            int MeanPress = (int)DataA.DCArray[XMax];
-            double V1 = max * (double)Cfg.CoeffLeft;
-            double V2 = max * (double)Cfg.CoeffRight;
+            if (HRVmode)
+            {
+                FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
+                formHRV.ShowDialog();
+                formHRV.Dispose();
+                return;
+            }
+
+            double PSys = 0;
+            double PDia = 0;
+            int indexPSys = 0;
+            int indexPDia = 0;
+            double ValueSys = MaximumAmplitude * (double)Cfg.CoeffLeft;
+            double ValueDia = MaximumAmplitude * (double)Cfg.CoeffRight;
 
             //Определение систолического давления (влево от Max)
-            for (int i = XMaxIndex; i > 0; i--)
+            for (int i = XMax; i >= 0; i--)
             {
-                if (ArrValues[i] < V1)
+                if (DataA.EnvelopeArray[i] < ValueSys)
                 {
-                    int x1 = ArrayOfWaveIndexes[i];
-                    int x2 = ArrayOfWaveIndexes[i + 1];
-                    double y1 = ArrValues[i];
-                    double y2 = ArrValues[i + 1];
-                    indexP1 = (int)(x1 + (x2 - x1) * (V1 - y1) / (y2 - y1));
-                    P1 = DataA.DCArray[indexP1];
+                    PSys = DataA.DCArray[i];
+                    indexPSys = i;
                     break;
                 }
+            }
+            if (PSys == 0)
+            {
+                PSys = DataA.DCArray[0];
+                ShowError(BPMError.Sys);
             }
             //Определение диастолического давления (вправо от Max)
-            for (int i = XMaxIndex; i < ArrayOfWaveIndexes.Length - 1; i++)
+            for (int i = XMax; i < DataA.Size; i++)
             {
-                if (ArrValues[i] < V2)
+                if (DataA.EnvelopeArray[i] < ValueDia)
                 {
-                    int x2 = ArrayOfWaveIndexes[i];
-                    int x1 = ArrayOfWaveIndexes[i - 1];
-                    double y2 = ArrValues[i];
-                    double y1 = ArrValues[i - 1];
-                    indexP2 = (int)(x2 - (x1 - x2) * (V1 - y2) / (y1 - x2));
-                    P2 = DataA.DCArray[indexP2];
+                    PDia = DataA.DCArray[i];
+                    indexPDia = i;
                     break;
                 }
             }
-            int[] ArrayOfPoints = { indexP1, ArrayOfWaveIndexes[XMaxIndex], indexP2 };
+            if (PDia == 0)
+            {
+                PDia = DataA.DCArray[DataA.Size - 1];
+                ShowError(BPMError.Dia);
+            }
+
+            int[] ArrayOfPoints = { indexPSys, XMax, indexPDia };
             VisirList.Add(ArrayOfPoints);
 
-            float[] envelopeArray = new float[ArrayOfWaveIndexes.Length];
-            int[] envelopeMmhGArray = new int[ArrayOfWaveIndexes.Length];
-            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
-            {
-                if (ArrayOfWaveIndexes[i] > DataA.RealTimeArray.Length - 1)
-                {
-                    break;
-                }
-                envelopeArray[i] = (float)DataA.PressureViewArray[ArrayOfWaveIndexes[i]];
-                envelopeMmhGArray[i] = DataProcessing.ValueToMmHg(DataA.RealTimeArray[ArrayOfWaveIndexes[i]]);
-            }
-
-/*            int UpsampleFactor = 10;
-            int InterpolatedLength = envelopeArray.Length * UpsampleFactor;
-            float[] xs = new float[InterpolatedLength];
-            for (int i = 0; i < InterpolatedLength; i++)
-            {
-                xs[i] = (float)i * (envelopeArray.Length - 1) / (float)(InterpolatedLength - 1);
-            }
-            int[] xint = Enumerable.Range(0, envelopeArray.Length).ToArray();
-            float[] x = new float[xint.Length];
-            for (int i = 0; i < xint.Length; i++)
-            {
-                x[i] = (float)xint[i];
-            }
-            float[] ys = CubicSpline.Compute(x, envelopeArray, xs, 0.0f, Single.NaN, true);
-
-            DataProcessing.SaveArray("env_spline.txt", ys);*/
-
-            DataProcessing.SaveArray("env.txt", envelopeMmhGArray);
-            labMeanPressure.Text = "Mean : " + DataProcessing.ValueToMmHg(MeanPress).ToString();
-            labSys.Text = "Sys : " + DataProcessing.ValueToMmHg(P1).ToString();
-            labDia.Text = "Dia : " + DataProcessing.ValueToMmHg(P2).ToString();
-            //FormHRV formHRV = new(ArrayOfWaveIndexes, Decomposer.SamplingFrequency);
-            //formHRV.ShowDialog();
-            //formHRV.Dispose();
+            labSys.Text = "Sys : " + ValueToMmHg.Convert(PSys).ToString();
+            labDia.Text = "Dia : " + ValueToMmHg.Convert(PDia).ToString();
         }
 
-        private void bufferedPanel_Paint(object? sender, PaintEventArgs e)
+        private void bufferedPanel_Paint(object sender, PaintEventArgs e)
         {
             if (DataA == null)
             {
@@ -296,26 +587,17 @@ namespace TTestApp
             var ArrayList = new List<double[]>();
             if (ViewMode)
             {
-                if (radioButton11.Checked) //1:1
-                {
-                    ArrayList.Add(DataA.PressureViewArray);
-                    ArrayList.Add(DataA.DerivArray);
-                    ArrayList.Add(DataA.DebugArray);
-                    ArrayList.Add(DataA.EnvelopeArray);
-                }
-                else //fit
-                {
-                    ArrayList.Add(DataA.CompressedArray);
-                }
+                ArrayList.Add(DataA.PressureViewArray);
+                ArrayList.Add(DataA.DerivArray);
+                ArrayList.Add(DataA.DebugArray);
+                ArrayList.Add(DataA.EnvelopeArray);//Последняя кривая в списке жирная
             }
             else
             {
                 ArrayList.Add(DataA.PressureViewArray);
                 ArrayList.Add(DataA.DerivArray);
-//                ArrayList.Add(DataA.DCArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
-//            ArrayList.Clear();
         }
 
         private void UpdateScrollBar(int size)
@@ -330,13 +612,14 @@ namespace TTestApp
 
         private void Form1_FormClosing(object? sender, FormClosingEventArgs e)
         {
+            butValvesOpen_Click(this, EventArgs.Empty);
             Cfg.Maximized = WindowState == FormWindowState.Maximized;
             Cfg.WindowWidth = Width;
             Cfg.WindowHeight = Height;
             TTestConfig.SaveConfig(Cfg);
         }
 
-        private void Form1_Resize(object? sender, EventArgs e)
+        private void Form1_Resize(object sender, EventArgs e)
         {
             if (DataA == null)
             {
@@ -346,11 +629,11 @@ namespace TTestApp
             {
                 return;
             }
-            DataA.CountViewArrays(BufPanel);
+            DataA.CountViewArrays();
             BufPanel.Refresh();
         }
 
-        private void BufPanel_MouseMove(object? sender, MouseEventArgs e)
+        private void BufPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (!ViewMode)
             {
@@ -370,82 +653,70 @@ namespace TTestApp
             double sec = index / Decomposer.SamplingFrequency;
             labelX.Text = String.Format("X : {0}, Time {1:f2} s ", index, sec);
             labY0.Text = String.Format("PressureViewArray : {0:f0}", DataA.PressureViewArray[index]);
-            labY1.Text = String.Format("DerivArray : {0:f0}", DataA.DerivArray[index]);
+            labY1.Text = String.Format("RealTimeArray : {0:f0}", DataA.RealTimeArray[index]);
             labY2.Text = String.Format("DCArray : {0:f0}", DataA.DCArray[index]) + "  " +
-                         DataProcessing.ValueToMmHg(DataA.DCArray[index]).ToString();
+                                        ValueToMmHg.Convert(DataA.DCArray[index]).ToString();
         }
 
-        int FileNum = 0;
-        private void NewWaveDetected(object? sender, WaveDetectorEventArgs e)
+        private void OnCoeffChanged(object senger, ConverterValueToMmHgEventArgs e)
         {
-            double StopMeasCoeff = 0.55;
+            labCoeff.Text = "Coeff : " + e.Coeff.ToString();
+        }
 
-            string fileName = "PointsOnCompression" + FileNum.ToString() + ".txt";
+        int PumpingDia;
+        int PumpingSys;
+        private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
+        {
+            HeartVisibleCounter = HeartVisibleDelay;
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
             labNumOfWaves.Text = "Waves detected: " + text;
 
             switch (PressureMeasStatus)
             {
-                case (int)PressureMeasurementStatus.Pumping:
+                case PressureMeasurementStatus.Pumping:
+                    if (PumpingDia == 0)
+                    {
+                        PumpingDia = ValueToMmHg.Convert(DataA.DCArray[e.Index]);
+                    }
+                    else
+                    {
+                        PumpingSys = ValueToMmHg.Convert(DataA.DCArray[e.Index]);
+                    }
+                    
                     switch (PumpStatus)
                     {
-                        case (int)PumpingStatus.WaitingForLevel:
-                            if (e.Amplitude > Decomposer.StartSearchMaxLevel)
+                        case PumpingStatus.WaitingForLevel:
+                            if (e.Amplitude > Constants.StartSearchMaxLevel)
                             {
-                                PumpStatus = (int)PumpingStatus.MaximumSearch;
-                                File.AppendAllText(fileName, "Search\t\t" + text + Environment.NewLine);
-                            }
-                            else
-                            {
-                                File.AppendAllText(fileName, "Ready\t\t" + text + Environment.NewLine);
+                                PumpStatus = PumpingStatus.MaximumSearch;
                             }
                             break;
-                        case (int)PumpingStatus.MaximumSearch:
+                        case PumpingStatus.MaximumSearch:
                             MaxDerivValue = Math.Max(MaxDerivValue, e.Amplitude);
                             if (MaxDerivValue > e.Amplitude)
                             {
-                                File.AppendAllText(fileName, "Maximum found\t\t" + text + Environment.NewLine);
-                                PumpStatus = (int)PumpingStatus.MaximumFound;
-                                MaxFoundMoment = (int)Decomposer.MainIndex;
-                            }
-                            else
-                            {
-                                File.AppendAllText(fileName, "Search\t\t" + text + Environment.NewLine);
+                                PumpStatus = PumpingStatus.MaximumFound;
+                                MomentMaxFound = (int)Decomposer.MainIndex;
                             }
                             break;
-                        case (int)PumpingStatus.MaximumFound:
-                            int Index = (int)Decomposer.MainIndex;
-                            bool timeout = (Index - MaxFoundMoment) / Decomposer.SamplingFrequency > MaxTimeAfterMaxFound;
-                            if (timeout)
+                        case PumpingStatus.MaximumFound:
+                            if (e.Amplitude < Constants.StopPumpingLevel && CurrentPressure > Constants.MinPressure)
                             {
-                                label5.Text = "Timeout";
-                            }
-                            if (/*e.Amplitude < Decomposer.StopPumpingLevel ||*/ timeout)
-                            {
-                                File.AppendAllText(fileName, "Stop pumping\t\t" + text + Environment.NewLine);
-                                PumpStatus = (int)PumpingStatus.Ready;
-                                Decomposer.PacketCounter = 0;
-                                Decomposer.MainIndex = 0;
-                                MaxDerivValue = 0;
-                                Detector?.Reset();
-                                //USBPort.WriteByte((byte)CmdGigaDevice.Valve1PWMOn);
-                                //USBPort.WriteByte((byte)CmdGigaDevice.PumpSwitchOff);
-                                PressureMeasStatus = (int)PressureMeasurementStatus.Measurement;
-                                //Останавливаем накачку
-                            }
-                            else
-                            {
-                                File.AppendAllText(fileName, "Maximum found\t\t" + text + Environment.NewLine);
+                                StopPumping("Stop pumping level reached");
                             }
                             break;
                     }
                     break;
-                case (int)PressureMeasurementStatus.Measurement:
+                case PressureMeasurementStatus.Measurement:
+//                    labPressPumping.Text = PumpingSys.ToString() + "/" + PumpingDia.ToString();
                     MaxDerivValue = Math.Max(e.Amplitude, MaxDerivValue);
-
-                    if (e.Amplitude < MaxDerivValue * StopMeasCoeff)
+                    if (e.Amplitude < MaxDerivValue * Constants.StopMeasCoeff)
                     {
-                        PressureMeasStatus = (int)PressureMeasurementStatus.Ready;
+                        DevStatus.ValveSlowClosed = false; 
+                        DevStatus.ValveFastClosed = false;
+                        PressureMeasStatus = PressureMeasurementStatus.Ready;
+                        USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
+                        USBPort.WriteByte((byte)CmdDevice.StopReading);
                         butStopRecord_Click(this, EventArgs.Empty);
                     }
                     break;
@@ -453,52 +724,120 @@ namespace TTestApp
                     break;
             }
         }
-        private void OnPacketReceived(object? sender, PacketEventArgs e)
+
+        private void OnPacketReceived(object sender, PacketEventArgs e)
         {
-            labPumpStatus.Text = "Pumping status : " + PumpStatus switch
+            labZero.Text = "Zero : " + Decomposer.ZeroLine.ToString();
+            labHeart.Visible = HeartVisibleCounter != 0;
+            if (HeartVisibleCounter != 0)
             {
-                (int)PumpingStatus.Ready           => "Ready",
-                (int)PumpingStatus.WaitingForLevel => "Waiting for level",
-                (int)PumpingStatus.MaximumSearch   => "Maximum search",
-                (int)PumpingStatus.MaximumFound    => "Maximum found",
-                _ => "Ready",
-            };
+                HeartVisibleCounter--;
+            }
 
-            labMeasStatus.Text = "Measurement status : " + PressureMeasStatus switch
+            uint currentIndex = (e.MainIndex - 1) & (Constants.DataArrSize - 1);
+            CurrentPressure = ValueToMmHg.Convert(e.RealTimeValue);
+
+            double aver = 0;
+            int averSize = 250;
+            for (int i = 0; i < averSize; i++)
             {
-                (int)PressureMeasurementStatus.Ready       => "Ready",
-                (int)PressureMeasurementStatus.Calibration => "Calibration",
-                (int)PressureMeasurementStatus.Pumping     => "Pumping",
-                (int)PressureMeasurementStatus.Measurement => "Measurement",
-                _ => "Ready",
-            };
-
-            uint currentIndex = (e.MainIndex - 1) & (ByteDecomposer.DataArrSize - 1);
-            double CurrentPressure = e.RealTimeValue;
+                long index = (currentIndex - i) & (Constants.DataArrSize - 1);
+                aver += DataA.RealTimeArray[index];
+            }
+            aver = aver / averSize;
             DataA.DerivArray[currentIndex] = DataProcessing.GetDerivative(DataA.PressureViewArray, currentIndex);
+            MaxPressure = (int)Math.Max(DataA.RealTimeArray[currentIndex], MaxPressure);
+            labCurrentPressure.Text = "Current : " +
+                                        CurrentPressure.ToString() +
+                                        " RealTime : " +
+                                        DataA.RealTimeArray[currentIndex].ToString() + " " +
+                                        Math.Round(aver).ToString();
             if (Decomposer.RecordStarted)
             {
-                MaxPressure = (int)Math.Max(DataA.DerivArray[currentIndex], MaxPressure);
-            }
-            if (currentIndex > 0)
-            {
-                labCurrentPressure.Text = "Current : " + 
-                                           DataProcessing.ValueToMmHg(CurrentPressure).ToString() +
-                                           " Deriv : " +
-                                           DataA.DerivArray[currentIndex].ToString("0.0").PadLeft(6, ' ') + " " +
-                                           MaxPressure.ToString();
-            }
-            if (Decomposer.RecordStarted)
-            {
-                if (PressureMeasStatus == (int)PressureMeasurementStatus.Calibration)
+                if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
                 {
-                    Decomposer.ZeroLine = Decomposer.tmpZero;
-                    PressureMeasStatus = (int)PressureMeasurementStatus.Pumping;
-                    PumpStatus = (int)PumpingStatus.WaitingForLevel;
+                    Decomposer.Calibr();
+                    USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
+                    USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
+                    USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
+                    PressureMeasStatus = PressureMeasurementStatus.Pumping;
+                    PumpStatus = PumpingStatus.WaitingForLevel;
                 }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
+                if (CurrentPressure > Constants.MaxAllowablePressure)
+                { 
+                    StopPumping("Max Allowable Pressure");
+                }
+                if (PumpStatus == PumpingStatus.WaitingForLevel)
+                {
+                    bool timeout = e.PacketCounter / Decomposer.SamplingFrequency > Constants.MaxTimeAfterStartPumping;
+                    if (timeout && CurrentPressure < Constants.PressureLevelForLeak)
+                    {
+                        butPressureMeasAbort_Click(this, EventArgs.Empty);
+                        ShowError(BPMError.AirLeak);
+                    }
+                }
+                if (PumpStatus == PumpingStatus.MaximumFound)
+                {
+                    int Index = e.PacketCounter;
+                    bool timeout = (Index - MomentMaxFound) / Decomposer.SamplingFrequency > Constants.MaxTimeAfterMaxFound;
+                    if (timeout && CurrentPressure > Constants.MinPressure)
+                    {
+                        StopPumping("Timeout");
+                    }
+                }
+                if (PressureMeasStatus == PressureMeasurementStatus.Delay)
+                {
+                    DelayCounter++;
+                    if (DelayCounter > DelayValue)
+                    {
+                        PressureMeasStatus = PressureMeasurementStatus.Measurement;
+                        AfterDelay();
+                    }
+                }
             }
+        }
+
+        private void StopPumping(string mess)
+        {
+            MaxPressureReachedValue = ValueToMmHg.Convert(DataA.DCArray[Decomposer.MainIndex]);
+            DevStatus.PumpIsOn = false;
+            DevStatus.ValveSlowClosed = false;
+            labStopPumpingReason.Text = mess;
+            PumpStatus = PumpingStatus.Ready;
+            USBPort.WriteByte((byte)CmdDevice.PumpSwitchOff);
+            PressureMeasStatus = PressureMeasurementStatus.Delay;
+            DelayCounter = 0;
+            DelayValue = (int)(Decomposer.SamplingFrequency * DelayInSeconds);
+        }
+
+        private void AfterDelay()
+        {
+            PumpStatus = PumpingStatus.Ready;
+            Decomposer.PacketCounter = 0;
+            timerDetectRate.Enabled = true;
+            Decomposer.MainIndex = 0;
+            MaxDerivValue = 0;
+            Detector?.Reset();
+            USBPort.WriteByte((byte)CmdDevice.ValveSlowOpen);
+            PressureMeasStatus = PressureMeasurementStatus.Measurement;
+            timerDetectRate.Enabled = true;
+            labPressPumping.Text = PumpingSys.ToString() + " / " + PumpingDia.ToString() + " Reached pressure " + MaxPressureReachedValue;
+        }
+
+        private static void ShowError(BPMError error)
+        {
+            string errorText = error switch
+            {
+                BPMError.AirLeak     => "Air leak",
+                BPMError.ReadingFile => "Reading file error",
+                BPMError.Connection  => "Connection failure",
+                BPMError.Sys         => "Systolic pressure error",
+                BPMError.Dia         => "Diastolic pressure error",
+                _ => "",
+            };
+            MessageBox.Show(errorText, "Error");
         }
     }
 }

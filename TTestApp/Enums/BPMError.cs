@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace TTestApp.Enums
 {
-    internal enum PressureMeasurementStatus 
+    //Blood pressure measurement errors
+    internal enum BPMError
     {
-        Ready,
-        Calibration,
-        Pumping,
-        Delay,
-        Measurement
+        AirLeak,
+        Sys,
+        Dia,
+        ReadingFile,
+        Connection
     }
 }

@@ -29,15 +29,12 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.butRefresh = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
             this.numUDRight = new System.Windows.Forms.NumericUpDown();
-            this.panelView = new System.Windows.Forms.Panel();
-            this.radioButton11 = new System.Windows.Forms.RadioButton();
-            this.radioButtonFit = new System.Windows.Forms.RadioButton();
-            this.label1 = new System.Windows.Forms.Label();
             this.butFlow = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.numUDLeft = new System.Windows.Forms.NumericUpDown();
@@ -45,10 +42,14 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
+            this.labMeasurementStatus = new System.Windows.Forms.Label();
+            this.labPressPumping = new System.Windows.Forms.Label();
+            this.labCoeff = new System.Windows.Forms.Label();
+            this.labAF = new System.Windows.Forms.Label();
+            this.labHeart = new System.Windows.Forms.Label();
             this.labelRate = new System.Windows.Forms.Label();
             this.labArrythmia = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.labMeasStatus = new System.Windows.Forms.Label();
+            this.labStopPumpingReason = new System.Windows.Forms.Label();
             this.labPumpStatus = new System.Windows.Forms.Label();
             this.labDeviceIsOff = new System.Windows.Forms.Label();
             this.labNumOfWaves = new System.Windows.Forms.Label();
@@ -58,34 +59,40 @@
             this.labPulse = new System.Windows.Forms.Label();
             this.labDia = new System.Windows.Forms.Label();
             this.labSys = new System.Windows.Forms.Label();
-            this.labMeanPressure = new System.Windows.Forms.Label();
             this.labCurrentPressure = new System.Windows.Forms.Label();
             this.labPort = new System.Windows.Forms.Label();
             this.labelX = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.butStartRecord = new System.Windows.Forms.Button();
             this.progressBarRecord = new System.Windows.Forms.ProgressBar();
             this.butSaveFile = new System.Windows.Forms.Button();
             this.labRecordSize = new System.Windows.Forms.Label();
             this.butStopRecord = new System.Windows.Forms.Button();
-            this.butStartRecord = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.controlPanel = new System.Windows.Forms.Panel();
-            this.butValve1PWM = new System.Windows.Forms.Button();
+            this.labZero = new System.Windows.Forms.Label();
+            this.butCalibr = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.butStartToPressure = new System.Windows.Forms.Button();
+            this.numUDpressure = new System.Windows.Forms.NumericUpDown();
+            this.butValvesClose = new System.Windows.Forms.Button();
+            this.butValvesOpen = new System.Windows.Forms.Button();
             this.butPumpOff = new System.Windows.Forms.Button();
             this.butPumpOn = new System.Windows.Forms.Button();
             this.labPump = new System.Windows.Forms.Label();
-            this.butValve2Close = new System.Windows.Forms.Button();
-            this.butValve2Open = new System.Windows.Forms.Button();
-            this.butValve1Close = new System.Windows.Forms.Button();
-            this.butValve1Open = new System.Windows.Forms.Button();
-            this.labValve2 = new System.Windows.Forms.Label();
+            this.butValveFastClose = new System.Windows.Forms.Button();
+            this.butValveFastOpen = new System.Windows.Forms.Button();
+            this.butValveSlowClose = new System.Windows.Forms.Button();
+            this.butValveSlowOpen = new System.Windows.Forms.Button();
             this.labValve1 = new System.Windows.Forms.Label();
+            this.labValve2 = new System.Windows.Forms.Label();
             this.panel5 = new System.Windows.Forms.Panel();
-            this.labMeasInProgress = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.butPressureMeasAbort = new System.Windows.Forms.Button();
-            this.butPressureMeasStart = new System.Windows.Forms.Button();
+            this.butStartMeas = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.timerRead = new System.Windows.Forms.Timer(this.components);
@@ -96,7 +103,6 @@
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).BeginInit();
-            this.panelView.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDLeft)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).BeginInit();
             this.panelBottom.SuspendLayout();
@@ -104,6 +110,7 @@
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.controlPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDpressure)).BeginInit();
             this.panel5.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -138,7 +145,6 @@
             this.panel1.Controls.Add(this.butRefresh);
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.numUDRight);
-            this.panel1.Controls.Add(this.panelView);
             this.panel1.Controls.Add(this.butFlow);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.numUDLeft);
@@ -197,49 +203,6 @@
             0,
             131072});
             this.numUDRight.ValueChanged += new System.EventHandler(this.numUDRight_ValueChanged);
-            // 
-            // panelView
-            // 
-            this.panelView.Controls.Add(this.radioButton11);
-            this.panelView.Controls.Add(this.radioButtonFit);
-            this.panelView.Controls.Add(this.label1);
-            this.panelView.Location = new System.Drawing.Point(8, 215);
-            this.panelView.Name = "panelView";
-            this.panelView.Size = new System.Drawing.Size(89, 68);
-            this.panelView.TabIndex = 10;
-            // 
-            // radioButton11
-            // 
-            this.radioButton11.AutoSize = true;
-            this.radioButton11.Location = new System.Drawing.Point(16, 22);
-            this.radioButton11.Name = "radioButton11";
-            this.radioButton11.Size = new System.Drawing.Size(40, 19);
-            this.radioButton11.TabIndex = 2;
-            this.radioButton11.TabStop = true;
-            this.radioButton11.Text = "1:1";
-            this.radioButton11.UseVisualStyleBackColor = true;
-            this.radioButton11.CheckedChanged += new System.EventHandler(this.radioButton11_CheckedChanged);
-            // 
-            // radioButtonFit
-            // 
-            this.radioButtonFit.AutoSize = true;
-            this.radioButtonFit.Location = new System.Drawing.Point(16, 47);
-            this.radioButtonFit.Name = "radioButtonFit";
-            this.radioButtonFit.Size = new System.Drawing.Size(38, 19);
-            this.radioButtonFit.TabIndex = 3;
-            this.radioButtonFit.TabStop = true;
-            this.radioButtonFit.Text = "Fit";
-            this.radioButtonFit.UseVisualStyleBackColor = true;
-            this.radioButtonFit.CheckedChanged += new System.EventHandler(this.radioButtonFit_CheckedChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 15);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "View";
             // 
             // butFlow
             // 
@@ -321,10 +284,14 @@
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelBottom.Controls.Add(this.labMeasurementStatus);
+            this.panelBottom.Controls.Add(this.labPressPumping);
+            this.panelBottom.Controls.Add(this.labCoeff);
+            this.panelBottom.Controls.Add(this.labAF);
+            this.panelBottom.Controls.Add(this.labHeart);
             this.panelBottom.Controls.Add(this.labelRate);
             this.panelBottom.Controls.Add(this.labArrythmia);
-            this.panelBottom.Controls.Add(this.label5);
-            this.panelBottom.Controls.Add(this.labMeasStatus);
+            this.panelBottom.Controls.Add(this.labStopPumpingReason);
             this.panelBottom.Controls.Add(this.labPumpStatus);
             this.panelBottom.Controls.Add(this.labDeviceIsOff);
             this.panelBottom.Controls.Add(this.labNumOfWaves);
@@ -334,7 +301,6 @@
             this.panelBottom.Controls.Add(this.labPulse);
             this.panelBottom.Controls.Add(this.labDia);
             this.panelBottom.Controls.Add(this.labSys);
-            this.panelBottom.Controls.Add(this.labMeanPressure);
             this.panelBottom.Controls.Add(this.labCurrentPressure);
             this.panelBottom.Controls.Add(this.labPort);
             this.panelBottom.Controls.Add(this.labelX);
@@ -344,54 +310,99 @@
             this.panelBottom.Size = new System.Drawing.Size(1014, 203);
             this.panelBottom.TabIndex = 3;
             // 
+            // labMeasurementStatus
+            // 
+            this.labMeasurementStatus.AutoSize = true;
+            this.labMeasurementStatus.CausesValidation = false;
+            this.labMeasurementStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labMeasurementStatus.Location = new System.Drawing.Point(500, 51);
+            this.labMeasurementStatus.Name = "labMeasurementStatus";
+            this.labMeasurementStatus.Size = new System.Drawing.Size(176, 21);
+            this.labMeasurementStatus.TabIndex = 27;
+            this.labMeasurementStatus.Text = "Measurement status : ";
+            // 
+            // labPressPumping
+            // 
+            this.labPressPumping.AutoSize = true;
+            this.labPressPumping.CausesValidation = false;
+            this.labPressPumping.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labPressPumping.Location = new System.Drawing.Point(219, 1);
+            this.labPressPumping.Name = "labPressPumping";
+            this.labPressPumping.Size = new System.Drawing.Size(22, 30);
+            this.labPressPumping.TabIndex = 26;
+            this.labPressPumping.Text = "/";
+            // 
+            // labCoeff
+            // 
+            this.labCoeff.AutoSize = true;
+            this.labCoeff.Location = new System.Drawing.Point(13, 29);
+            this.labCoeff.Name = "labCoeff";
+            this.labCoeff.Size = new System.Drawing.Size(110, 15);
+            this.labCoeff.TabIndex = 25;
+            this.labCoeff.Text = "Value to mm coeff :";
+            // 
+            // labAF
+            // 
+            this.labAF.AutoSize = true;
+            this.labAF.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labAF.ForeColor = System.Drawing.Color.Red;
+            this.labAF.Location = new System.Drawing.Point(971, 8);
+            this.labAF.Name = "labAF";
+            this.labAF.Size = new System.Drawing.Size(29, 21);
+            this.labAF.TabIndex = 24;
+            this.labAF.Text = "AF";
+            this.labAF.Visible = false;
+            // 
+            // labHeart
+            // 
+            this.labHeart.AutoSize = true;
+            this.labHeart.Font = new System.Drawing.Font("Segoe UI", 30F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labHeart.ForeColor = System.Drawing.Color.Red;
+            this.labHeart.Location = new System.Drawing.Point(959, 142);
+            this.labHeart.Name = "labHeart";
+            this.labHeart.Size = new System.Drawing.Size(50, 54);
+            this.labHeart.TabIndex = 23;
+            this.labHeart.Text = "♥";
+            this.labHeart.Visible = false;
+            // 
             // labelRate
             // 
             this.labelRate.AutoSize = true;
             this.labelRate.Location = new System.Drawing.Point(13, 6);
             this.labelRate.Name = "labelRate";
-            this.labelRate.Size = new System.Drawing.Size(38, 15);
+            this.labelRate.Size = new System.Drawing.Size(55, 15);
             this.labelRate.TabIndex = 22;
-            this.labelRate.Text = "label6";
+            this.labelRate.Text = "labelRate";
             // 
             // labArrythmia
             // 
             this.labArrythmia.AutoSize = true;
             this.labArrythmia.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labArrythmia.Location = new System.Drawing.Point(938, 8);
+            this.labArrythmia.Location = new System.Drawing.Point(981, 29);
             this.labArrythmia.Name = "labArrythmia";
             this.labArrythmia.Size = new System.Drawing.Size(19, 21);
             this.labArrythmia.TabIndex = 21;
             this.labArrythmia.Text = "0";
             // 
-            // label5
+            // labStopPumpingReason
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.label5.Location = new System.Drawing.Point(782, 15);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(38, 21);
-            this.label5.TabIndex = 20;
-            this.label5.Text = "test";
-            // 
-            // labMeasStatus
-            // 
-            this.labMeasStatus.AutoSize = true;
-            this.labMeasStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labMeasStatus.Location = new System.Drawing.Point(474, 50);
-            this.labMeasStatus.Name = "labMeasStatus";
-            this.labMeasStatus.Size = new System.Drawing.Size(223, 21);
-            this.labMeasStatus.TabIndex = 19;
-            this.labMeasStatus.Text = "Measurement status : Ready";
+            this.labStopPumpingReason.AutoSize = true;
+            this.labStopPumpingReason.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labStopPumpingReason.Location = new System.Drawing.Point(812, 29);
+            this.labStopPumpingReason.Name = "labStopPumpingReason";
+            this.labStopPumpingReason.Size = new System.Drawing.Size(38, 21);
+            this.labStopPumpingReason.TabIndex = 20;
+            this.labStopPumpingReason.Text = "test";
             // 
             // labPumpStatus
             // 
             this.labPumpStatus.AutoSize = true;
             this.labPumpStatus.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labPumpStatus.Location = new System.Drawing.Point(509, 29);
+            this.labPumpStatus.Location = new System.Drawing.Point(535, 29);
             this.labPumpStatus.Name = "labPumpStatus";
-            this.labPumpStatus.Size = new System.Drawing.Size(188, 21);
+            this.labPumpStatus.Size = new System.Drawing.Size(141, 21);
             this.labPumpStatus.TabIndex = 18;
-            this.labPumpStatus.Text = "Pumping status : Ready";
+            this.labPumpStatus.Text = "Pumping status : ";
             // 
             // labDeviceIsOff
             // 
@@ -408,7 +419,7 @@
             // 
             this.labNumOfWaves.AutoSize = true;
             this.labNumOfWaves.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labNumOfWaves.Location = new System.Drawing.Point(509, 8);
+            this.labNumOfWaves.Location = new System.Drawing.Point(535, 8);
             this.labNumOfWaves.Name = "labNumOfWaves";
             this.labNumOfWaves.Size = new System.Drawing.Size(142, 21);
             this.labNumOfWaves.TabIndex = 15;
@@ -471,22 +482,12 @@
             this.labSys.TabIndex = 8;
             this.labSys.Text = "Sys : ";
             // 
-            // labMeanPressure
-            // 
-            this.labMeanPressure.AutoSize = true;
-            this.labMeanPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labMeanPressure.Location = new System.Drawing.Point(183, 36);
-            this.labMeanPressure.Name = "labMeanPressure";
-            this.labMeanPressure.Size = new System.Drawing.Size(85, 30);
-            this.labMeanPressure.TabIndex = 7;
-            this.labMeanPressure.Text = "Mean : ";
-            // 
             // labCurrentPressure
             // 
             this.labCurrentPressure.AutoSize = true;
             this.labCurrentPressure.CausesValidation = false;
             this.labCurrentPressure.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.labCurrentPressure.Location = new System.Drawing.Point(166, 6);
+            this.labCurrentPressure.Location = new System.Drawing.Point(165, 36);
             this.labCurrentPressure.Name = "labCurrentPressure";
             this.labCurrentPressure.Size = new System.Drawing.Size(103, 30);
             this.labCurrentPressure.TabIndex = 5;
@@ -504,9 +505,10 @@
             // labelX
             // 
             this.labelX.AutoSize = true;
-            this.labelX.Location = new System.Drawing.Point(616, 110);
+            this.labelX.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.labelX.Location = new System.Drawing.Point(616, 86);
             this.labelX.Name = "labelX";
-            this.labelX.Size = new System.Drawing.Size(35, 15);
+            this.labelX.Size = new System.Drawing.Size(70, 30);
             this.labelX.TabIndex = 2;
             this.labelX.Text = "X : 0  ";
             // 
@@ -532,20 +534,30 @@
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Controls.Add(this.progressBarRecord);
             this.panel3.Controls.Add(this.butSaveFile);
             this.panel3.Controls.Add(this.labRecordSize);
             this.panel3.Controls.Add(this.butStopRecord);
-            this.panel3.Controls.Add(this.butStartRecord);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(3, 409);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(224, 203);
             this.panel3.TabIndex = 6;
             // 
+            // butStartRecord
+            // 
+            this.butStartRecord.Location = new System.Drawing.Point(22, 16);
+            this.butStartRecord.Name = "butStartRecord";
+            this.butStartRecord.Size = new System.Drawing.Size(107, 23);
+            this.butStartRecord.TabIndex = 5;
+            this.butStartRecord.Text = "Start record HRV";
+            this.butStartRecord.UseVisualStyleBackColor = true;
+            this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
+            // 
             // progressBarRecord
             // 
-            this.progressBarRecord.Location = new System.Drawing.Point(22, 69);
+            this.progressBarRecord.Location = new System.Drawing.Point(22, 85);
             this.progressBarRecord.Name = "progressBarRecord";
             this.progressBarRecord.Size = new System.Drawing.Size(85, 23);
             this.progressBarRecord.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
@@ -554,7 +566,7 @@
             // 
             // butSaveFile
             // 
-            this.butSaveFile.Location = new System.Drawing.Point(22, 113);
+            this.butSaveFile.Location = new System.Drawing.Point(22, 129);
             this.butSaveFile.Name = "butSaveFile";
             this.butSaveFile.Size = new System.Drawing.Size(85, 23);
             this.butSaveFile.TabIndex = 3;
@@ -565,7 +577,7 @@
             // labRecordSize
             // 
             this.labRecordSize.AutoSize = true;
-            this.labRecordSize.Location = new System.Drawing.Point(24, 95);
+            this.labRecordSize.Location = new System.Drawing.Point(24, 111);
             this.labRecordSize.Name = "labRecordSize";
             this.labRecordSize.Size = new System.Drawing.Size(72, 15);
             this.labRecordSize.TabIndex = 2;
@@ -573,24 +585,13 @@
             // 
             // butStopRecord
             // 
-            this.butStopRecord.Location = new System.Drawing.Point(22, 35);
+            this.butStopRecord.Location = new System.Drawing.Point(22, 51);
             this.butStopRecord.Name = "butStopRecord";
             this.butStopRecord.Size = new System.Drawing.Size(85, 23);
             this.butStopRecord.TabIndex = 1;
             this.butStopRecord.Text = "Stop record";
             this.butStopRecord.UseVisualStyleBackColor = true;
             this.butStopRecord.Click += new System.EventHandler(this.butStopRecord_Click);
-            // 
-            // butStartRecord
-            // 
-            this.butStartRecord.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.butStartRecord.Location = new System.Drawing.Point(22, 6);
-            this.butStartRecord.Name = "butStartRecord";
-            this.butStartRecord.Size = new System.Drawing.Size(85, 23);
-            this.butStartRecord.TabIndex = 0;
-            this.butStartRecord.Text = "Start record";
-            this.butStartRecord.UseVisualStyleBackColor = true;
-            this.butStartRecord.Click += new System.EventHandler(this.butStartRecord_Click);
             // 
             // panel4
             // 
@@ -604,35 +605,112 @@
             // 
             // controlPanel
             // 
-            this.controlPanel.Controls.Add(this.butValve1PWM);
+            this.controlPanel.Controls.Add(this.labZero);
+            this.controlPanel.Controls.Add(this.butCalibr);
+            this.controlPanel.Controls.Add(this.label1);
+            this.controlPanel.Controls.Add(this.butStartToPressure);
+            this.controlPanel.Controls.Add(this.numUDpressure);
+            this.controlPanel.Controls.Add(this.butValvesClose);
+            this.controlPanel.Controls.Add(this.butValvesOpen);
             this.controlPanel.Controls.Add(this.butPumpOff);
             this.controlPanel.Controls.Add(this.butPumpOn);
             this.controlPanel.Controls.Add(this.labPump);
-            this.controlPanel.Controls.Add(this.butValve2Close);
-            this.controlPanel.Controls.Add(this.butValve2Open);
-            this.controlPanel.Controls.Add(this.butValve1Close);
-            this.controlPanel.Controls.Add(this.butValve1Open);
-            this.controlPanel.Controls.Add(this.labValve2);
+            this.controlPanel.Controls.Add(this.butValveFastClose);
+            this.controlPanel.Controls.Add(this.butValveFastOpen);
+            this.controlPanel.Controls.Add(this.butValveSlowClose);
+            this.controlPanel.Controls.Add(this.butValveSlowOpen);
             this.controlPanel.Controls.Add(this.labValve1);
+            this.controlPanel.Controls.Add(this.labValve2);
             this.controlPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.controlPanel.Location = new System.Drawing.Point(0, 0);
             this.controlPanel.Name = "controlPanel";
             this.controlPanel.Size = new System.Drawing.Size(1012, 93);
             this.controlPanel.TabIndex = 17;
             // 
-            // butValve1PWM
+            // labZero
             // 
-            this.butValve1PWM.Location = new System.Drawing.Point(280, 13);
-            this.butValve1PWM.Name = "butValve1PWM";
-            this.butValve1PWM.Size = new System.Drawing.Size(75, 23);
-            this.butValve1PWM.TabIndex = 7;
-            this.butValve1PWM.Text = "PWM";
-            this.butValve1PWM.UseVisualStyleBackColor = true;
-            this.butValve1PWM.Click += new System.EventHandler(this.butValve1PWM_Click);
+            this.labZero.AutoSize = true;
+            this.labZero.Location = new System.Drawing.Point(816, 62);
+            this.labZero.Name = "labZero";
+            this.labZero.Size = new System.Drawing.Size(40, 15);
+            this.labZero.TabIndex = 28;
+            this.labZero.Text = "Zero : ";
+            // 
+            // butCalibr
+            // 
+            this.butCalibr.Location = new System.Drawing.Point(735, 57);
+            this.butCalibr.Name = "butCalibr";
+            this.butCalibr.Size = new System.Drawing.Size(75, 23);
+            this.butCalibr.TabIndex = 27;
+            this.butCalibr.Text = "Calibration";
+            this.butCalibr.UseVisualStyleBackColor = true;
+            this.butCalibr.Click += new System.EventHandler(this.butCalibr_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(887, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(86, 15);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "Target pressure";
+            // 
+            // butStartToPressure
+            // 
+            this.butStartToPressure.Location = new System.Drawing.Point(812, 25);
+            this.butStartToPressure.Name = "butStartToPressure";
+            this.butStartToPressure.Size = new System.Drawing.Size(75, 23);
+            this.butStartToPressure.TabIndex = 25;
+            this.butStartToPressure.Text = "Start";
+            this.butStartToPressure.UseVisualStyleBackColor = true;
+            this.butStartToPressure.Click += new System.EventHandler(this.butStartToPressure_Click);
+            // 
+            // numUDpressure
+            // 
+            this.numUDpressure.Location = new System.Drawing.Point(893, 25);
+            this.numUDpressure.Maximum = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.numUDpressure.Minimum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.numUDpressure.Name = "numUDpressure";
+            this.numUDpressure.Size = new System.Drawing.Size(80, 23);
+            this.numUDpressure.TabIndex = 24;
+            this.numUDpressure.Value = new decimal(new int[] {
+            60,
+            0,
+            0,
+            0});
+            this.numUDpressure.ValueChanged += new System.EventHandler(this.numUDpressure_ValueChanged);
+            // 
+            // butValvesClose
+            // 
+            this.butValvesClose.Location = new System.Drawing.Point(379, 25);
+            this.butValvesClose.Name = "butValvesClose";
+            this.butValvesClose.Size = new System.Drawing.Size(45, 52);
+            this.butValvesClose.TabIndex = 11;
+            this.butValvesClose.Text = "Close";
+            this.butValvesClose.UseVisualStyleBackColor = true;
+            this.butValvesClose.Click += new System.EventHandler(this.butValvesClose_Click);
+            // 
+            // butValvesOpen
+            // 
+            this.butValvesOpen.Location = new System.Drawing.Point(247, 27);
+            this.butValvesOpen.Name = "butValvesOpen";
+            this.butValvesOpen.Size = new System.Drawing.Size(45, 52);
+            this.butValvesOpen.TabIndex = 10;
+            this.butValvesOpen.Text = "Open";
+            this.butValvesOpen.UseVisualStyleBackColor = true;
+            this.butValvesOpen.Click += new System.EventHandler(this.butValvesOpen_Click);
             // 
             // butPumpOff
             // 
-            this.butPumpOff.Location = new System.Drawing.Point(643, 13);
+            this.butPumpOff.Location = new System.Drawing.Point(616, 25);
             this.butPumpOff.Name = "butPumpOff";
             this.butPumpOff.Size = new System.Drawing.Size(75, 23);
             this.butPumpOff.TabIndex = 9;
@@ -642,7 +720,7 @@
             // 
             // butPumpOn
             // 
-            this.butPumpOn.Location = new System.Drawing.Point(562, 13);
+            this.butPumpOn.Location = new System.Drawing.Point(535, 25);
             this.butPumpOn.Name = "butPumpOn";
             this.butPumpOn.Size = new System.Drawing.Size(75, 23);
             this.butPumpOn.TabIndex = 8;
@@ -653,75 +731,76 @@
             // labPump
             // 
             this.labPump.AutoSize = true;
-            this.labPump.Location = new System.Drawing.Point(460, 17);
+            this.labPump.Location = new System.Drawing.Point(460, 29);
             this.labPump.Name = "labPump";
             this.labPump.Size = new System.Drawing.Size(48, 15);
             this.labPump.TabIndex = 6;
             this.labPump.Text = "Pump : ";
             // 
-            // butValve2Close
+            // butValveFastClose
             // 
-            this.butValve2Close.Location = new System.Drawing.Point(199, 40);
-            this.butValve2Close.Name = "butValve2Close";
-            this.butValve2Close.Size = new System.Drawing.Size(75, 23);
-            this.butValve2Close.TabIndex = 5;
-            this.butValve2Close.Text = "Close";
-            this.butValve2Close.UseVisualStyleBackColor = true;
-            this.butValve2Close.Click += new System.EventHandler(this.butValve2Close_Click);
+            this.butValveFastClose.Location = new System.Drawing.Point(298, 56);
+            this.butValveFastClose.Name = "butValveFastClose";
+            this.butValveFastClose.Size = new System.Drawing.Size(75, 23);
+            this.butValveFastClose.TabIndex = 5;
+            this.butValveFastClose.Text = "Close";
+            this.butValveFastClose.UseVisualStyleBackColor = true;
+            this.butValveFastClose.Click += new System.EventHandler(this.butValve2Close_Click);
             // 
-            // butValve2Open
+            // butValveFastOpen
             // 
-            this.butValve2Open.Location = new System.Drawing.Point(118, 40);
-            this.butValve2Open.Name = "butValve2Open";
-            this.butValve2Open.Size = new System.Drawing.Size(75, 23);
-            this.butValve2Open.TabIndex = 4;
-            this.butValve2Open.Text = "Open";
-            this.butValve2Open.UseVisualStyleBackColor = true;
-            this.butValve2Open.Click += new System.EventHandler(this.butValve2Open_Click);
+            this.butValveFastOpen.Location = new System.Drawing.Point(166, 56);
+            this.butValveFastOpen.Name = "butValveFastOpen";
+            this.butValveFastOpen.Size = new System.Drawing.Size(75, 23);
+            this.butValveFastOpen.TabIndex = 4;
+            this.butValveFastOpen.Text = "Open";
+            this.butValveFastOpen.UseVisualStyleBackColor = true;
+            this.butValveFastOpen.Click += new System.EventHandler(this.butValve2Open_Click);
             // 
-            // butValve1Close
+            // butValveSlowClose
             // 
-            this.butValve1Close.Location = new System.Drawing.Point(199, 13);
-            this.butValve1Close.Name = "butValve1Close";
-            this.butValve1Close.Size = new System.Drawing.Size(75, 23);
-            this.butValve1Close.TabIndex = 3;
-            this.butValve1Close.Text = "Close";
-            this.butValve1Close.UseVisualStyleBackColor = true;
-            this.butValve1Close.Click += new System.EventHandler(this.butValve1Close_Click);
+            this.butValveSlowClose.Location = new System.Drawing.Point(298, 26);
+            this.butValveSlowClose.Name = "butValveSlowClose";
+            this.butValveSlowClose.Size = new System.Drawing.Size(75, 23);
+            this.butValveSlowClose.TabIndex = 3;
+            this.butValveSlowClose.Text = "Close";
+            this.butValveSlowClose.UseVisualStyleBackColor = true;
+            this.butValveSlowClose.Click += new System.EventHandler(this.butValve1Close_Click);
             // 
-            // butValve1Open
+            // butValveSlowOpen
             // 
-            this.butValve1Open.Location = new System.Drawing.Point(118, 13);
-            this.butValve1Open.Name = "butValve1Open";
-            this.butValve1Open.Size = new System.Drawing.Size(75, 23);
-            this.butValve1Open.TabIndex = 2;
-            this.butValve1Open.Text = "Open";
-            this.butValve1Open.UseVisualStyleBackColor = true;
-            this.butValve1Open.Click += new System.EventHandler(this.butValve1Open_Click);
-            // 
-            // labValve2
-            // 
-            this.labValve2.AutoSize = true;
-            this.labValve2.Location = new System.Drawing.Point(13, 48);
-            this.labValve2.Name = "labValve2";
-            this.labValve2.Size = new System.Drawing.Size(52, 15);
-            this.labValve2.TabIndex = 1;
-            this.labValve2.Text = "Valve 2 : ";
+            this.butValveSlowOpen.Location = new System.Drawing.Point(166, 27);
+            this.butValveSlowOpen.Name = "butValveSlowOpen";
+            this.butValveSlowOpen.Size = new System.Drawing.Size(75, 23);
+            this.butValveSlowOpen.TabIndex = 2;
+            this.butValveSlowOpen.Text = "Open";
+            this.butValveSlowOpen.UseVisualStyleBackColor = true;
+            this.butValveSlowOpen.Click += new System.EventHandler(this.butValve1Open_Click);
             // 
             // labValve1
             // 
             this.labValve1.AutoSize = true;
-            this.labValve1.Location = new System.Drawing.Point(13, 21);
+            this.labValve1.Location = new System.Drawing.Point(12, 29);
             this.labValve1.Name = "labValve1";
-            this.labValve1.Size = new System.Drawing.Size(52, 15);
-            this.labValve1.TabIndex = 0;
-            this.labValve1.Text = "Valve 1 : ";
+            this.labValve1.Size = new System.Drawing.Size(88, 15);
+            this.labValve1.TabIndex = 1;
+            this.labValve1.Text = "Valve 1 (Slow) : ";
+            // 
+            // labValve2
+            // 
+            this.labValve2.AutoSize = true;
+            this.labValve2.Location = new System.Drawing.Point(12, 55);
+            this.labValve2.Name = "labValve2";
+            this.labValve2.Size = new System.Drawing.Size(84, 15);
+            this.labValve2.TabIndex = 0;
+            this.labValve2.Text = "Valve 2 (Fast) : ";
             // 
             // panel5
             // 
-            this.panel5.Controls.Add(this.labMeasInProgress);
+            this.panel5.Controls.Add(this.button2);
+            this.panel5.Controls.Add(this.button1);
             this.panel5.Controls.Add(this.butPressureMeasAbort);
-            this.panel5.Controls.Add(this.butPressureMeasStart);
+            this.panel5.Controls.Add(this.butStartMeas);
             this.panel5.Controls.Add(this.label4);
             this.panel5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel5.Location = new System.Drawing.Point(3, 307);
@@ -730,21 +809,29 @@
             this.panel5.Size = new System.Drawing.Size(224, 97);
             this.panel5.TabIndex = 8;
             // 
-            // labMeasInProgress
+            // button2
             // 
-            this.labMeasInProgress.AutoSize = true;
-            this.labMeasInProgress.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            this.labMeasInProgress.ForeColor = System.Drawing.Color.Red;
-            this.labMeasInProgress.Location = new System.Drawing.Point(24, 74);
-            this.labMeasInProgress.Name = "labMeasInProgress";
-            this.labMeasInProgress.Size = new System.Drawing.Size(149, 15);
-            this.labMeasInProgress.TabIndex = 3;
-            this.labMeasInProgress.Text = "Measurement in progress";
-            this.labMeasInProgress.Visible = false;
+            this.button2.Location = new System.Drawing.Point(130, 58);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 5;
+            this.button2.Text = "Stop read";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(130, 29);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 4;
+            this.button1.Text = "Start read";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // butPressureMeasAbort
             // 
-            this.butPressureMeasAbort.Location = new System.Drawing.Point(23, 50);
+            this.butPressureMeasAbort.Location = new System.Drawing.Point(23, 57);
             this.butPressureMeasAbort.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.butPressureMeasAbort.Name = "butPressureMeasAbort";
             this.butPressureMeasAbort.Size = new System.Drawing.Size(85, 22);
@@ -753,16 +840,16 @@
             this.butPressureMeasAbort.UseVisualStyleBackColor = true;
             this.butPressureMeasAbort.Click += new System.EventHandler(this.butPressureMeasAbort_Click);
             // 
-            // butPressureMeasStart
+            // butStartMeas
             // 
-            this.butPressureMeasStart.Location = new System.Drawing.Point(23, 23);
-            this.butPressureMeasStart.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.butPressureMeasStart.Name = "butPressureMeasStart";
-            this.butPressureMeasStart.Size = new System.Drawing.Size(85, 22);
-            this.butPressureMeasStart.TabIndex = 1;
-            this.butPressureMeasStart.Text = "Start";
-            this.butPressureMeasStart.UseVisualStyleBackColor = true;
-            this.butPressureMeasStart.Click += new System.EventHandler(this.butPressureMeasStart_Click);
+            this.butStartMeas.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
+            this.butStartMeas.Location = new System.Drawing.Point(23, 30);
+            this.butStartMeas.Name = "butStartMeas";
+            this.butStartMeas.Size = new System.Drawing.Size(85, 23);
+            this.butStartMeas.TabIndex = 0;
+            this.butStartMeas.Text = "Start";
+            this.butStartMeas.UseVisualStyleBackColor = true;
+            this.butStartMeas.Click += new System.EventHandler(this.butStartMeas_Click);
             // 
             // label4
             // 
@@ -812,6 +899,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1302, 615);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
@@ -822,8 +910,6 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDRight)).EndInit();
-            this.panelView.ResumeLayout(false);
-            this.panelView.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numUDLeft)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarAmp)).EndInit();
             this.panelBottom.ResumeLayout(false);
@@ -834,6 +920,7 @@
             this.panel4.ResumeLayout(false);
             this.controlPanel.ResumeLayout(false);
             this.controlPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numUDpressure)).EndInit();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
             this.ResumeLayout(false);
@@ -847,20 +934,17 @@
         private Button butOpenFile;
         private Panel panelGraph;
         private HScrollBar hScrollBar1;
-        private RadioButton radioButtonFit;
-        private RadioButton radioButton11;
         private OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Timer timerRead;
         private Label labelX;
         private Panel panelBottom;
-        private Label label1;
         private TrackBar trackBarAmp;
         private Label label2;
         private NumericUpDown numUDLeft;
         private Panel panel2;
         private Panel panel3;
         private Button butStopRecord;
-        private Button butStartRecord;
+        private Button butStartMeas;
         private Label labPort;
         private System.Windows.Forms.Timer timerStatus;
         private System.Windows.Forms.Timer timerPaint;
@@ -870,11 +954,9 @@
         private Button butSaveFile;
         private SaveFileDialog saveFileDialog1;
         private ProgressBar progressBarRecord;
-        private Label labMeanPressure;
         private Label labDia;
         private Label labSys;
         private Label labPulse;
-        private Panel panelView;
         private Label labY0;
         private Label labY1;
         private Label labY2;
@@ -886,25 +968,36 @@
         private Label labDeviceIsOff;
         private Panel panel5;
         private Button butPressureMeasAbort;
-        private Button butPressureMeasStart;
         private Label label4;
-        private Label labMeasInProgress;
         private Panel controlPanel;
-        private Button butValve1PWM;
         private Button butPumpOff;
         private Button butPumpOn;
         private Label labPump;
-        private Button butValve2Close;
-        private Button butValve2Open;
-        private Button butValve1Close;
-        private Button butValve1Open;
-        private Label labValve2;
+        private Button butValveFastClose;
+        private Button butValveFastOpen;
+        private Button butValveSlowClose;
+        private Button butValveSlowOpen;
         private Label labValve1;
+        private Label labValve2;
         private Label labPumpStatus;
-        private Label labMeasStatus;
-        private Label label5;
+        private Label labStopPumpingReason;
         private Label labArrythmia;
         private System.Windows.Forms.Timer timerDetectRate;
         private Label labelRate;
+        private Button button1;
+        private Button button2;
+        private Label labHeart;
+        private Button butStartRecord;
+        private Button butValvesClose;
+        private Button butValvesOpen;
+        private Label label1;
+        private Button butStartToPressure;
+        private NumericUpDown numUDpressure;
+        private Button butCalibr;
+        private Label labZero;
+        private Label labAF;
+        private Label labCoeff;
+        private Label labPressPumping;
+        private Label labMeasurementStatus;
     }
 }

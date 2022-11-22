@@ -2,36 +2,27 @@
 {
     class WaveDetector
     {
-        private int CurrentInterval;
-        public double DetectLevel = 5;
-        private const double MinDetectLevel = 5;
-        private int LockInterval = 60;
-        private const int NoWaveInterval1 = 600;
-        private const int NoWaveInterval2 = 1000;
-        public double MaxD;
-        private const int NNArrSize = 10000;
-        private Point[] NNPointArr;
-        private int NNPointIndex;
-        private int PrevInterval;
-        private int[] NNArray;
-        private int NNIndex;
-        private int NumOfIntervalsForAver;
-        private const int MaxNumOfIntervalsForAver = 10;
         public List<int> FiltredPoints;
-        private readonly int _samplingFrequency;
+
         private int _currentInterval;
+        private double _detectLevel = Constants.MinDetectLevel;
+        private double _maxD;
+        private int _prevIndex;
+        private int _prevInterval;
+        private int _numOfNN;
+        private double _detectLevelCoeff;
+        private int _lastInterval;
+        private double _currentValue;
+        private int _currentIndex;
 
-        private double CurrentValue;
-        public EventHandler<WaveDetectorEventArgs>? OnWaveDetected;
+        public EventHandler<WaveDetectorEventArgs> OnWaveDetected;
 
-        public int Arrythmia;
+        public int Arrhythmia;
 
-        public WaveDetector(int samplingFrequency)
+        public WaveDetector()
         {
-            NNPointArr = new Point[NNArrSize];
-            NNArray = new int[NNArrSize];
+            _detectLevelCoeff = Constants.DetectLevelCoeffSys;
             FiltredPoints = new List<int>();
-            _samplingFrequency = samplingFrequency;
         }
 
         protected virtual void NewWaveDetected()
@@ -39,128 +30,106 @@
             WaveDetectorEventArgs args = new()
             {
                 WaveCount = FiltredPoints.Count,
-                Amplitude = CurrentValue,
-                Interval = _currentInterval,
-                Arrithmia = Arrythmia
+                Amplitude = _currentValue,
+                Interval = _lastInterval,
+                ArrhythmiaCount = Arrhythmia,
+                Index = _currentIndex
             };
             OnWaveDetected?.Invoke(this, args);
         }
 
         public void Reset()
         {
-            NNPointIndex = 0;
-            NNIndex = 0;
+            _numOfNN = 0;
+            _detectLevel = Constants.MinDetectLevel;
+            _detectLevelCoeff = Constants.DetectLevelCoeffSys;
             FiltredPoints.Clear();
-            DetectLevel = MinDetectLevel;
-            Arrythmia = 0;
+            Arrhythmia = 0;
         }
 
-        public int GetCurrentPulse()
+        public double Detect(double[] dataArr, int index, int IndexOfMax)
         {
-            if (NNIndex == 0)
+            if (index == IndexOfMax)
             {
-                return 0;
+                _detectLevelCoeff = Constants.DetectLevelCoeffDia;
             }
-            if (NNIndex < NumOfIntervalsForAver)
-            {
-                NumOfIntervalsForAver = NNIndex;
-            }
-            int sum = 0;
-            for (int i = 0; i<NumOfIntervalsForAver; i++)
-            {
-                sum += NNArray[(NNIndex - 1 - i) ];
-            }
-            sum /= NumOfIntervalsForAver;
-            double d = sum;
-            d /= _samplingFrequency; 
-            d = 60 / d;
-            return (int)Math.Round(d);
+            return Detect(dataArr, index);
         }
 
-        public double Detect(double[] DataArr, int Ind)
+        public double Detect(double[] dataArr, int index)
         {
-            CurrentInterval++;
-            if (CurrentInterval == NoWaveInterval1)
+            _currentIndex = index;
+            _currentInterval++;
+            if (_currentInterval == Constants.NoWaveInterval1)
             {
-                DetectLevel /= 2;
+                _detectLevel /= 2;
             }
-            if (CurrentInterval > NoWaveInterval2)
+            if (_currentInterval == Constants.NoWaveInterval2)
             {
-                DetectLevel /= 2;
-                NumOfIntervalsForAver = 0;
+                _detectLevel = Constants.MinDetectLevel;
             }
-            DetectLevel = Math.Max(DetectLevel, MinDetectLevel);
-            if (Ind < DataProcessing.DerivativeShift)
+            if (index < DataProcessing.DerivativeShift)
             {
-                return DetectLevel;
-            }
-
-            if (CurrentInterval < LockInterval)
-            {
-                return DetectLevel;
+                return _detectLevel;
             }
 
-            CurrentValue = DataArr[Ind - 1];
-            if (CurrentValue > DetectLevel)
+            if (_currentInterval < Constants.LockInterval)
             {
-                MaxD = Math.Max((int)CurrentValue, MaxD);
-                if (MaxD > CurrentValue)
+                return _detectLevel;
+            }
+
+            _currentValue = dataArr[index - 1];
+            if (_currentValue > _detectLevel)
+            {
+                _maxD = Math.Max((int)_currentValue, _maxD);
+                if (_maxD > _currentValue)
                 {
                     int tmpNN = 0;
-                    NNPointArr[NNPointIndex].X = Ind - 1;
-                    NNPointArr[NNPointIndex].Y = (int)MaxD;
-                    if (NNPointIndex > 0)
+                    if (_prevIndex > 0)
                     {
-                        tmpNN = NNPointArr[NNPointIndex].X - NNPointArr[NNPointIndex - 1].X;
+                        tmpNN = (index - 1) - _prevIndex;
                     }
                     if (Filter25percent(tmpNN))
                     {
-                        NNArray[NNIndex] = tmpNN;
-                        _currentInterval = tmpNN;
-                        NNIndex++;
-                        NumOfIntervalsForAver++;
-                        NumOfIntervalsForAver = Math.Min(NumOfIntervalsForAver, MaxNumOfIntervalsForAver);
-                        FiltredPoints.Add(Ind - 1);
-                        LockInterval = tmpNN / 2;
+                        _lastInterval = tmpNN;
+                        FiltredPoints.Add(index - 1);
+                        Constants.LockInterval = tmpNN / 2;
                         NewWaveDetected();
                     }
-                    CurrentInterval = 0;
-                    NNPointIndex++;
-                    DetectLevel = MaxD / 2;
-                    MaxD = 0;
+                    _currentInterval = 0;
+                    _prevIndex = index - 1;
+                    _numOfNN++;
+                    _detectLevel = _maxD * _detectLevelCoeff;
+                    _maxD = 0;
                 }
             }
-            return DetectLevel;
+            return _detectLevel;
         }
 
-        private bool Filter25percent(int NewInterval)
+        private bool Filter25percent(int newInterval)
         {
-            const int LoLimit = 50;  //ms - 240 уд / мин 
-            const int HiLimit = 400; //ms - 30  уд / мин
+            const int LoLimit = 75;  //ms - 200 уд / мин 
+            const int HiLimit = 500; //ms - 30  уд / мин
             const int MinNumberForArrythmia = 4;
-            if (NewInterval < LoLimit) 
+            if (newInterval < LoLimit) 
             {
                 return false;
             }
-            if (NewInterval > HiLimit)
+            if (newInterval > HiLimit)
             {
                 return false;
             }
-            int PrevInt = PrevInterval;
-            PrevInterval = NewInterval;
-            if (NNPointIndex < MinNumberForArrythmia)
+            int PrevInt = _prevInterval;
+            _prevInterval = newInterval;
+            //Аритмию не оцениваем, если число зарегистрированных интервалов < Min
+            if (_numOfNN < MinNumberForArrythmia)
             {
                 return true;
             }
-            if (NewInterval > PrevInt + PrevInt / 2)
+            if (newInterval > PrevInt + PrevInt / 4 || newInterval < PrevInt - PrevInt / 4)
             {
-                Arrythmia++;
-                return false;
-            }
-            if (NewInterval < PrevInt - PrevInt / 2)
-            {
-                Arrythmia++;
-                return false;
+                Arrhythmia++;
+                return true;
             }
             return true;
         }

@@ -6,10 +6,10 @@ namespace TTestApp
 {
     public interface IMessageHandler
     {
-        event Action<Message> WindowsMessage;
+        event Action<Message> WindowsMessageHandler;
     }
 
-    public class USBSerialPort: IMessageHandler
+    public class USBSerialPort
     {
         private const int _USBTimerInterval = 25;
         public SerialPort PortHandle;
@@ -18,20 +18,20 @@ namespace TTestApp
         public int CurrentPort;
         public int BytesRead;
         public Boolean ReadEnabled;
-        readonly System.Threading.Timer ReadTimer;
+        private readonly System.Threading.Timer ReadTimer;
 
         private readonly int _portBufSize = 10000;
-        private readonly int _baudRate;
+        private readonly int _baudRate = 115200;
 
         public event Action<Exception> ConnectionFailure;
         public event Action ConnectionOk;
-        public event Action<Message> WindowsMessage;
 
-        
-        public USBSerialPort(IMessageHandler messageHandler, int baudrate)
+        private readonly string _connectionString;
+
+        public USBSerialPort(IMessageHandler messageHandler, string connectionString)
         {
-            _baudRate = baudrate;
-            messageHandler.WindowsMessage += OnMessage;
+            _connectionString = connectionString;
+            messageHandler.WindowsMessageHandler += OnMessage;
             ReadEnabled = false;
             PortBuf = new byte[_portBufSize];
             ReadTimer = new System.Threading.Timer(ReadPort, null, 0, Timeout.Infinite);
@@ -66,10 +66,7 @@ namespace TTestApp
         {
             try
             {
-                if (PortHandle != null)
-                {
-                    PortHandle.Write(buf, 0, buf.Length);
-                }
+                PortHandle?.Write(buf, 0, buf.Length);
                 return true;
             }
             catch (Exception)
@@ -83,58 +80,13 @@ namespace TTestApp
             byte[] buf = { b }; // new byte[1];
             try
             {
-                if (PortHandle != null)
-                {
-                    PortHandle.Write(buf, 0, 1);
-                }
+                PortHandle?.Write(buf, 0, 1);
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
-        }
-
-        private string GetUSBSerialPortName()
-        {
-            string portName;
-            string usbSerialString = "USB-SERIAL";
-            ManagementObjectCollection collection = null;
-            try
-            {
-                using (var searcher = new ManagementObjectSearcher(
-                        "root\\CIMV2",
-                        @"Select Caption,DeviceID,PnpClass From Win32_PnpEntity WHERE DeviceID like '%USB%'")) 
-                    collection = searcher.Get();
-            }
-            catch (Exception)
-            {
-                portName = "";
-            }
-            List<string> list = new();
-            if (collection != null)
-            {
-                foreach (var device in collection)
-                {
-                    foreach (var p in device.Properties)
-                    {
-                        if (p.Value != null)
-                        {
-                            list.Add(p.Value.ToString());
-                        }
-                    }
-                }
-            }
-            try
-            {
-                portName = list.Where(p => p.IndexOf(usbSerialString) >= 0).First();
-            }
-            catch (Exception)
-            {
-
-                portName = "";
-            }
-            return portName;
         }
 
         public void Connect()
@@ -165,41 +117,25 @@ namespace TTestApp
             }
         }
 
-        private static string[] GetPortsNames()
+        private string[]? GetPortsNames()
         {
-            const string ArduinoSerialString = "Serial19";
-            const string FTDIString = "VCP";
-            const string STMString = "VCP0";
-            bool FTDI = false;
+            const string ArduinoSerialString0 = "Serial0";
 
-            RegistryKey r_hklm = Registry.LocalMachine;
-            RegistryKey r_hard = r_hklm.OpenSubKey("HARDWARE");
+            RegistryKey r_hklm   = Registry.LocalMachine;
+            RegistryKey r_hard   = r_hklm.OpenSubKey("HARDWARE");
             RegistryKey r_device = r_hard.OpenSubKey("DEVICEMAP");
-            RegistryKey r_port = r_device.OpenSubKey("SERIALCOMM");
+            RegistryKey r_port   = r_device.OpenSubKey("SERIALCOMM");
             if (r_port == null) 
             {
                 return null;
             }
             string[] portvalues = r_port.GetValueNames();
             List<string> portNames = new List<string>();
-            int Ind = 0;
             for (int i = 0; i < portvalues.Length; i++)
             {
-                if (FTDI)
+                if (portvalues[i].IndexOf(_connectionString) >= 0 && portvalues[i].IndexOf(ArduinoSerialString0) < 0)
                 {
-                    if (portvalues[i].IndexOf(STMString) >= 0)
-                    {
-                        portNames.Add((string)r_port.GetValue(portvalues[i]));
-                        Ind++;
-                    }
-                }
-                else
-                {
-                    if (portvalues[i].IndexOf(ArduinoSerialString) >= 0)
-                    {
-                        portNames.Add((string)r_port.GetValue(portvalues[i]));
-                        Ind++;
-                    }
+                    portNames.Add((string)r_port.GetValue(portvalues[i]));
                 }
             }
             return portNames.ToArray();

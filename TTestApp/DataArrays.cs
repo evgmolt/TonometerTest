@@ -3,31 +3,30 @@
     internal class DataArrays
     {
         private readonly int _size;
+
         public double[] RealTimeArray;
         public double[] DCArray;
         public double[] PressureViewArray;
         public double[] EnvelopeArray;
-        public double[] CompressedArray;
         public double[] DerivArray;
         public double[] DebugArray;
-        public double[] DiffArray;
 
         public int Size { get { return _size; } }
-        public DataArrays(int size)
+        
+        public DataArrays(uint size)
         {
-            _size = size;
+            _size = (int)size;
             RealTimeArray = new double[_size];
             DCArray = new double[_size];
             PressureViewArray = new double[_size];
             EnvelopeArray = new double[_size];
             DerivArray = new double[_size];  
             DebugArray = new double[_size];
-            DiffArray = new double[_size];
         }
 
-        public static DataArrays? CreateDataFromLines(string[] lines)
+        public static DataArrays CreateDataFromLines(string[] lines)
         {
-            DataArrays a = new(lines.Length);
+            DataArrays a = new((uint)lines.Length);
             try
             {
                 for (int i = 0; i < lines.Length; i++)
@@ -42,7 +41,7 @@
             }
         }
 
-        public void CountViewArrays(Control panel)
+        public void CountViewArrays()
         {
             int DCArrayWindow = 60;
             int ACArrayWindow = 6;
@@ -68,8 +67,27 @@
             {
                 DerivArray[i] = DataProcessing.GetDerivative(PressureViewArray, i);
             }
+        }
 
-            CompressedArray = DataProcessing.GetCompressedArray(panel, RealTimeArray);
+        public void CountEnvelopeArray(int[] arrayOfIndexes, double[] arrayOfValues)
+        {
+            for (int i = 1; i < arrayOfIndexes.Length; i++)
+            {
+                int x1 = arrayOfIndexes[i - 1];
+                int x2 = arrayOfIndexes[i];
+                double y1 = arrayOfValues[i - 1];
+                double y2 = arrayOfValues[i];
+                double coeff = (y2 - y1) / (x2 - x1);
+                for (int j = x1 - 1; j < x2; j++)
+                {
+                    int ind = i + j;
+                    if (ind >= Size)
+                    {
+                        break;
+                    }
+                    EnvelopeArray[i + j] = y1 + coeff * (j - x1);
+                }
+            }
         }
 
         public String GetDataString(uint index)
