@@ -48,13 +48,13 @@
         public static int GetMaxIndexInRegion(double[] sourceArray, int index)
         {
             int range = 50;
-            double max = 0;
+            double max = -1000;
             int maxIndex = 0;
             for (int i = 0; i < range; i++)
             {
                 int arrayIndex = index - range / 2 + i;
                 if (arrayIndex < 0) continue;
-                if (arrayIndex > sourceArray.Length) continue;
+                if (arrayIndex > sourceArray.Length - 1) continue;
                 if (sourceArray[arrayIndex] > max)
                 {
                     max = sourceArray[arrayIndex];
@@ -91,15 +91,9 @@
                 mean += arrayOfIndexes[i] - arrayOfIndexes[i - 1];
                 intervals[i - 1] = arrayOfIndexes[i] - arrayOfIndexes[i - 1];
             }
-            mean /= arrayOfIndexes.Length - 1;
-
-//            mean = Filter.Median(intervals.Length, intervals, 0);
-
-            //Аналог цикла и деления выше
-            //            mean = arrayOfIndexes.Zip(arrayOfIndexes.Skip(1), (first, second) => second - first).Average();
-
-            mean /= samplingFreq;
-            mean = secondsPerMin / mean;
+            mean /= arrayOfIndexes.Length - 1; 
+            mean /= samplingFreq; // Длительность интервала в cекундах
+            mean = secondsPerMin / mean; // Ударов в минуту
             return (int)Math.Round(mean);
         }
 
@@ -232,13 +226,6 @@
                 result[i] = (int)(aver /= windowSize);
             }
             return result;
-        }
-
-        public static int GetRange(double[] Data)
-        {
-            int max = (int)Data.Max();
-            int min = (int)Data.Min();
-            return (max - min);
         }
 
         public static double GetDerivative(int[] dataArr, int Ind)
