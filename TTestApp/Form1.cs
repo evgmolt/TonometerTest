@@ -287,7 +287,6 @@ namespace TTestApp
             }
             if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
             {
-//                Decomposer.ZeroLine = Decomposer.tmpZero;
                 Decomposer.RecordStarted = true;
                 PressureMeasStatus = PressureMeasurementStatus.Measurement;
             }
