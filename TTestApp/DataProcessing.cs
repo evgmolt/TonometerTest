@@ -52,15 +52,16 @@
             int maxIndex = 0;
             for (int i = 0; i < range; i++)
             {
-                if (i - range / 2 < 0) continue;
-                if (i - range / 2 > sourceArray.Length) continue;
-                if (sourceArray[i - range / 2] > max)
+                int arrayIndex = index - range / 2 + i;
+                if (arrayIndex < 0) continue;
+                if (arrayIndex > sourceArray.Length) continue;
+                if (sourceArray[arrayIndex] > max)
                 {
-                    max = sourceArray[i - range / 2];
-                    maxIndex = i;
+                    max = sourceArray[arrayIndex];
+                    maxIndex = arrayIndex;
                 }
             }
-            return index + maxIndex;
+            return maxIndex;
         }
 
         public static void SaveArray(string fname, int[] inputArray)
