@@ -17,7 +17,8 @@ namespace TTestApp.Decomposers
         public int PacketCounter = 0;
         public bool RecordStarted;
 
-        protected int tmpValue;
+        protected int tmpValue1;
+        protected int tmpValue2;
 
         protected int byteNum;
 
@@ -36,6 +37,7 @@ namespace TTestApp.Decomposers
                 new PacketEventArgs
                 {
                     RealTimeValue = Data.RealTimeArray[MainIndex],
+                    EnvelopeValue = Data.EnvelopeArray[MainIndex],
                     PacketCounter = PacketCounter,
                     MainIndex = MainIndex
                 });
@@ -75,18 +77,31 @@ namespace TTestApp.Decomposers
                         }
                         break;
                     case 1:
-                        tmpValue = usbport.PortBuf[i];
+                        tmpValue1 = usbport.PortBuf[i];
                         byteNum = 2;
                         break;
                     case 2:
-                        tmpValue += 0x100 * usbport.PortBuf[i];
-                        if ((tmpValue & 0x8000) != 0)
+                        tmpValue1 += 0x100 * usbport.PortBuf[i];
+                        if ((tmpValue1 & 0x8000) != 0)
                         {
-                            tmpValue -= 0x10000;
+                            tmpValue1 -= 0x10000;
                         }
 
-                        Data.RealTimeArray[MainIndex] = tmpValue;
+                        Data.RealTimeArray[MainIndex] = tmpValue1;
+                        byteNum = 3;
+                        break;
+                    case 3:
+                        tmpValue2 = usbport.PortBuf[i];
+                        byteNum = 4;
+                        break;
+                    case 4:
+                        tmpValue2 += 0x100 * usbport.PortBuf[i];
+                        if ((tmpValue2 & 0x8000) != 0)
+                        {
+                            tmpValue2 -= 0x10000;
+                        }
 
+                        Data.EnvelopeArray[MainIndex] = tmpValue2;
                         byteNum = 0;
 
                         if (RecordStarted)

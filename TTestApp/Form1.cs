@@ -213,18 +213,14 @@ namespace TTestApp
             if (ViewMode)
             {
                     ArrayList.Add(DataA.RealTimeArray);
-//                    ArrayList.Add(DataA.DerivArray);
-//                    ArrayList.Add(DataA.DebugArray);
-//                    ArrayList.Add(DataA.EnvelopeArray);
+                    ArrayList.Add(DataA.EnvelopeArray);
             }
             else
             {
                 ArrayList.Add(DataA.RealTimeArray);
-//                ArrayList.Add(DataA.DerivArray);
-//                ArrayList.Add(DataA.DebugArray);
+                ArrayList.Add(DataA.EnvelopeArray);
             }
             Painter.Paint(ViewMode, ViewShift, ArrayList, VisirList, ScaleY, MaxValue, e);
-//            ArrayList.Clear();
         }
 
         private void UpdateScrollBar(int size)
@@ -287,7 +283,7 @@ namespace TTestApp
             {
                 labCurrentPressure.Text = "Current pressure, mmHG: " +
                                            DataProcessing.ValueToMmhG(CurrentPressure).ToString() + " " +
-                                           CurrentPressure.ToString();
+                                           CurrentPressure.ToString() + " " + e.EnvelopeValue.ToString();
             }
             if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
             {

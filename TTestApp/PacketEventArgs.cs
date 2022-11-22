@@ -5,5 +5,6 @@
         public uint MainIndex { get; set; }
         public int PacketCounter { get; set; }
         public double RealTimeValue { get; set; }
+        public double EnvelopeValue { get; set; }
     }
 }
