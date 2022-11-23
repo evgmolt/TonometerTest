@@ -33,18 +33,6 @@
             return indexes;
         }
 
-        //public static int GetMaxIndexInRegion(double[] sourceArray, int index)
-        //{
-        //    int range = 60;
-        //    double[] regionArray = new double[range];
-        //    range = 2 * Math.Min(range / 2, sourceArray.Length - index);
-        //    Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
-        //    double max = regionArray.Max();
-        //    int maxIndex = Array.IndexOf(regionArray, max);
-        //    int result = index - range / 2 + maxIndex;
-        //    return (result >= sourceArray.Length - 1)? sourceArray.Length - 1 : result;
-        //}
-
         public static int GetMaxIndexInRegion(double[] sourceArray, int index)
         {
             int range = 50;
@@ -63,6 +51,18 @@
             }
             return maxIndex;
         }
+
+        //public static int GetMaxIndexInRegion(double[] sourceArray, int index)
+        //{
+        //    int range = 60;
+        //    double[] regionArray = new double[range];
+        //    range = 2 * Math.Min(range / 2, sourceArray.Length - index);
+        //    Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
+        //    double max = regionArray.Max();
+        //    int maxIndex = Array.IndexOf(regionArray, max);
+        //    int result = index - range / 2 + maxIndex;
+        //    return (result >= sourceArray.Length - 1)? sourceArray.Length - 1 : result;
+        //}
 
         public static void SaveArray(string fname, int[] inputArray)
         {

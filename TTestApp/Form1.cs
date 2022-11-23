@@ -472,7 +472,7 @@ namespace TTestApp
             int XMaxIndex = Array.IndexOf(ArrayOfWaveAmplitudes, MaximumAmplitude);
             int XMax = ArrayOfWaveIndexes[XMaxIndex];
 
-            //-----Второй проход с изменяемым порогом------------------------------------------------------
+            //-----Второй проход с изменяемым порогом------------
             //-----До максимума 0.7, после максимума 0.55--------
 
             WD.Reset();
