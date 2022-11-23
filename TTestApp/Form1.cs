@@ -272,6 +272,9 @@ namespace TTestApp
 
             int index = e.X + ViewShift;
             double sec = index / Decomposer.SamplingFrequency;
+            labX.Text = "Index : " + index.ToString() + "  Seconds : " + sec.ToString();
+            labY1.Text = "Value 1 : " + DataA.RealTimeArray[index].ToString();
+            labY2.Text = "Value 2 : " + DataA.EnvelopeArray[index].ToString();
         }
 
         int FileNum = 0;
@@ -294,11 +297,6 @@ namespace TTestApp
             {
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
             }
-        }
-
-        private void butCalibration_Click(object sender, EventArgs e)
-        {
-            PressureMeasStatus = PressureMeasurementStatus.Calibration;
         }
     }
 }

@@ -40,7 +40,9 @@
             this.panelGraph = new System.Windows.Forms.Panel();
             this.trackBarAmp = new System.Windows.Forms.TrackBar();
             this.panelBottom = new System.Windows.Forms.Panel();
-            this.butCalibration = new System.Windows.Forms.Button();
+            this.labY2 = new System.Windows.Forms.Label();
+            this.labY1 = new System.Windows.Forms.Label();
+            this.labX = new System.Windows.Forms.Label();
             this.labCurrentPressure = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
@@ -75,8 +77,8 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 70F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 33F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 128F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(1302, 615);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -91,7 +93,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(224, 507);
+            this.panel1.Size = new System.Drawing.Size(224, 448);
             this.panel1.TabIndex = 0;
             // 
             // progressBarRecord
@@ -148,7 +150,7 @@
             this.panelGraph.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGraph.Location = new System.Drawing.Point(233, 3);
             this.panelGraph.Name = "panelGraph";
-            this.panelGraph.Size = new System.Drawing.Size(1014, 507);
+            this.panelGraph.Size = new System.Drawing.Size(1014, 448);
             this.panelGraph.TabIndex = 1;
             // 
             // trackBarAmp
@@ -158,32 +160,55 @@
             this.trackBarAmp.Minimum = -10;
             this.trackBarAmp.Name = "trackBarAmp";
             this.trackBarAmp.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBarAmp.Size = new System.Drawing.Size(46, 507);
+            this.trackBarAmp.Size = new System.Drawing.Size(46, 448);
             this.trackBarAmp.TabIndex = 4;
             this.trackBarAmp.ValueChanged += new System.EventHandler(this.trackBarAmp_ValueChanged);
             // 
             // panelBottom
             // 
             this.panelBottom.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelBottom.Controls.Add(this.butCalibration);
+            this.panelBottom.Controls.Add(this.labY2);
+            this.panelBottom.Controls.Add(this.labY1);
+            this.panelBottom.Controls.Add(this.labX);
             this.panelBottom.Controls.Add(this.labCurrentPressure);
             this.panelBottom.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBottom.Location = new System.Drawing.Point(233, 548);
+            this.panelBottom.Location = new System.Drawing.Point(233, 490);
             this.panelBottom.Name = "panelBottom";
-            this.panelBottom.Size = new System.Drawing.Size(1014, 64);
+            this.panelBottom.Size = new System.Drawing.Size(1014, 122);
             this.panelBottom.TabIndex = 3;
             // 
-            // butCalibration
+            // labY2
             // 
-            this.butCalibration.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.butCalibration.Location = new System.Drawing.Point(783, 20);
-            this.butCalibration.Name = "butCalibration";
-            this.butCalibration.Size = new System.Drawing.Size(85, 23);
-            this.butCalibration.TabIndex = 6;
-            this.butCalibration.Text = "Calibration";
-            this.butCalibration.UseVisualStyleBackColor = true;
-            this.butCalibration.Visible = false;
-            this.butCalibration.Click += new System.EventHandler(this.butCalibration_Click);
+            this.labY2.AutoSize = true;
+            this.labY2.CausesValidation = false;
+            this.labY2.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labY2.Location = new System.Drawing.Point(438, 62);
+            this.labY2.Name = "labY2";
+            this.labY2.Size = new System.Drawing.Size(72, 21);
+            this.labY2.TabIndex = 8;
+            this.labY2.Text = "Value 2 : ";
+            // 
+            // labY1
+            // 
+            this.labY1.AutoSize = true;
+            this.labY1.CausesValidation = false;
+            this.labY1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labY1.Location = new System.Drawing.Point(438, 41);
+            this.labY1.Name = "labY1";
+            this.labY1.Size = new System.Drawing.Size(72, 21);
+            this.labY1.TabIndex = 7;
+            this.labY1.Text = "Value 1 : ";
+            // 
+            // labX
+            // 
+            this.labX.AutoSize = true;
+            this.labX.CausesValidation = false;
+            this.labX.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.labX.Location = new System.Drawing.Point(452, 20);
+            this.labX.Name = "labX";
+            this.labX.Size = new System.Drawing.Size(58, 21);
+            this.labX.TabIndex = 6;
+            this.labX.Text = "Index : ";
             // 
             // labCurrentPressure
             // 
@@ -201,9 +226,9 @@
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel2.Controls.Add(this.hScrollBar1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(233, 516);
+            this.panel2.Location = new System.Drawing.Point(233, 457);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(1014, 26);
+            this.panel2.Size = new System.Drawing.Size(1014, 27);
             this.panel2.TabIndex = 5;
             // 
             // hScrollBar1
@@ -211,7 +236,7 @@
             this.hScrollBar1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.hScrollBar1.Location = new System.Drawing.Point(0, 0);
             this.hScrollBar1.Name = "hScrollBar1";
-            this.hScrollBar1.Size = new System.Drawing.Size(1012, 24);
+            this.hScrollBar1.Size = new System.Drawing.Size(1012, 25);
             this.hScrollBar1.TabIndex = 0;
             this.hScrollBar1.ValueChanged += new System.EventHandler(this.hScrollBar1_ValueChanged);
             // 
@@ -220,9 +245,9 @@
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel3.Controls.Add(this.labPort);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel3.Location = new System.Drawing.Point(3, 548);
+            this.panel3.Location = new System.Drawing.Point(3, 490);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(224, 64);
+            this.panel3.Size = new System.Drawing.Size(224, 122);
             this.panel3.TabIndex = 6;
             // 
             // labPort
@@ -306,6 +331,8 @@
         private Label labRecordSize;
         private ProgressBar progressBarRecord;
         private Label labPort;
-        private Button butCalibration;
+        private Label labY2;
+        private Label labY1;
+        private Label labX;
     }
 }
