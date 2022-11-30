@@ -23,6 +23,39 @@
             return subArray;
         }
 
+        internal static int[] GetArrayOfNegativeWaveIndexes(double[] valuesArray, int[] arrayOfWaveIndexes)
+        {
+            int interval = 0;
+            int a = 0;
+            for (int i = 0; i < arrayOfWaveIndexes.Length - 1; i++)
+            {
+                interval += arrayOfWaveIndexes[i + 1] - arrayOfWaveIndexes[i];
+                a++;
+            }
+            interval = (interval / arrayOfWaveIndexes.Length - 1) / 2;
+            int[] indexes = new int[arrayOfWaveIndexes.Length];
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                double min = 100000;
+                int minIndex = 0;
+                for (int j = 0; j < interval; j++)
+                {
+                    if (arrayOfWaveIndexes[i] + j > valuesArray.Length - 1)
+                    {
+                        break;
+                    }
+                    if (valuesArray[arrayOfWaveIndexes[i] + j] < min)
+                    {
+                        min = Math.Min(min, valuesArray[arrayOfWaveIndexes[i] + j]);
+                        minIndex = arrayOfWaveIndexes[i] + j;
+                    }
+                }
+                indexes[i] = minIndex;
+            }
+            return indexes;
+
+        }
+
         public static int[] GetArrayOfWaveIndexes(double[] valuesArray, int[] indexesArray)
         {
             int[] indexes = new int[indexesArray.Length];

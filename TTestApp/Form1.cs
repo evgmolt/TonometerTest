@@ -30,7 +30,7 @@ namespace TTestApp
 
         int DelayCounter;
         int DelayValue;
-        const double DelayInSeconds = 0.3; //sec задержка начала записи сигнала после выключения компрессора
+        const double DelayInSeconds = 0.1; //sec задержка начала записи сигнала после выключения компрессора
         int HeartVisibleDelay = 50;
         int HeartVisibleCounter;
         bool HRVmode = false;
@@ -455,6 +455,8 @@ namespace TTestApp
         {
             //Детектор - обнаружение пульсовых волн по производной
             WaveDetector WD = new();
+
+            //Первый проход с постоянным порогом
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
             {
@@ -462,10 +464,16 @@ namespace TTestApp
             }
 
             labArrythmia.Text = WD.Arrhythmia.ToString();
-
+            WD.FiltredPoints.RemoveAt(WD.FiltredPoints.Count - 1);
             //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
             int[] ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
+            int[] ArrayOfNegativeWaveIndexes = DataProcessing.GetArrayOfNegativeWaveIndexes(DataA.PressureViewArray, ArrayOfWaveIndexes);
             double[] ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
+            double[] ArrayOfWaveNegativeAmplitudes = ArrayOfNegativeWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
+            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
+            {
+                ArrayOfWaveAmplitudes[i] -= ArrayOfWaveNegativeAmplitudes[i];
+            }
             DataProcessing.RemoveArtifacts(ArrayOfWaveAmplitudes);
 
             double MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
@@ -483,7 +491,13 @@ namespace TTestApp
 
             //Получение массива максимумов пульсаций давления (в окрестностях максимума производной)
             ArrayOfWaveIndexes = DataProcessing.GetArrayOfWaveIndexes(DataA.PressureViewArray, WD.FiltredPoints.ToArray());
+            ArrayOfNegativeWaveIndexes = DataProcessing.GetArrayOfNegativeWaveIndexes(DataA.PressureViewArray, ArrayOfWaveIndexes);
             ArrayOfWaveAmplitudes = ArrayOfWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
+            ArrayOfWaveNegativeAmplitudes = ArrayOfNegativeWaveIndexes.Select(x => DataA.PressureViewArray[x]).ToArray();
+            for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
+            {
+                ArrayOfWaveAmplitudes[i] -= ArrayOfWaveNegativeAmplitudes[i];
+            }
             DataProcessing.RemoveArtifacts(ArrayOfWaveAmplitudes);
 
             MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
@@ -493,6 +507,7 @@ namespace TTestApp
 
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
+            VisirList.Add(ArrayOfNegativeWaveIndexes);
 
             double[] ArrLeftValues = new double[XMaxIndex];
             double[] ArrRightValues = new double[ArrayOfWaveIndexes.Length - XMaxIndex];
@@ -665,11 +680,14 @@ namespace TTestApp
 
         int PumpingDia;
         int PumpingSys;
+        int MaxAmp;
         private void NewWaveDetected(object sender, WaveDetectorEventArgs e)
         {
             HeartVisibleCounter = HeartVisibleDelay;
             string text = e.WaveCount.ToString() + " " + e.Interval.ToString() + " " + e.Amplitude.ToString("0.0");
-            labNumOfWaves.Text = "Waves detected: " + text;
+            int indexMaxAmp = DataProcessing.GetMaxIndexInRegion(DataA.PressureViewArray, e.Index);
+            MaxAmp = (int)DataA.PressureViewArray[indexMaxAmp];
+            labNumOfWaves.Text = "Waves detected: " + text + " AmpOfMaxP " + MaxAmp.ToString();
 
             switch (PressureMeasStatus)
             {
@@ -712,17 +730,22 @@ namespace TTestApp
                     MaxDerivValue = Math.Max(e.Amplitude, MaxDerivValue);
                     if (e.Amplitude < MaxDerivValue * Constants.StopMeasCoeff)
                     {
-                        DevStatus.ValveSlowClosed = false; 
-                        DevStatus.ValveFastClosed = false;
-                        PressureMeasStatus = PressureMeasurementStatus.Ready;
-                        USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
-                        USBPort.WriteByte((byte)CmdDevice.StopReading);
-                        butStopRecord_Click(this, EventArgs.Empty);
+                        StopMeas();
                     }
                     break;
                 default:
                     break;
             }
+        }
+
+        private void StopMeas()
+        {
+            DevStatus.ValveSlowClosed = false;
+            DevStatus.ValveFastClosed = false;
+            PressureMeasStatus = PressureMeasurementStatus.Ready;
+            USBPort.WriteByte((byte)CmdDevice.ValveFastOpen);
+            USBPort.WriteByte((byte)CmdDevice.StopReading);
+            butStopRecord_Click(this, EventArgs.Empty);
         }
 
         private void OnPacketReceived(object sender, PacketEventArgs e)
