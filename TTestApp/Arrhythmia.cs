@@ -12,7 +12,7 @@ namespace TTestApp
         private const double level = 0.06;
 
         //Мерцательная аритмия, алгоритм Microlife
-        internal static bool AtrialFibrillation(int[] arrayOfIndexes) 
+        internal static bool AtrialFibrillation(int[] arrayOfIndexes, ref double res) 
         {
             int length = arrayOfIndexes.Length;
             if (numOfIntervals > length - 1)
@@ -28,7 +28,41 @@ namespace TTestApp
             double TwentyFivePercent = aver / 4;
             intervals.RemoveAll(x => Math.Abs(x - aver) > TwentyFivePercent);
             double SKO = Math.Sqrt(intervals.Select(x => (x - aver) * (x - aver)).Sum() / numOfIntervals);
-            double res = SKO / aver;
+            res = SKO / aver;
+            return res > level;
+        }
+
+        internal static bool AtrialFibrillation2(int[] arrayOfIndexes, ref double res)
+        {
+            if (arrayOfIndexes.Length < numOfIntervals + 1)
+            {
+                return false;
+            }
+            int[] Intervals = new int[numOfIntervals];
+            for (int i = 1; i < numOfIntervals; i++)      //Цикл с 1 !!!
+            {
+                Intervals[i - 1] = arrayOfIndexes[numOfIntervals - i] - arrayOfIndexes[numOfIntervals - i - 1];
+            }
+            double Aver = 0;
+            for (int i = 0; i < numOfIntervals; i++)
+            {
+                Aver += Intervals[i];
+            }
+            Aver /= numOfIntervals;
+            double TwentyFivePercent = Aver / 4;
+            int Counter = 0;
+            double SumSqr = 0;
+            for (int i = 0; i < numOfIntervals; i++)
+            {
+                double Diff = Intervals[i] - Aver;
+                if (Math.Abs(Diff) < TwentyFivePercent)
+                {
+                    SumSqr += Diff * Diff;
+                    Counter++;
+                }
+            }
+            double SKO = Math.Sqrt(SumSqr / Counter);
+            res = SKO / Aver;
             return res > level;
         }
     }

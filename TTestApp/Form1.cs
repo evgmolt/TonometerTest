@@ -507,7 +507,7 @@ namespace TTestApp
 
             VisirList.Clear();
             VisirList.Add(ArrayOfWaveIndexes);
-            VisirList.Add(ArrayOfNegativeWaveIndexes);
+//            VisirList.Add(ArrayOfNegativeWaveIndexes);
 
             double[] ArrLeftValues = new double[XMaxIndex];
             double[] ArrRightValues = new double[ArrayOfWaveIndexes.Length - XMaxIndex];
@@ -520,7 +520,11 @@ namespace TTestApp
             //Построение огибающей максимумов пульсаций давления
             DataA.CountEnvelopeArray(ArrayOfWaveIndexes, ArrValues);
 
-            labAF.Visible = Arrhythmia.AtrialFibrillation(ArrayOfWaveIndexes);
+            double arr1 = 0;
+            double arr2 = 0;
+            Arrhythmia.AtrialFibrillation(ArrayOfWaveIndexes, ref arr2);
+            labAF.Visible = Arrhythmia.AtrialFibrillation(ArrayOfWaveIndexes, ref arr1);
+            labAF.Text = arr1.ToString("0.##") + " " + arr2.ToString("0.##");
 
             //Подготовка массива для вычисления пульса
             int[] ArrayForPulse;
