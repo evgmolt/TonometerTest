@@ -122,20 +122,21 @@
                             _queueForDC.Dequeue();
                         }
 
-                        //Массив исходных данных - смещение
+                        //Массив исходных данных
                         _data.RealTimeArray[MainIndex] = _tmpValue;
                         //Массив постоянной составляющей
                         _data.DCArray[MainIndex] = _queueForDC.Average();
 
                         //Очередь - переменная составляющая
-                        _queueForAC.Enqueue(_tmpValue - _queueForDC.Average());
+//                        _queueForAC.Enqueue(_tmpValue - _queueForDC.Average());
+                        _queueForAC.Enqueue(_tmpValue);
                         if (_queueForAC.Count > _sizeQForAC)
                         {
                             _queueForAC.Dequeue();
                         }
 
                         //Массив переменной составляющей
-                        _data.PressureViewArray[MainIndex] = _queueForAC.Average();
+                        _data.PressureViewArray[MainIndex] = Filter.HighPass(_queueForAC.Average());
 
                         _byteNum = 0;
 

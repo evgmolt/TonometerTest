@@ -24,7 +24,8 @@ namespace TTestApp
         //z = 0.978894 + j 0.012015 
         static int NCoef = 2;
         static double[] y = new double[NCoef + 1]; //output samples 
-        static double[] x = new double[NCoef + 1]; //input samples 
+        static double[] x = { 4300, 4300, 4300 };// new double[NCoef + 1]; //input samples 
+//        static double[] x = new double[NCoef + 1]; //input samples 
 
         internal static double HighPass(double NewSample)
         {

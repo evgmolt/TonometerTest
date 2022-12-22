@@ -47,6 +47,8 @@
         {
             int DCArrayWindow = 60;
             int ACArrayWindow = 6;
+            int BadSamples = 160;
+
             for (int i = DCArrayWindow; i < _size; i++)
             {
                 double DCLevel = 0;
@@ -65,23 +67,31 @@
                 PressureViewArray[i] = ACLevel - DCLevel;
             }
 
-            for (int i = ACArrayWindow; i < _size; i++)
+            for (int i = 0; i < _size; i++)
             {
                 double ACLevel = 0;
-                for (int j = 0; j < ACArrayWindow; j++)
+                if (i < ACArrayWindow)
                 {
-                    ACLevel += RealTimeArray[i - j];
+                    ACLevel = RealTimeArray[i];
                 }
-                ACLevel /= ACArrayWindow;
+                else
+                {
+                    for (int j = 0; j < ACArrayWindow; j++)
+                    {
+                        ACLevel += RealTimeArray[i - j];
+                    }
+                    ACLevel /= ACArrayWindow;
+                }
                 RealTimeSmoothArray[i] = ACLevel;
             }
+
 
             for (int i = 0; i < RealTimeArray.Length; i++)
             {
                 PressureViewArray[i] = Filter.HighPass(RealTimeSmoothArray[i]);
             }
 
-            for (int i = 0; i < 400; i++)
+            for (int i = 0; i < BadSamples; i++)
             {
                 PressureViewArray[i] = 0;
             }

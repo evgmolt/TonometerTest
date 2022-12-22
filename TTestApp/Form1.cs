@@ -460,7 +460,8 @@ namespace TTestApp
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
             {
-                DataA.DebugArray[i] = WD.Detect(DataA.PressureViewArray, i);
+//                DataA.DebugArray[i] = WD.Detect(DataA.PressureViewArray, i);
+                DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i);
             }
 
             labArrythmia.Text = WD.Arrhythmia.ToString();
