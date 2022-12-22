@@ -233,5 +233,23 @@
                 }
             }
         }
+
+        internal static double GetSquare(double[] pressureViewArray, int indexOfMax)
+        {
+            double Integral = 0;
+            int Index = indexOfMax;
+            while (pressureViewArray[Index] > 0)
+            {
+                Integral++;
+                Index--;
+            }
+            Index = indexOfMax;
+            while (pressureViewArray[Index] > 0)
+            {
+                Integral++;
+                Index++;
+            }
+            return Integral;
+        }
     }
 }

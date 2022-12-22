@@ -460,7 +460,7 @@ namespace TTestApp
             WD.Reset();
             for (int i = 0; i < CurrentFileSize; i++)
             {
-                DataA.DebugArray[i] = WD.Detect(DataA.DerivArray, i);
+                DataA.DebugArray[i] = WD.Detect(DataA.PressureViewArray, i);
             }
 
             labArrythmia.Text = WD.Arrhythmia.ToString();
@@ -474,6 +474,13 @@ namespace TTestApp
             {
                 ArrayOfWaveAmplitudes[i] -= ArrayOfWaveNegativeAmplitudes[i];
             }
+
+            //Вариант с вычислением площади
+            //for (int i = 0; i < ArrayOfWaveIndexes.Length; i++)
+            //{
+            //    ArrayOfWaveAmplitudes[i] = DataProcessing.GetSquare(DataA.PressureViewArray, ArrayOfWaveIndexes[i]);
+            //}
+
             DataProcessing.RemoveArtifacts(ArrayOfWaveAmplitudes);
 
             double MaximumAmplitude = ArrayOfWaveAmplitudes.Max();
@@ -607,7 +614,7 @@ namespace TTestApp
             if (ViewMode)
             {
                 ArrayList.Add(DataA.PressureViewArray);
-                ArrayList.Add(DataA.DerivArray);
+//                ArrayList.Add(DataA.DerivArray);
                 ArrayList.Add(DataA.DebugArray);
                 ArrayList.Add(DataA.EnvelopeArray);//Последняя кривая в списке жирная
             }

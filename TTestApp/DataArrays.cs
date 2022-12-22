@@ -5,6 +5,7 @@
         private readonly int _size;
 
         public double[] RealTimeArray;
+        public double[] RealTimeSmoothArray;
         public double[] DCArray;
         public double[] PressureViewArray;
         public double[] EnvelopeArray;
@@ -17,6 +18,7 @@
         {
             _size = (int)size;
             RealTimeArray = new double[_size];
+            RealTimeSmoothArray = new double[_size];
             DCArray = new double[_size];
             PressureViewArray = new double[_size];
             EnvelopeArray = new double[_size];
@@ -62,6 +64,28 @@
                 ACLevel /= ACArrayWindow;
                 PressureViewArray[i] = ACLevel - DCLevel;
             }
+
+            for (int i = ACArrayWindow; i < _size; i++)
+            {
+                double ACLevel = 0;
+                for (int j = 0; j < ACArrayWindow; j++)
+                {
+                    ACLevel += RealTimeArray[i - j];
+                }
+                ACLevel /= ACArrayWindow;
+                RealTimeSmoothArray[i] = ACLevel;
+            }
+
+            for (int i = 0; i < RealTimeArray.Length; i++)
+            {
+                PressureViewArray[i] = Filter.HighPass(RealTimeSmoothArray[i]);
+            }
+
+            for (int i = 0; i < 400; i++)
+            {
+                PressureViewArray[i] = 0;
+            }
+
 
             for (uint i = 0; i < PressureViewArray.Length; i++)
             {

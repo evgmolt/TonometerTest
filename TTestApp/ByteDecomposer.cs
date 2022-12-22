@@ -44,7 +44,7 @@
             _queueForDC = new Queue<double>(_sizeQForDC);
             _queueForAC = new Queue<double>(_sizeQForAC);
             _queueForZero = new Queue<int>(_sizeQForZero);
-            _samplingFrequency = 128;
+            _samplingFrequency = 250;
             _zeroLine = 0;
         }
 
