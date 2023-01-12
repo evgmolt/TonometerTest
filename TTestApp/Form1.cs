@@ -789,19 +789,10 @@ namespace TTestApp
                                         Math.Round(aver).ToString();
             if (Decomposer.RecordStarted)
             {
-                if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
-                {
-                    Decomposer.Calibr();
-                    USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
-                    USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
-                    USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
-                    PressureMeasStatus = PressureMeasurementStatus.Pumping;
-                    PumpStatus = PumpingStatus.WaitingForLevel;
-                }
                 labRecordSize.Text = "Record size : " + (e.PacketCounter / Decomposer.SamplingFrequency).ToString() + " c";
                 DataA.DebugArray[currentIndex] = (int)Detector.Detect(DataA.DerivArray, (int)currentIndex);
                 if (CurrentPressure > Constants.MaxAllowablePressure)
-                { 
+                {
                     StopPumping("Max Allowable Pressure");
                 }
                 if (PumpStatus == PumpingStatus.WaitingForLevel)
@@ -822,6 +813,15 @@ namespace TTestApp
                         StopPumping("Timeout");
                     }
                 }
+                if (PressureMeasStatus == PressureMeasurementStatus.Calibration)
+                {
+                    Decomposer.Calibr();
+                    USBPort.WriteByte((byte)CmdDevice.ValveFastClose);
+                    USBPort.WriteByte((byte)CmdDevice.ValveSlowClose);
+                    USBPort.WriteByte((byte)CmdDevice.PumpSwitchOn);
+                    PressureMeasStatus = PressureMeasurementStatus.Pumping;
+                    PumpStatus = PumpingStatus.WaitingForLevel;
+                }
                 if (PressureMeasStatus == PressureMeasurementStatus.Delay)
                 {
                     DelayCounter++;
@@ -829,6 +829,14 @@ namespace TTestApp
                     {
                         PressureMeasStatus = PressureMeasurementStatus.Measurement;
                         AfterDelay();
+                    }
+                }
+                if (PressureMeasStatus == PressureMeasurementStatus.Measurement)
+                {
+                    double Pressure = ValueToMmHg.Convert(e.DCValue);
+                    if (Pressure < Constants.StopMeasPressure)
+                    {
+                        StopMeas();
                     }
                 }
             }

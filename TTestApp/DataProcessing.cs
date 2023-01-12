@@ -85,18 +85,6 @@
             return maxIndex;
         }
 
-        //public static int GetMaxIndexInRegion(double[] sourceArray, int index)
-        //{
-        //    int range = 60;
-        //    double[] regionArray = new double[range];
-        //    range = 2 * Math.Min(range / 2, sourceArray.Length - index);
-        //    Array.Copy(sourceArray, index - range / 2, regionArray, 0, range);
-        //    double max = regionArray.Max();
-        //    int maxIndex = Array.IndexOf(regionArray, max);
-        //    int result = index - range / 2 + maxIndex;
-        //    return (result >= sourceArray.Length - 1)? sourceArray.Length - 1 : result;
-        //}
-
         public static void SaveArray(string fname, int[] inputArray)
         {
             var stringsArr = inputArray.Select(s => s.ToString()).ToArray();
@@ -158,35 +146,6 @@
                 return 0;
             }
         }
-
-        //public static double GetDerivative(double[] dataArr, uint Ind)
-        //{
-        //    if (Ind < DerivativeAverageWidth / 2 + DerivativeShift)
-        //    {
-        //        return 0;
-        //    }
-        //    if (Ind - DerivativeAverageWidth / 2 + DerivativeAverageWidth > dataArr.Length - 1)
-        //    {
-        //        return 0;
-        //    }
-        //    List<double> L1 = new();
-        //    List<double> L2 = new();
-        //    for (int i = 0; i < DerivativeAverageWidth; i++)
-        //    {
-        //        L1.Add(dataArr[Ind - DerivativeAverageWidth / 2 + i]);
-        //        L2.Add(dataArr[Ind - DerivativeAverageWidth / 2 - DerivativeShift + i]);
-        //    }
-        //    if (L1.Count > 0 && L2.Count > 0)
-        //    {
-        //        double A1 = L1.Average();
-        //        double A2 = L2.Average();
-        //        return (A1 - A2);
-        //    }
-        //    else
-        //    {
-        //        return 0;
-        //    }
-        //}
 
         //Корреляционная функция - весь массив, коэффициент корреляции Пирсона
         public static void Corr(double[] inputArray, double[] resultArray, double[] corrPattern)

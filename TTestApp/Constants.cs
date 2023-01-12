@@ -11,7 +11,8 @@ namespace TTestApp
         internal static uint DataArrSize = 0x100000;
 
         //Алгоритм
-        internal static double StopMeasCoeff = 0.6;//Измерение прекращается, если амплитуда производной меньше StopMeasCoeff*Max
+        internal static double StopMeasCoeff = 0.65;//Измерение прекращается, если амплитуда производной меньше StopMeasCoeff*Max
+        internal static double StopMeasPressure = 50;
         internal static double MaxAllowablePressure = 180;
         internal static double MinPressure = 120; //Минимальное давление, до которого осуществляется накачка  
         internal static double PressureLevelForLeak = 10;
