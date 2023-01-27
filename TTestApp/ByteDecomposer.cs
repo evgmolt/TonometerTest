@@ -27,6 +27,10 @@
         private int _tmpValue;
         private int _byteNum;
 
+        private double _dummyValue;
+        private int _lockCounter;
+        private double _lockCounterValue = 0.7;
+
         //Очереди для усреднения скользящим окном
         private Queue<double> _queueForDC;
         private Queue<double> _queueForAC;
@@ -46,6 +50,12 @@
             _queueForZero = new Queue<int>(_sizeQForZero);
             _samplingFrequency = 250;
             _zeroLine = 0;
+        }
+
+        public void Lock()
+        {
+            _dummyValue = _data.PressureViewArray[MainIndex - 1];
+            _lockCounter = (int)(_samplingFrequency * _lockCounterValue);
         }
 
         public void Calibr()
@@ -115,6 +125,7 @@
                         }
 
                         _tmpValue -= ZeroLine;
+
                         //Очередь для выделения постоянной составляющей
                         _queueForDC.Enqueue(_tmpValue);
                         if (_queueForDC.Count > _sizeQForDC)
@@ -129,14 +140,20 @@
 
                         //Очередь - переменная составляющая
 //                        _queueForAC.Enqueue(_tmpValue - _queueForDC.Average());
+                        
                         _queueForAC.Enqueue(_tmpValue);
                         if (_queueForAC.Count > _sizeQForAC)
-                        {
+                        {   
                             _queueForAC.Dequeue();
                         }
 
                         //Массив переменной составляющей
                         _data.PressureViewArray[MainIndex] = Filter.HighPass(_queueForAC.Average());
+                        if (_lockCounter > 0)
+                        {
+                            _lockCounter--;
+                            _data.PressureViewArray[MainIndex] = _dummyValue;
+                        }
 
                         _byteNum = 0;
 

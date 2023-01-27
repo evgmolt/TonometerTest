@@ -844,6 +844,7 @@ namespace TTestApp
 
         private void StopPumping(string mess)
         {
+            Decomposer.Lock();
             MaxPressureReachedValue = ValueToMmHg.Convert(DataA.DCArray[Decomposer.MainIndex]);
             DevStatus.PumpIsOn = false;
             DevStatus.ValveSlowClosed = false;
