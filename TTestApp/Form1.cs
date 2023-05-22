@@ -567,6 +567,19 @@ namespace TTestApp
             double ValueSys = MaximumAmplitude * (double)Cfg.CoeffLeft;
             double ValueDia = MaximumAmplitude * (double)Cfg.CoeffRight;
 
+            for (int i = XMaxIndex; i >= 0; i--)
+            {
+                if (ArrValues[i] < ValueSys)
+                {
+                    int x1 = ArrayOfWaveIndexes[i];
+                    int x2 = ArrayOfWaveIndexes[i + 1];
+                    int xx1 = ArrayOfNegativeWaveIndexes[i];
+                    int xx2 = ArrayOfNegativeWaveIndexes[i + 1];
+                    PSys = (DataA.DCArray[xx1] + DataA.DCArray[xx1]) / 2;
+                    break;
+                }
+            }
+
             //Определение систолического давления (влево от Max)
             for (int i = XMax; i >= 0; i--)
             {
@@ -615,8 +628,8 @@ namespace TTestApp
             if (ViewMode)
             {
                 ArrayList.Add(DataA.PressureViewArray);
-//                ArrayList.Add(DataA.DerivArray);
-                ArrayList.Add(DataA.DebugArray);
+//                ArrayList.Add(DataA.DCArray);
+                ArrayList.Add(DataA.DerivArray);
                 ArrayList.Add(DataA.EnvelopeArray);//Последняя кривая в списке жирная
             }
             else
