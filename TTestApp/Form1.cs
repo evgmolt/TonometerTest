@@ -627,8 +627,8 @@ namespace TTestApp
             var ArrayList = new List<double[]>();
             if (ViewMode)
             {
+                ArrayList.Add(DataA.DebugArray);
                 ArrayList.Add(DataA.PressureViewArray);
-//                ArrayList.Add(DataA.DCArray);
                 ArrayList.Add(DataA.DerivArray);
                 ArrayList.Add(DataA.EnvelopeArray);//Последняя кривая в списке жирная
             }

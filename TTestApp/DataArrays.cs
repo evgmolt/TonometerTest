@@ -45,8 +45,8 @@
 
         public void CountViewArrays()
         {
-            int DCArrayWindow = 60;
-            int ACArrayWindow = 6;
+            int DCArrayWindow = 30;
+            int ACArrayWindow = 4;
             int BadSamples = 160;
 
             for (int i = DCArrayWindow; i < _size; i++)
@@ -85,7 +85,7 @@
                 RealTimeSmoothArray[i] = ACLevel;
             }
 
-
+/*
             for (int i = 0; i < RealTimeArray.Length; i++)
             {
                 PressureViewArray[i] = Filter.HighPass(RealTimeSmoothArray[i]);
@@ -95,7 +95,7 @@
             {
                 PressureViewArray[i] = 0;
             }
-
+*/
 
             for (uint i = 0; i < PressureViewArray.Length; i++)
             {

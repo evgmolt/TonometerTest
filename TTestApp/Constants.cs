@@ -27,6 +27,6 @@ namespace TTestApp
         internal static int NoWaveInterval2 = 1200;
         internal static double MinDetectLevel = 5;
         internal static double DetectLevelCoeffSys = 0.7;
-        internal static double DetectLevelCoeffDia = 0.55;
+        internal static double DetectLevelCoeffDia = 0.55;//!!!
     }
 }
